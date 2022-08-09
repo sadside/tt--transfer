@@ -1,0 +1,42 @@
+.moderation-wrapper {
+	background-color: #B4BCC8;
+	display: flex;
+	height: 100vh;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+.moderation-block {
+	width: 700px;
+	height: 500px;
+	background-color: #fff;
+	border-radius: 3px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 30px 50px;
+	
+	h1 {
+		text-align: center;
+		margin-bottom: 30px;
+	}
+	
+	p {
+		text-align: center;
+		margin-bottom: 35px;
+	}
+	
+}
+
+.clock {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 30px;
+	
+	img {
+		display: block;
+	}
+}

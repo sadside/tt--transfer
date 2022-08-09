@@ -1,0 +1,31 @@
+.success-wrapper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	height: 100vh;
+	background-color: #B4BCC8;
+	
+	div {
+		font-size: 32px;
+		font-weight: 400;
+		margin-bottom: 10px;
+		width: 900px;
+		text-align: center;
+		margin-top: 30px;
+	}
+	
+	p {
+		margin-bottom: 30px;
+		font-size: 22px;
+	}
+}
+
+.success-block {
+	padding: 50px;
+	background-color: #FFFFFF;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	border-radius: 3px;
+}

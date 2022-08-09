@@ -1,0 +1,24 @@
+.applications-wrap {
+	border-radius: 3px;
+	background-color: #ffffff;
+	margin-top: 16px;
+	border: 1px solid rgba(216, 216, 216, 0.8);
+	padding: 13px;
+	
+	ul {
+		margin: 0;
+		padding: 0;
+		
+		li {
+			list-style: none;
+			margin-top: 15px;
+		}
+	}
+	
+	.transfer-number {
+		color: #737373;
+		font-size: 14px;
+		margin-bottom: 3px;
+	}
+	
+}

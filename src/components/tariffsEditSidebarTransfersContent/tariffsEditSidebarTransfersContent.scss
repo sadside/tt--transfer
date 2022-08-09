@@ -1,0 +1,237 @@
+.tariffs-edit-sidebar-content-wrapper-transfers {
+	padding: 33px 23px 17px 23px;
+}
+
+.inputs-wrap {
+	height: calc(100vh - 311px);
+}
+
+.first-info-inputs {
+	display: flex;
+	font-size: 14px;
+	
+	input {
+		width: 260px;
+	}
+	
+	div:first-child {
+		margin-right: 20px;
+	}
+	
+	span {
+		color: #CF1616;
+	}
+}
+
+.destination-selection {
+	display: flex;
+	align-items: center;
+	margin-top: 20px;
+	font-size: 14px;
+	
+	img {
+		display: block;
+		margin: 27px 37px 0 11px;
+	}
+}
+
+.from {
+	position: relative;
+	flex-grow: 1;
+	
+	input {
+		width: 100%;
+	}
+}
+
+.from:after {
+	content: 'А';
+	position: absolute;
+	top: 38px;
+	left: -15px;
+	font-size: 16px;
+}
+
+.to {
+	flex-grow: 1;
+	position: relative;
+	
+	input {
+		width: 100%;
+	}
+}
+
+.to:after {
+	content: 'Б';
+	position: absolute;
+	top: 38px;
+	left: -15px;
+	font-size: 16px;
+}
+
+
+.global-adress-checkbox {
+	background: #E8E8E8;
+	border-radius: 3px;
+	height: 20px;
+	width: 20px;
+}
+
+.global-adress-wrap {
+	display: flex;
+	align-items: center;
+	
+	label {
+		margin-left: 15px;
+	}
+}
+
+.background-information {
+	display: flex;
+	justify-content: space-between;
+	margin-top: 18px;
+	align-items: flex-start;
+	font-size: 14px;
+}
+
+.time-and-distance-inputs {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	
+	div:first-child {
+		margin-bottom: 15px;
+	}
+}
+
+.time-and-distance-input {
+	width: 90px;
+	height: 30px;
+	border-radius: 3px;
+	background: #D9D9D9;
+	border: none;
+	outline: none;
+	margin-left: 6px;
+	text-align: center;
+}
+
+.scroll-table-transfer {
+	height: calc(100vh - 370px);
+	
+}
+
+.scroll-table-body-tariff {
+	overflow-x: auto;
+	margin-top: 0;
+	height: 100%;
+}
+
+.scroll-table-transfer table {
+	width: 100%;
+	table-layout: fixed;
+	border: none;
+	border-collapse: collapse;
+}
+
+.scroll-table-transfer thead {
+	border: none;
+	height: 60px;
+	border-radius: 3px;
+}
+
+.scroll-table-transfer thead th {
+	box-sizing: border-box;
+	text-align: center;
+	padding: 10px 15px;
+	vertical-align: center;
+	font-size: 14px;
+	font-weight: 400;
+}
+
+.scroll-table-transfer thead tr {
+	background-color: #FFFFFF;
+	border-left: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+	border-bottom: 1px solid #CCCCCC;
+}
+
+.scroll-table-transfer tbody td {
+	text-align: center;
+	padding: 10px 15px;
+	font-size: 14px;
+	vertical-align: center;
+	height: 70px;
+	box-sizing: border-box;
+	border: 1px solid #CCCCCC;
+	
+}
+
+
+.checkbox {
+	width: 40px;
+}
+
+.green-tr {
+	background-color: #8DC73F;
+}
+
+.red-tr {
+	background-color: #DB5454;
+}
+
+.tariff-price-input {
+	width: 70px;
+	height: 30px;
+	background: #D9D9D9;
+	border-radius: 3px;
+	border: none;
+	outline: none;
+	padding: 0 10px;
+}
+
+.tariff-price-wrap {
+	display: flex;
+	align-items: center;
+	
+	div {
+		margin-left: 10px;
+	}
+}
+
+.tariff-price-wrap:first-child {
+	margin-bottom: 10px;
+}
+
+.submit-tariff-buttons-wrap {
+	display: flex;
+	justify-content: flex-end;
+	
+	.submit-tariff-buttons {
+		display: flex;
+	}
+}
+
+.region {
+	transition: background-color 0.2s ease-in;
+	cursor: pointer;
+	position: relative;
+}
+
+
+.transferLink-item-region {
+	position: relative;
+	cursor: pointer;
+}
+
+.transferLink-item-region:after {
+	content: "";
+	background: url("../../assets/addIcon.svg");
+	height: 25px;
+	width: 25px;
+	position: absolute;
+	top: 17px;
+	right: 20px;
+	border: none;
+	padding: 0;
+	margin: 0;
+}

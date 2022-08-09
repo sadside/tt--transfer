@@ -1,0 +1,61 @@
+.header-block-wrap {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.header-block-input {
+	background: #E8E8E8;
+	border: none;
+	outline: none;
+	height: 40px;
+	width: 400px;
+	padding: 0 20px;
+	display: block;
+}
+
+.search-icon {
+	position: absolute;
+	top: 7px;
+	right: 12px;
+	cursor: pointer;
+}
+
+.header-block-input-wrap {
+	position: relative;
+	width: min-content;
+}
+
+.smart-filter {
+	background-color: #364150;
+	width: 180px;
+	height: 40px;
+	margin-left: 17px;
+	border-radius: 3px;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.smart-filter-columns {
+	display: flex;
+	align-items: center;
+	
+	div {
+		margin-left: 9px;
+		font-size: 14px;
+	}
+}
+
+.excel-upload {
+	display: flex;
+	align-items: center;
+	margin-right: 25px;
+}
+
+.left-wrap {
+	display: flex;
+}

@@ -1,0 +1,88 @@
+.scroll-table {
+	height: calc(100% - 110px);
+}
+
+.scroll-table-body {
+	overflow-x: auto;
+	margin-top: 0;
+	height: 100%;
+}
+
+.scroll-table table {
+	width: 100%;
+	table-layout: fixed;
+	border: none;
+	border-collapse: collapse;
+}
+
+.scroll-table thead {
+	border: none;
+	height: 60px;
+	background-color: #E8E8E8;
+	border-radius: 3px;
+}
+
+.scroll-table thead th {
+	font-weight: bold;
+	box-sizing: border-box;
+	text-align: center;
+	padding: 10px 15px;
+	vertical-align: center;
+	background: #E8E8E8;
+	font-size: 14px;
+}
+
+.scroll-table thead tr {
+	border: none;
+	background: #E8E8E8;
+}
+
+.scroll-table tbody td {
+	text-align: center;
+	padding: 10px 15px;
+	font-size: 14px;
+	vertical-align: center;
+	height: 70px;
+	border-bottom: 1px solid #E8E8E8;
+	box-sizing: border-box;
+	
+}
+
+
+.checkbox {
+	width: 40px;
+}
+
+.green {
+	color: #8DC73F;
+	cursor: pointer;
+	
+}
+
+.red {
+	color: #DB5454;
+	cursor: pointer;
+	position: relative;
+	
+	div {
+		position: absolute;
+		top: 60px;
+		right: 0;
+		z-index: 1000;
+		background: #E8E8E8;
+		border-radius: 3px;
+		height: 80px;
+		width: 180px;
+		padding: 10px;
+		box-sizing: border-box;
+		pointer-events: none;
+		
+		p {
+			margin: 2px 0 0 0;
+			padding: 0;
+			text-align: left;
+			color: #000;
+		}
+		
+	}
+}

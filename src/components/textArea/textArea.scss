@@ -1,0 +1,50 @@
+.textarea {
+	background-color: #ffffff;
+	width: 100%;
+	border: 1px solid #D8D8D8;
+	box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+	padding: 15px;
+	box-sizing: border-box;
+	
+	.choose-type-message {
+		font-weight: 400;
+		display: flex;
+	}
+	
+	.active-type-message-indicator {
+		height: 2px;
+		width: 100%;
+		background-color: #8DC73F;
+		margin-top: 4px;
+	}
+	
+	.type-message-item {
+		margin-right: 20px;
+		color: #737373;
+		cursor: pointer;
+	}
+	
+	.textarea-input {
+		display: block;
+		width: 100%;
+		height: 50px;
+		margin: 15px 0;
+		border: none;
+		outline: none;
+		background-color: #fff;
+		resize: none;
+		padding: 5px 0;
+		font-weight: 300;
+		font-size: 16px;
+	}
+	
+	.additional-textarea-buttons {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		
+		.symbols {
+			margin-right: 10px;
+		}
+	}
+}

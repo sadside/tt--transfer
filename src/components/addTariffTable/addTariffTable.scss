@@ -1,0 +1,48 @@
+.scroll-table-tariff {
+	height: calc(100vh - 370px);
+}
+
+.scroll-table-body-tariff {
+	overflow-x: auto;
+	margin-top: 0;
+	height: 100%;
+}
+
+.scroll-table-tariff table {
+	width: 100%;
+	table-layout: fixed;
+	border: none;
+	border-collapse: collapse;
+}
+
+.scroll-table-tariff thead {
+	border: none;
+	height: 60px;
+	border-radius: 3px;
+}
+
+.scroll-table-tariff thead th {
+	box-sizing: border-box;
+	text-align: center;
+	padding: 10px 15px;
+	vertical-align: center;
+	font-size: 14px;
+	font-weight: 400 !important;
+}
+
+.scroll-table-tariff thead tr {
+	background-color: #FFFFFF;
+	border-left: 1px solid #CCCCCC;
+	border-right: 1px solid #CCCCCC;
+	border-bottom: 1px solid #CCCCCC;
+}
+
+.scroll-table-tariff tbody td {
+	text-align: center;
+	padding: 10px 15px;
+	font-size: 14px;
+	vertical-align: center;
+	height: 70px;
+	box-sizing: border-box;
+	border: 1px solid #CCCCCC;
+}

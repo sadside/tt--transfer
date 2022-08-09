@@ -1,0 +1,138 @@
+.zoneWrap {
+	height: 50px;
+	border-radius: 3px;
+	border: 1px solid #CCCCCC;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	margin-top: 15px;
+}
+
+.editZoneBtn {
+	background-color: #8DC73F;
+	display: flex;
+	align-items: center;
+	height: 40px;
+	padding: 0 30px;
+	box-sizing: border-box;
+	border-radius: 3px;
+	color: #fff;
+	font-weight: 400;
+	cursor: pointer;
+	margin: 0 10px;
+	flex: 0 0;
+}
+
+.deleteZoneBtn {
+		background-color: #DB5454;
+	display: flex;
+	align-items: center;
+	height: 40px;
+	padding: 0 30px;
+	box-sizing: border-box;
+	border-radius: 3px;
+	color: #fff;
+	font-weight: 400;
+	cursor: pointer;
+		margin: 0 10px;
+		flex: 0 0;
+}
+
+.zoneNumber {
+	flex: 1 1;
+	margin: 0 20px 0 0;
+	height: 50px;
+	display: flex;
+	align-items: center;
+	font-size: 16px;
+	font-weight: 400;
+}
+
+.zoneColor {
+	display: flex;
+	align-items: center;
+	height: 50px;
+	justify-content: center;
+	width: 20px;
+	margin: 0 10px 0 15px;
+	div {
+		height: 15px;
+		width: 15px;
+		border-radius: 100%;
+		background-color: #8DC73F;
+	}
+}
+
+.colorItem {
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	div {
+		height: 15px;
+		width: 15px;
+		border-radius: 100%;
+	}
+	
+	
+	&:hover {
+		background-color: #ccc;
+	}
+}
+
+.green {
+	background-color: #8DC73F !important;
+}
+
+.blue {
+		background-color: #337AB7 !important;
+
+}
+.red {
+	background-color: #DB5454 !important;
+}
+.yellow {
+		background-color: yellow !important;
+}
+
+.zoneIndicator {
+		height: 15px;
+		width: 15px;
+		border-radius: 100%;
+}
+
+.selectZoneItem {
+		position: absolute;
+		top: 65px;
+		left: 0;
+		width: 100%;
+		height: 120px;
+		background-color: #fff;
+		border-radius: 3px;
+		box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.25);
+}
+
+.selectZone {
+	font-weight: 400;
+	box-sizing: border-box;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	position: relative;
+	justify-content: center;
+	width: 180px;
+	border-radius: 3px;
+	border: 1px solid #ccc;
+	margin: 0 20px;
+	flex-grow: 0;
+	cursor: pointer;
+}
+
+.coordsInputWrap {
+	flex: 1 1;
+	padding-right: 20px;
+	input {
+		width: 100%;
+		height: 30px;
+	}
+}

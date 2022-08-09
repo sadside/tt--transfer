@@ -1,0 +1,266 @@
+.selectCity {
+	margin-top: 10px;
+	display: flex;
+	align-items: center;
+	margin-bottom: 30px;
+	label {
+		font-size: 16px;
+		width: 130px;
+	}
+	input {
+		width: 300px;
+		height: 40px;
+		outline: none;
+		background: #e8e8e8;
+		border-radius: 3px;
+		outline: none;
+		border: none;
+		padding: 0 10px;
+		font-weight: 300;
+		font-size: 16px;
+	}
+}
+
+.citySelectWrap {
+	position: relative;
+}
+
+.citySelect {
+	position: absolute;
+	top: 50px;
+	left: 0;
+	max-height: 200px;
+	width: 100%;
+	box-sizing: border-box;
+	background: #fff;
+	z-index: 10000;
+	box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.25);
+	overflow-y: auto;
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		li {
+			padding: 13px;
+			box-sizing: border-box;
+			cursor: pointer;
+			transition: background-color 0.2s ease-in;
+		}
+		li:hover {
+			background-color: #d7d7d7;
+		}
+	}
+}
+
+.howToUse {
+	padding: 0 30px;
+	background-color: #db5454;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	font-size: 16px;
+	height: 100px;
+	border-radius: 3px;
+	a {
+		color: #000000;
+	}
+}
+.calculatorTitle {
+	font-size: 28px;
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+.addZone {
+	display: flex;
+	margin-top: 15px;
+}
+
+.coords {
+	height: 40px;
+	outline: none;
+	border: none;
+	padding-left: 17px;
+	box-sizing: border-box;
+	font-weight: 300;
+	font-size: 16px;
+	flex-grow: 1;
+	background: #e8e8e8;
+	border-bottom-left-radius: 3px;
+	border-top-left-radius: 3px;
+}
+.selectZone {
+	font-weight: 400;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	position: relative;
+	justify-content: center;
+	width: 150px;
+	flex-grow: 0;
+	cursor: pointer;
+	background-color: #e8e8e8;
+}
+
+.selectZoneItem {
+	position: absolute;
+	top: 65px;
+	left: 0;
+	width: 100%;
+	height: 120px;
+	background-color: #fff;
+	border-radius: 3px;
+	box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.25);
+}
+.addZoneBtn {
+	width: 150px;
+	cursor: pointer;
+	border: none;
+	background-color: #8dc73f;
+	color: #ffffff;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+
+.colorItem {
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	div {
+		height: 15px;
+		width: 15px;
+		border-radius: 100%;
+		background-color: red;
+	}
+
+	&:hover {
+		background-color: #ccc;
+	}
+}
+
+
+
+.green {
+	color: #8dc73f !important;
+}
+
+.blue {
+	color: #337ab7 !important;
+}
+.red {
+	color: #db5454 !important;
+}
+.yellow {
+	color: yellow;
+}
+.calculatorSubTitle {
+	font-weight: 300;
+	font-size: 28px;
+	margin: 24px 0 0 0;
+}
+
+.zones {
+	margin-top: 20px;
+	max-height: calc(100vh - 800px);
+	overflow-y: auto;
+}
+
+.transferCalculatorWrap {
+	margin-top: 50px;
+}
+
+.selectZoneColorBlock {
+	background-color: #e8e8e8;
+	height: 100%;
+	display: flex;
+	img {
+		flex: 0 0;
+		margin-left: 10px;
+		margin-top: 1px;
+	}
+	align-items: center;
+	padding-right: 15px;
+	cursor: pointer;
+}
+.selectZoneColor {
+	position: relative;
+}
+
+.selectZoneColorMenu {
+	position: absolute;
+	top: 30px;
+	left: 0;
+	width: calc(100% - 15px);
+	box-sizing: border-box;
+	background: #E8E8E8;
+	border: 1px solid #D9D9D9;
+	border-radius: 3px;
+	padding: 5px 13px;
+}
+
+.selectZoneColorMenuItem {
+	display: flex;
+	cursor: pointer;
+	height: 30px;
+	align-items: center;
+}
+
+.zoneIndicatorGreen {
+	border-radius: 100%;
+	background-color: #8DC73F;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+.zoneIndicatorBlue {
+	border-radius: 100%;
+	background: #337AB7;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+.zoneIndicatorRed {
+	border-radius: 100%;
+	background-color: #DB5454;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+.zoneIndicatorYellow {
+	border-radius: 100%;
+	background-color: yellow;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+.zoneIndicatorOrange {
+	border-radius: 100%;
+	background-color: orange;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+.zoneIndicatorLime {
+	border-radius: 100%;
+	background-color: lime;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+.zoneIndicatorPurple {
+	border-radius: 100%;
+	background-color: purple;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+
+.zoneColorText {
+	font-size: 14px;
+}
+
+.zoneColorTextActive {
+	color: #737373;
+}

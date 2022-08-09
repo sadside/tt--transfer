@@ -1,0 +1,43 @@
+.select-car-wrap {
+	display: flex;
+	justify-content: center;
+	margin-top: 36px;
+	padding: 0 40px;
+	overflow-y: auto;
+}
+
+.car-descr {
+	font-size: 16px;
+	margin-top: 10px;
+}
+
+.car-items-main-wrap {
+	height: calc(100vh - 200px);
+	overflow-y: auto;
+	overflow-x: hidden;
+	width: 100%;
+}
+
+.car-items-wrap {
+	display: flex;
+	justify-content: space-between;
+}
+
+.car-item {
+	margin-bottom: 40px;
+	position: relative;
+	cursor: pointer;
+}
+
+.car-selected-indicator {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 200px;
+	width: 250px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: rgba(0, 0, 0, 0.7);
+	border-radius: 3px;
+}

@@ -1,0 +1,14 @@
+.active-content-wrap {
+	display: flex;
+	justify-content: space-between;
+	width: auto;
+	height: 100%;
+	overflow-x: hidden;
+	border-radius: 3px;
+}
+
+.second-sidebar {
+	width: 270px;
+	flex-shrink: 0;
+	height: min-content;
+}

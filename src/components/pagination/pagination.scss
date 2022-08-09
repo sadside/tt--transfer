@@ -1,0 +1,80 @@
+.pagination-wrap {
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	position: relative;
+	height: 50px;
+	flex-shrink: 0;
+	//	margin-top: 85px;
+	background-color: #fff;
+	border-left: 1px solid rgba(216, 216, 216, 0.8);
+	border-bottom: 1px solid rgba(216, 216, 216, 0.8);
+	border-right: 1px solid rgba(216, 216, 216, 0.8);
+	padding: 15px;
+}
+
+.pagination-button {
+	width: 25px;
+	height: 25px;
+	border: 1px solid #B7B7B7;
+	border-radius: 3px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-left: 11px;
+	cursor: pointer;
+}
+
+.pagination-text {
+	margin-left: 11px;
+}
+
+.prev-page-button {
+	margin-left: 11px;
+	
+}
+
+.count-pages {
+	position: relative;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	border: 1px solid #B7B7B7;
+	border-radius: 3px;
+	width: 65px;
+	justify-content: center;
+	height: 25px;
+	
+	span {
+		margin-left: 10px;
+	}
+}
+
+.select-count-countries {
+	position: absolute;
+	bottom: 47px;
+	left: 16px;
+	background-color: #fff;
+	z-index: 111111;
+	width: 65px;
+	border-radius: 3px;
+	border: 1px solid #B7B7B7;
+	
+	div {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 3px;
+		cursor: pointer;
+		transition: all 0.3s ease-in;
+		
+		&:hover {
+			background-color: #ccc;
+		}
+	}
+}
+
+.active-pagination-button {
+	color: #337AB7;
+	border: 1px solid #337AB7;
+}

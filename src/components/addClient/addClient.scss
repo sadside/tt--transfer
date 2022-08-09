@@ -1,0 +1,48 @@
+.add-client-wrap {
+	padding: 32px 42px;
+	height: calc(100vh - 200px);
+	overflow-y: auto;
+}
+
+.client-info {
+	display: flex;
+}
+
+.client-photo {
+	background-color: #E8E8E8;
+	height: 200px;
+	width: 200px;
+	border-radius: 100%;
+	color: #A0A9B4;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+}
+
+.client-input {
+	background: #E8E8E8;
+	border-radius: 3px;
+	border: none;
+	outline: none;
+	height: 40px;
+	padding-left: 14px;
+	width: 300px;
+	margin-top: 10px;
+}
+
+.client-field:not(:first-child) {
+	margin-top: 15px;
+}
+
+.client-field {
+	font-size: 14px;
+}
+
+.client-fields {
+	margin-left: 48px;
+}
+
+.submit-client-buttons {
+	margin-top: calc(100vh - 863px);
+}

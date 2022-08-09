@@ -1,0 +1,36 @@
+.edit-profile-input {
+	height: 50px;
+	width: 440px;
+	background-color: #E8E8E8;
+	border: none;
+	outline: none;
+	padding-left: 23px;
+	box-sizing: border-box;
+	font-weight: 400;
+	font-size: 16px;
+	margin-top: 15px;
+	display: block;
+	border-radius: 3px;
+}
+
+.edit-profile-input-item {
+	margin-bottom: 15px;
+}
+
+.change-password-input {
+	display: block;
+}
+
+.change-password-input {
+	width: min-content;
+	position: relative;
+	
+	.show-password {
+		position: absolute;
+		top: 48px;
+		right: 15px;
+		text-decoration: underline;
+		color: #777777;
+		cursor: pointer;
+	}
+}

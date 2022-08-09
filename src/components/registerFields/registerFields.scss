@@ -1,0 +1,94 @@
+@import '../../scss/variabels';
+
+
+.submit-button {
+	background-color: $green;
+	border: none;
+	outline: none;
+	box-sizing: border-box;
+	border-radius: 3px;
+	cursor: pointer;
+	color: #fff;
+	font-weight: normal;
+	font-size: 16px;
+	width: 220px;
+	display: block;
+	height: 40px;
+	margin-top: 33px;
+}
+
+.register-fields-wrap {
+	width: 500px;
+	overflow: hidden;
+	
+	@media (max-width: $md4 + px) {
+		margin: 120px 20px 80px 20px;
+	}
+	@media (max-width: $md3 + px) {
+		margin: 0 20px;
+	}
+	
+	.register-fields-title {
+		margin-bottom: 10px;
+		font-size: 28px;
+		font-weight: 400;
+		@media (max-width: $md4 + px) {
+			margin-top: 200px;
+		}
+		@media (max-width: $md3 + px) {
+			margin-top: 100px;
+		}
+		@media (max-width: $md5 + px) {
+			margin-top: 150px;
+		}
+	}
+	
+	.register-fields-description {
+		font-size: 14px;
+		line-height: 25px;
+		margin-bottom: 10px;
+	}
+	
+	.accept {
+		margin-top: 15px;
+		font-size: 14px;
+		@media (max-width: $md4 + px) {
+			margin-bottom: 50px;
+		}
+	}
+	
+}
+
+.role-class-select {
+	margin-top: 10px;
+	width: 500px;
+	height: 50px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	box-sizing: border-box;
+	padding: 0 18px 0 24px;
+	background: #E8E8E8;
+	cursor: pointer;
+	font-size: 14px;
+}
+
+.reg-form {
+	input {
+		margin-top: 20px;
+	}
+}
+
+.error-component {
+	width: 100%;
+	line-height: 20px;
+	box-sizing: border-box;
+	padding: 15px;
+	border: 1px solid #DB5454;
+	margin-top: 20px;
+	height: 50px;
+	display: flex;
+	align-items: center;
+	font-weight: 400;
+	color: #DB5454;
+}

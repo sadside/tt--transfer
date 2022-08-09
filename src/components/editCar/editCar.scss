@@ -1,0 +1,68 @@
+.edit-car-wrap {
+	padding: 21px 19px 13px 24px;
+}
+
+.car-info {
+	display: flex;
+}
+
+.car-image-wrap {
+	height: 200px;
+	width: 200px;
+	border-radius: 100%;
+	overflow: hidden;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #E8E8E8;
+	font-size: 14px;
+	color: #A0A9B4;
+	cursor: pointer;
+}
+
+.car-info-inputs {
+	margin-left: 40px;
+}
+
+.car-label {
+	color: #737373;
+	font-size: 14px;
+	display: block;
+	margin-top: 12px;
+}
+
+.car-full-name {
+	font-size: 20px;
+	color: #337AB7;
+}
+
+.driver-full-name {
+	font-size: 20px !important;
+	color: #337AB7 !important;
+	font-weight: 300;
+	text-align: left;
+	margin: 0 !important;
+	padding: 0;
+	min-width: 300px;
+}
+
+.not-active-input {
+	width: 100px;
+	outline: none;
+	color: #000;
+	border: none;
+	margin-left: 5px;
+	font-size: 14px;
+}
+
+.car-edit-inputs {
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: column;
+	height: 150px;
+	margin-bottom: 40px;
+}
+
+.car-edit {
+	height: calc(100vh - 485px);
+}

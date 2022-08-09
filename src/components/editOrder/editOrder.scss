@@ -1,0 +1,54 @@
+.edit-order-wrap {
+	padding: 27px 53px;
+}
+
+.order-date-pick {
+	font-size: 14px !important;
+	margin-top: 25px;
+}
+
+.edit-order-fields {
+	font-size: 14px;
+	display: flex;
+}
+
+.edit-order-fields-right {
+	margin-left: 108px;
+}
+
+.edit-order-price {
+	margin-top: 54px !important;
+}
+
+.order-comment {
+	margin-top: 70px;
+	
+	textarea {
+		width: 400px;
+		height: 150px;
+		resize: none;
+		outline: none;
+		border: none;
+		background: #E8E8E8;
+		border-radius: 3px;
+		padding: 11px 13px;
+		box-sizing: border-box;
+		margin-top: 10px;
+	}
+}
+
+.from-calculator {
+	position: relative;
+	
+	.long-arrow {
+		position: absolute;
+		right: -60px;
+		top: 37px;
+	}
+	
+	.long-arrow-1 {
+		position: absolute;
+		right: -80px;
+		top: 37px;
+	}
+}

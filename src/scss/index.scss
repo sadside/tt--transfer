@@ -1,0 +1,37 @@
+@import "normalize";
+
+body {
+	font-family: 'Roboto', sans-serif;
+	font-weight: 300;
+	overflow: hidden;
+}
+
+html {
+
+}
+
+::placeholder {
+}
+
+::-webkit-scrollbar { /* 1 - скроллбар */
+	width: 7px;
+	height: 7px;
+}
+
+::-webkit-scrollbar-button { /* 2 - кнопка */
+
+}
+
+::-webkit-scrollbar-track-piece { /* 4 - видимая часть трека */
+}
+
+::-webkit-scrollbar-thumb { /* 5 - ползунок */
+	border-radius: 7px;
+	background-color: #737373;
+}
+
+::-webkit-scrollbar-corner { /* 6 - уголок */
+}
+
+::-webkit-resizer { /* 7 - изменение размеров */
+}

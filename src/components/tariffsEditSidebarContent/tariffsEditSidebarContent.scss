@@ -1,0 +1,14 @@
+.transferLink {
+	cursor: pointer;
+	position: relative;
+}
+
+.transferLink-item::after {
+	content: "";
+	background: url("../../assets/addIcon.svg");
+	height: 25px;
+	width: 25px;
+	position: absolute;
+	top: 20px;
+	right: 10px;
+}

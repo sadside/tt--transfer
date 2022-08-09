@@ -1,0 +1,16 @@
+.input {
+	font-weight: 300;
+	height: 50px;
+	width: 100%;
+	background-color: #E8E8E8;
+	border: none;
+	outline: none;
+	padding: 25px 23px;
+	box-sizing: border-box;
+	font-size: 16px;
+	display: block;
+	@media (max-height: 800px) {
+		height: 40px;
+		margin-top: 15px;
+	}
+}

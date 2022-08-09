@@ -1,0 +1,13 @@
+@import '../../scss/variabels';
+
+.logo {
+	position: fixed;
+	z-index: 1111;
+	top: 8px;
+	left: 13px;
+}
+
+.logo-wrap {
+	position: relative;
+	background-color: red;
+}

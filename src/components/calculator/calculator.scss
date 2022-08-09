@@ -1,0 +1,122 @@
+.calculator-wrap {
+	padding: 0 18px 48px 18px;
+	height: calc(100vh - 180px);
+	overflow-y: auto;
+}
+
+.calculator-inputs {
+	margin-top: 0 !important;
+}
+
+.to-calculator {
+	position: relative;
+	font-size: 14px;
+
+	input {
+		width: 350px;
+	}
+}
+
+.from-calculator {
+	font-size: 14px;
+	position: relative;
+
+	input {
+		width: 350px;
+	}
+}
+
+.to-calculator:after {
+	content: 'Б';
+	position: absolute;
+	top: 38px;
+	left: -15px;
+	font-size: 16px;
+}
+
+.from-calculator:after {
+	content: 'А';
+	position: absolute;
+	top: 38px;
+	left: -15px;
+	font-size: 16px;
+}
+
+.calculator-additional-inputs {
+	display: flex;
+	margin-top: 30px;
+
+	input,
+	select {
+		width: 350px;
+	}
+}
+
+.select-car-class {
+	box-sizing: border-box;
+	margin-left: 100px;
+}
+
+.calculator-calc-button {
+	margin-top: 25px;
+	margin-bottom: 53px;
+	display: flex;
+	justify-content: flex-end;
+	width: 800px;
+}
+
+.add-race {
+	padding-left: 32px;
+	margin-top: 15px;
+	font-size: 14px;
+	text-decoration: underline;
+	position: relative;
+	cursor: pointer;
+
+	&::before {
+		content: '';
+		height: 25px;
+		width: 25px;
+		background: url('../../assets/addIcon.svg');
+		position: absolute;
+		left: 0;
+		top: -5px;
+	}
+}
+
+.calculator-wrap {
+	font-size: 14px;
+}
+
+.route-info {
+	display: flex;
+	justify-content: space-between;
+	width: 800px;
+	font-size: 16px;
+}
+
+.right-route-info {
+	font-size: 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+
+	span {
+		font-size: 20px;
+		text-decoration: underline;
+		margin-left: 5px;
+	}
+}
+
+.left-route-info div:first-child {
+	margin-bottom: 10px;
+}
+
+.route-info {
+	margin-bottom: 20px;
+}
+
+//.map-wrapper {
+//	height: calc(100vh - 540px);
+//	overflow-y: auto;
+//}

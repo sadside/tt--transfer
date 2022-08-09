@@ -1,0 +1,100 @@
+
+.edit-sidebar-tabs {
+	display: flex;
+}
+
+.edit-sidebar-tab {
+	height: 60px;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	padding: 20px;
+	color: #fff;
+	font-weight: 400;
+	border-bottom: 3px solid #364150;
+	cursor: pointer;
+	transition: 0.3s border-bottom-color ease-in;
+}
+
+.active {
+	border-bottom: 3px solid #8DC73F;
+}
+
+.tariffs-edit-sidebar-content-inputs {
+	margin-top: 17px;
+	display: flex;
+	height: calc(100vh - 297px);
+}
+
+.tariffs-edit-sidebar-content-edit-part {
+	padding: 0 23px;
+}
+
+.tariff-data-input {
+	display: block;
+	height: 40px;
+	padding: 0 14px;
+	box-sizing: border-box;
+	border: none;
+	outline: none;
+	background: #E8E8E8;
+	border-radius: 3px;
+	margin-top: 10px;
+	width: 253px;
+}
+
+::placeholder {
+	font-weight: 300;
+	font-size: 14px;
+}
+
+.required {
+	color: #CF1616;
+}
+
+.tariff-data {
+	label {
+		display: block;
+		margin-top: 17px;
+		font-size: 14px;
+	}
+}
+
+.select-currency {
+	height: 50px;
+	display: block;
+	padding: 14px;
+	font-size: 14px;
+	border: none;
+	outline: none;
+	background: #E8E8E8;
+	border-radius: 3px;
+	margin-top: 10px;
+	width: 253px;
+	font-weight: 300;
+}
+
+.tariff-comment {
+	margin-left: 42px;
+	
+	label {
+		display: block;
+		margin-top: 17px;
+		font-size: 14px;
+	}
+	
+	textarea {
+		display: block;
+		width: 650px;
+		height: 205px;
+		background: #E8E8E8;
+		border-radius: 3px;
+		border: none;
+		outline: none;
+		padding: 12px;
+		resize: none;
+		margin-top: 10px;
+		font-weight: 300;
+		box-sizing: border-box;
+	}
+}
