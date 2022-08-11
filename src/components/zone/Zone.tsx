@@ -2,20 +2,34 @@ import classNames from "classnames";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { Interface } from "readline";
-import { deleteZone, editZone } from "../../store/zoneSlice";
+import {
+  deleteZone,
+  deleteZoneThunk,
+  editZone,
+  editZoneThunk,
+} from "../../store/zoneSlice";
+import deleteZoneIcon from "../../assets/deleteZone.svg";
 
 import styles from "./Zone.module.scss";
 
 interface ZoneProps {
-  type: string;
-  id: number;
+  color: string;
+  id: number | undefined;
   coordinates: string;
+  region?: string;
+  city?: string;
 }
 
-const Zone: React.FC<ZoneProps> = ({ type, id, coordinates }) => {
+const Zone: React.FC<ZoneProps> = ({
+  color,
+  id,
+  coordinates,
+  region,
+  city,
+}) => {
   let zoneText;
 
-  switch (type) {
+  switch (color) {
     case "green":
       zoneText = "Зеленая зона";
       break;
@@ -35,9 +49,9 @@ const Zone: React.FC<ZoneProps> = ({ type, id, coordinates }) => {
   const [edit, setEdit] = useState(false);
   const [showColorSelect, setShowColorSelect] = useState(false);
   const [activeColor, setActiveColor] = useState("green");
-  const [newCoords, setNewCoords] = useState(coordinates);
+  const [newCoords, setNewCoords] = useState(JSON.stringify(coordinates));
 
-  const zoneColor = classNames([styles.selectZone], {
+  const zoneColor = classNames([styles.selectZoneIndicator], {
     [styles.green]: activeColor === "green",
     [styles.blue]: activeColor === "blue",
     [styles.red]: activeColor === "red",
@@ -45,18 +59,29 @@ const Zone: React.FC<ZoneProps> = ({ type, id, coordinates }) => {
   });
 
   const zoneIndicatorColor = classNames([styles.zoneIndicator], {
-    [styles.green]: type === "green",
-    [styles.blue]: type === "blue",
-    [styles.red]: type === "red",
-    [styles.yellow]: type === "yellow",
+    [styles.green]: color === "green",
+    [styles.blue]: color === "blue",
+    [styles.red]: color === "red",
+    [styles.yellow]: color === "yellow",
   });
 
   const removeZone = () => {
-    dispatch(deleteZone(id));
+    // @ts-ignore
+    dispatch(deleteZoneThunk(id));
   };
 
   const zoneEditing = () => {
-    dispatch(editZone({ id, coordinates: newCoords, type: activeColor }));
+    // @ts-ignore
+    dispatch(
+      // @ts-ignore
+      editZoneThunk({
+        id,
+        coordinates: JSON.parse(newCoords),
+        color,
+        region,
+        city,
+      })
+    );
     setEdit(false);
   };
 
@@ -67,44 +92,14 @@ const Zone: React.FC<ZoneProps> = ({ type, id, coordinates }) => {
           <div className={zoneIndicatorColor}></div>
         </div>
       )}
-      {edit && (
-        <div>
-          <div
-            className={zoneColor}
-            onClick={() => setShowColorSelect(!showColorSelect)}
-          >
-            Выберите цвет зоны
-            {showColorSelect && (
-              <div className={styles.selectZoneItem}>
-                <div
-                  className={styles.colorItem}
-                  onClick={() => setActiveColor("green")}
-                >
-                  <div className={styles.green}></div>
-                </div>
-                <div
-                  className={styles.colorItem}
-                  onClick={() => setActiveColor("blue")}
-                >
-                  <div className={styles.blue}></div>
-                </div>
-                <div
-                  className={styles.colorItem}
-                  onClick={() => setActiveColor("red")}
-                >
-                  <div className={styles.red}></div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+
       {edit ? (
         <div className={styles.coordsInputWrap}>
           <input
             type="text"
             value={newCoords}
             onChange={(e) => setNewCoords(e.target.value)}
+            className={styles.editZoneInput}
           />
         </div>
       ) : (
@@ -120,7 +115,7 @@ const Zone: React.FC<ZoneProps> = ({ type, id, coordinates }) => {
         </div>
       )}
       <div className={styles.deleteZoneBtn} onClick={removeZone}>
-        Удалить
+        <img src={deleteZoneIcon} alt="" />
       </div>
     </div>
   );

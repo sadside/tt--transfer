@@ -15,7 +15,7 @@ import {
 } from "../../store/calculatorSlice";
 //@ts-ignore
 import downArrow from "../../assets/select-zone-color.svg";
-import { addZone, getZone } from "../../store/zoneSlice";
+import { addZone, addZoneThunk, getZone } from "../../store/zoneSlice";
 //@ts-ignore
 import ErrorComponent from "../errorComponent/ErrorComponent";
 import Loader from "../loader/Loader";
@@ -76,17 +76,31 @@ const Calculator = () => {
 
   const createZone = () => {
     if (coordinates.length !== 0) {
+      console.log(JSON.parse(coordinates));
+
       dispatch(
-        addZone({
-          id: 10,
-          coordinates: coordinates,
-          type: activeColor,
+        addZoneThunk({
+          coordinates: JSON.parse(coordinates),
+          color: activeColor,
         })
       );
 
       setCoordinates("");
     }
   };
+
+  useEffect(() => {
+    window.addEventListener("DOMContentLoaded", () => {
+      u1(
+        `http://localhost:8000/map/zones/?region=${activeRegion?.name}&city=${activeCity?.name}`
+      );
+    });
+  }, [zones]);
+
+  function u1(u: any): void {
+    // @ts-ignore
+    document.getElementById("iframeid").src = u;
+  }
 
   if (loading) {
     return <Loader />;
@@ -95,6 +109,8 @@ const Calculator = () => {
   // if (error) {
   //   return <ErrorComponent text="Ошибка!" toggle={"dad"}/>;
   // }
+
+  console.log("render");
 
   return (
     <>
@@ -185,6 +201,7 @@ const Calculator = () => {
                               onClick={(): void => {
                                 dispatch(setActiveCity(city));
                                 setCityInputValue(city.name);
+                                dispatch(getZone());
                               }}
                             >
                               {city.name}
@@ -199,118 +216,115 @@ const Calculator = () => {
             </div>
           </div>
         )}
-        {(activeCity ||
-          activeRegion?.name === "Москва" ||
-          activeRegion?.name === "Санкт-Петербург") && (
-          <div>
+        {activeRegion &&
+          (activeCity ||
+            activeRegion?.name === "Москва" ||
+            activeRegion?.name === "Санкт-Петербург") && (
             <div>
-              <div className={styles.howToUse}>
-                <div>
-                  Для зонирования города{" "}
-                  <strong>{activeCity?.name || activeRegion?.name}</strong>{" "}
-                  откройте{" "}
-                  <a
-                    href="https://yandex.ru/map-constructor/location-tool/?from=club"
-                    target={"_blank"}
-                    rel="noreferrer"
-                  >
-                    карту
-                  </a>{" "}
-                  и с помощью инструмента многоугольник прозонируйте город.
-                  Получившиеся координаты сохраните в отведенном поле, указав
-                  цвет зоны.
-                </div>
-              </div>
-            </div>
-            {activeCity && activeRegion && (
-              <button
-                onClick={() =>
-                  dispatch(
-                    getZone({
-                      region: activeRegion.name,
-                      city: activeCity.name,
-                    })
-                  )
-                }
-              >
-                Загрузить зоны
-              </button>
-            )}
-            <h2 className={styles.calculatorSubTitle}>
-              Добавьте зоны для рассчета
-            </h2>
-            <div className={styles.zonesWrap}>
-              <div className={styles.addZone}>
-                <input
-                  type="text"
-                  className={styles.coords}
-                  placeholder="Введите текст"
-                  value={coordinates}
-                  onChange={(e) => setCoordinates(e.target.value)}
-                />
-                <div className={styles.selectZoneColor}>
-                  <div
-                    className={styles.selectZoneColorBlock}
-                    onClick={() =>
-                      setShowColorSelect((prevState) => !prevState)
-                    }
-                  >
-                    <div className={zoneColor}>Выберите цвет</div>
-                    <img src={downArrow} alt="" />
+              <div>
+                <div className={styles.howToUse}>
+                  <div>
+                    Для зонирования города
+                    <strong>
+                      {activeCity?.name || activeRegion?.name}
+                    </strong>{" "}
+                    откройте{" "}
+                    <a
+                      href="https://yandex.ru/map-constructor/location-tool/?from=club"
+                      target={"_blank"}
+                      rel="noreferrer"
+                    >
+                      карту
+                    </a>
+                    и с помощью инструмента многоугольник прозонируйте город.
+                    Получившиеся координаты сохраните в отведенном поле, указав
+                    цвет зоны.
                   </div>
-                  {showColorSelect && (
-                    <div className={styles.selectZoneColorMenu}>
-                      <div
-                        className={styles.selectZoneColorMenuItem}
-                        onClick={() => setActiveColor("green")}
-                      >
-                        <div className={styles.zoneIndicatorGreen}></div>
-                        <div className={styles.zoneColorText}>Зеленый</div>
-                      </div>
-                      <div
-                        className={styles.selectZoneColorMenuItem}
-                        onClick={() => setActiveColor("blue")}
-                      >
-                        <div className={styles.zoneIndicatorBlue}></div>
-                        <div className={styles.zoneColorText}>Синий</div>
-                      </div>
-
-                      <div
-                        className={styles.selectZoneColorMenuItem}
-                        onClick={() => setActiveColor("red")}
-                      >
-                        <div className={styles.zoneIndicatorRed}></div>
-                        <div className={styles.zoneColorText}>Красный</div>
-                      </div>
-
-                      <div
-                        className={styles.selectZoneColorMenuItem}
-                        onClick={() => setActiveColor("yellow")}
-                      >
-                        <div className={styles.zoneIndicatorYellow}></div>
-                        <div className={styles.zoneColorText}>Желтый</div>
-                      </div>
-                    </div>
-                  )}
                 </div>
-                <button className={styles.addZoneBtn} onClick={createZone}>
-                  Добавить
-                </button>
               </div>
-              <div className={styles.zones}>
-                {zones.map((zone) => (
-                  <Zone
-                    key={zone.id}
-                    id={zone.id}
-                    coordinates={zone.coordinates}
-                    type={zone.type}
+              <h2 className={styles.calculatorSubTitle}>
+                Добавьте зоны для расчета
+              </h2>
+              <div className={styles.zonesWrap}>
+                <div className={styles.addZone}>
+                  <input
+                    type="text"
+                    className={styles.coords}
+                    placeholder="Введите текст"
+                    value={coordinates}
+                    onChange={(e) => setCoordinates(e.target.value)}
                   />
-                ))}
+                  <div className={styles.selectZoneColor}>
+                    <div
+                      className={styles.selectZoneColorBlock}
+                      onClick={() =>
+                        setShowColorSelect((prevState) => !prevState)
+                      }
+                    >
+                      <div className={zoneColor}>Выберите цвет</div>
+                      <img src={downArrow} alt="" />
+                    </div>
+                    {showColorSelect && (
+                      <div className={styles.selectZoneColorMenu}>
+                        <div
+                          className={styles.selectZoneColorMenuItem}
+                          onClick={() => setActiveColor("green")}
+                        >
+                          <div className={styles.zoneIndicatorGreen}></div>
+                          <div className={styles.zoneColorText}>Зеленый</div>
+                        </div>
+                        <div
+                          className={styles.selectZoneColorMenuItem}
+                          onClick={() => setActiveColor("blue")}
+                        >
+                          <div className={styles.zoneIndicatorBlue}></div>
+                          <div className={styles.zoneColorText}>Синий</div>
+                        </div>
+
+                        <div
+                          className={styles.selectZoneColorMenuItem}
+                          onClick={() => setActiveColor("red")}
+                        >
+                          <div className={styles.zoneIndicatorRed}></div>
+                          <div className={styles.zoneColorText}>Красный</div>
+                        </div>
+
+                        <div
+                          className={styles.selectZoneColorMenuItem}
+                          onClick={() => setActiveColor("yellow")}
+                        >
+                          <div className={styles.zoneIndicatorYellow}></div>
+                          <div className={styles.zoneColorText}>Желтый</div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                  <button className={styles.addZoneBtn} onClick={createZone}>
+                    Добавить
+                  </button>
+                </div>
+                <div className={styles.zones}>
+                  {zones.map((zone) => (
+                    <Zone
+                      key={zone.id}
+                      id={zone.id}
+                      coordinates={zone.coordinates}
+                      color={zone.color}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-        )}
-        {zones.length > 0 && (
+          )}
+
+        <iframe
+          src={`http://localhost:8000/map/zones/?region=${activeRegion?.name}&city=${activeCity?.name}`}
+          frameBorder="0"
+          width="100%"
+          height={480}
+          id="iframeid"
+        ></iframe>
+        {zones.length > 0 && activeRegion && activeCity && (
           <div className={styles.transferCalculatorWrap}>
             <div className="destination-selection calculator-inputs">
               <div className="from-calculator">

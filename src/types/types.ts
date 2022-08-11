@@ -10,9 +10,18 @@ export interface IUser {
 }
 
 export interface IZone {
-  id: number;
+  id?: number;
   coordinates: string;
-  type: string;
+  color: string;
+  region?: string | undefined;
+  city?: string | undefined | ICity;
+}
+
+export interface ICity {
+  id: number;
+  country: string;
+  region: string;
+  city: string;
 }
 
 export interface IRegion {

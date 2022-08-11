@@ -7,7 +7,7 @@ import {
 import CalculatorService from "../services/CalculatorService";
 import { ICity, IRegion } from "../types/types";
 
-type CalculatorState = {
+export type CalculatorState = {
   loading: boolean;
   error: boolean;
   regions: IRegion[];

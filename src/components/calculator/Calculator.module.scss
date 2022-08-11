@@ -13,7 +13,6 @@
 		outline: none;
 		background: #e8e8e8;
 		border-radius: 3px;
-		outline: none;
 		border: none;
 		padding: 0 10px;
 		font-weight: 300;
@@ -162,13 +161,19 @@
 }
 
 .zones {
-	margin-top: 20px;
-	max-height: calc(100vh - 800px);
+//	max-height: calc(100vh - 800px);
+	min-height: 40px;
+	max-height: 225px;
 	overflow-y: auto;
 }
 
 .transferCalculatorWrap {
 	margin-top: 50px;
+	background: #C9D2E0;
+	border-radius: 3px;
+	height: calc(100vh - 740px);
+	padding: 40px;
+	box-sizing: border-box;
 }
 
 .selectZoneColorBlock {
@@ -263,4 +268,11 @@
 
 .zoneColorTextActive {
 	color: #737373;
+}
+
+.iframeWrap {
+	margin-top: 30px;
+	iframe {
+		border-radius: 3px;
+	}
 }
