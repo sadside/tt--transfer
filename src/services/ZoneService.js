@@ -10,6 +10,10 @@ export class ZoneService {
     });
   }
 
+  static createCity(data) {
+    return $api.post("address/city/", data);
+  }
+
   static async addZone(data) {
     return $api.post("address/zones/", data);
   }

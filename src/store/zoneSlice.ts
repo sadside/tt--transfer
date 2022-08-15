@@ -7,7 +7,7 @@ import {
 import { AxiosResponse } from "axios";
 import $api from "../http";
 import { ZoneService } from "../services/ZoneService";
-import { IGetZone, IZone } from "../types/types";
+import { ICity, IGetZone, IZone } from "../types/types";
 import { CalculatorState } from "./calculatorSlice";
 
 type ZonesState = {
@@ -21,6 +21,27 @@ const initialState: ZonesState = {
   loading: false,
   error: false,
 };
+export const createCity = createAsyncThunk<
+  void,
+  string,
+  { rejectValue: string; state: { calculator: CalculatorState } }
+>(
+  "zone/getZone",
+  async (activeCity, { rejectWithValue, getState, dispatch }) => {
+    const activeRegion = getState().calculator.activeRegion?.name;
+
+    try {
+      const res: AxiosResponse<any> = await ZoneService.createCity({
+        region: activeRegion,
+        city: activeCity,
+      });
+
+      dispatch(getZone());
+    } catch (e: any) {
+      rejectWithValue(e.message);
+    }
+  }
+);
 
 export const getZone = createAsyncThunk<
   IZone[],
