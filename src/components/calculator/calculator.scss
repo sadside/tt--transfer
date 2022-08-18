@@ -20,27 +20,27 @@
 .from-calculator {
 	font-size: 14px;
 	position: relative;
-
+	width: 350px;
 	input {
 		width: 350px;
 	}
 }
 
-.to-calculator:after {
-	content: 'Б';
-	position: absolute;
-	top: 38px;
-	left: -15px;
-	font-size: 16px;
-}
-
-.from-calculator:after {
-	content: 'А';
-	position: absolute;
-	top: 38px;
-	left: -15px;
-	font-size: 16px;
-}
+//.to-calculator:after {
+//	content: 'Б';
+//	position: absolute;
+//	top: 38px;
+//	left: -15px;
+//	font-size: 16px;
+//}
+//
+//.from-calculator:after {
+//	content: 'А';
+//	position: absolute;
+//	top: 38px;
+//	left: -15px;
+//	font-size: 16px;
+//}
 
 .calculator-additional-inputs {
 	display: flex;
@@ -54,7 +54,7 @@
 
 .select-car-class {
 	box-sizing: border-box;
-	margin-left: 100px;
+	margin-left: 120px;
 }
 
 .calculator-calc-button {
@@ -121,3 +121,14 @@
 //	height: calc(100vh - 540px);
 //	overflow-y: auto;
 //}
+
+
+.custom-select {
+	&--control {
+		border: none !important;
+		background-color: #761c19 !important;
+	}
+	&--menu-is-open {
+		border-color: #761c19 !important;
+	}
+}

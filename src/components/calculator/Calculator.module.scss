@@ -276,3 +276,19 @@
 		border-radius: 3px;
 	}
 }
+
+.custom-select {
+	&__control {
+		border: none !important;
+	}
+	&--menu-is-open {
+		border-color: #761c19 !important;
+	}
+}
+
+.selectDestinationType {
+	width: 350px;
+	background: #E8E8E8;
+border-radius: 3px;
+	height: 40px;
+}

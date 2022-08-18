@@ -2,11 +2,10 @@ import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-//@ts-ignore
 import rightArrow from "../../assets/rightArrow.svg";
 import "./calculator.scss";
 import useOutside from "../../hooks/useOutside";
-import { useSuggestions } from "../../hooks/useSuggestions";
+
 import {
   filterCity,
   filterRegion,
@@ -25,6 +24,7 @@ import {
 //@ts-ignore
 import ErrorComponent from "../errorComponent/ErrorComponent";
 import Loader from "../loader/Loader";
+import Select from "../select/Select";
 import Zone from "../zone/Zone";
 import styles from "./Calculator.module.scss";
 import Button from "../ui/button/Button";
@@ -79,6 +79,17 @@ const Calculator = () => {
   const [showColorSelect, setShowColorSelect] = useState(false);
   const [activeColor, setActiveColor] = useState("green");
   const [coordinates, setCoordinates] = useState("");
+  const [showSelect, setShowSelect] = useState(false);
+  const [selectActiveItem, setSelectActiveItem] = useState("");
+
+  const items = [
+    {
+      text: "Хаб",
+    },
+    {
+      text: "Уникальный адрес",
+    },
+  ];
 
   const [fromCoordinates, setFromCoordinates] = useState({});
   const [toCoordinates, setToCoordinates] = useState({});
@@ -120,7 +131,6 @@ const Calculator = () => {
       suggestion.data["geo_lat"],
       suggestion.data["geo_lon"],
     ];
-    console.log("coords ", input.coordinates);
   };
 
   useEffect(() => {
@@ -164,10 +174,10 @@ const Calculator = () => {
   //   return <ErrorComponent text="Ошибка!" toggle={"dad"}/>;
   // }
 
-  console.log("render");
-  console.log(additionalRaces);
-  console.log(fromCoordinates);
-
+  // @ts-ignore
+  // @ts-ignore
+  // @ts-ignore
+  // @ts-ignore
   return (
     <>
       <div className="calculator-wrap">
@@ -238,8 +248,7 @@ const Calculator = () => {
               />
 
               <AnimatePresence>
-                {/* @ts-expect-error TS(2774): This condition will always return true since this ... Remove this comment to see the full error message */}
-                {filteredCities?.length !== 0 && !activeCity && setIsSecond && (
+                {filteredCities?.length !== 0 && !activeCity && isSecondShow && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
@@ -280,10 +289,8 @@ const Calculator = () => {
               <div>
                 <div className={styles.howToUse}>
                   <div>
-                    Для зонирования города
-                    <strong>
-                      {activeCity?.name || activeRegion?.name}
-                    </strong>{" "}
+                    Для зонирования города{" "}
+                    <strong>{activeCity?.name || activeRegion?.name}</strong>{" "}
                     откройте{" "}
                     <a
                       href="https://yandex.ru/map-constructor/location-tool/?from=club"
@@ -390,32 +397,41 @@ const Calculator = () => {
           <div className={styles.transferCalculatorWrap}>
             <div className="destination-selection calculator-inputs">
               <div className="from-calculator">
-                Откуда
-                <input
-                  type="text"
-                  className="tariff-data-input"
-                  placeholder="Откуда"
-                  value={fromInputValue}
-                  onChange={async (e) => {
-                    setFromInputValue(e.target.value);
-                    const response = await axios.post(
-                      "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
-                      {
-                        query: e.target.value,
-                      },
-                      {
-                        headers: {
-                          Accept: "application/json",
-                          Authorization:
-                            "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",
-                        },
-                      }
-                    );
-                    console.log(response.data.suggestions);
-                    setFromCoordinates({});
-                    setSuggestionsForFrom(response.data.suggestions);
-                  }}
+                <Select
+                  setShowSelect={setShowSelect}
+                  showSelect={showSelect}
+                  setSelectItem={setSelectActiveItem}
+                  items={items}
+                  text={selectActiveItem || items[0].text}
                 />
+                <div style={{ marginTop: 20 }}>
+                  Откуда
+                  <input
+                    type="text"
+                    className="tariff-data-input"
+                    placeholder="Откуда"
+                    value={fromInputValue}
+                    onChange={async (e) => {
+                      setFromInputValue(e.target.value);
+                      const response = await axios.post(
+                        "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
+                        {
+                          query: e.target.value,
+                        },
+                        {
+                          headers: {
+                            Accept: "application/json",
+                            Authorization:
+                              "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",
+                          },
+                        }
+                      );
+                      console.log(response.data.suggestions);
+                      setFromCoordinates({});
+                      setSuggestionsForFrom(response.data.suggestions);
+                    }}
+                  />
+                </div>
                 {fromInputValue.length !== 0 &&
                   Object.keys(fromCoordinates).length === 0 && (
                     <div className={styles.citySelect}>
@@ -439,32 +455,41 @@ const Calculator = () => {
               </div>
               <img src={rightArrow} alt="" />
               <div className="to-calculator">
-                Куда
-                <input
-                  type="text"
-                  className="tariff-data-input"
-                  placeholder="Куда"
-                  onChange={async (e) => {
-                    setToInputValue(e.target.value);
-                    const response = await axios.post(
-                      "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
-                      {
-                        query: e.target.value,
-                      },
-                      {
-                        headers: {
-                          Accept: "application/json",
-                          Authorization:
-                            "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",
-                        },
-                      }
-                    );
-                    console.log(response.data.suggestions);
-                    setToCoordinates({});
-                    setSuggestionsForTo(response.data.suggestions);
-                  }}
-                  value={toInputValue}
+                <Select
+                  setShowSelect={setShowSelect}
+                  showSelect={showSelect}
+                  setSelectItem={setSelectActiveItem}
+                  items={items}
+                  text={selectActiveItem || items[0].text}
                 />
+                <div style={{ marginTop: 20 }}>
+                  Куда
+                  <input
+                    type="text"
+                    className="tariff-data-input"
+                    placeholder="Куда"
+                    onChange={async (e) => {
+                      setToInputValue(e.target.value);
+                      const response = await axios.post(
+                        "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
+                        {
+                          query: e.target.value,
+                        },
+                        {
+                          headers: {
+                            Accept: "application/json",
+                            Authorization:
+                              "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",
+                          },
+                        }
+                      );
+                      console.log(response.data.suggestions);
+                      setToCoordinates({});
+                      setSuggestionsForTo(response.data.suggestions);
+                    }}
+                    value={toInputValue}
+                  />
+                </div>
                 {toInputValue.length !== 0 &&
                   Object.keys(toCoordinates).length === 0 && (
                     <div className={styles.citySelect}>
