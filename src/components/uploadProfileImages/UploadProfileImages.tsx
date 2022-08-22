@@ -31,12 +31,17 @@ const UploadProfileImages = () => {
 
     dispatch(setAvatar(formData));
   };
+
   const handleChangeDocuments = (e: any) => {
     if (e.target.files.length === 0) {
       alert("please select a file");
     }
+
     const formData: any = new FormData();
-    formData.append("avatar", e.target.files);
+
+    for (let i = 0; i < e.target.files.length; i++) {
+      formData.append("documents", e.target.files[i]);
+    }
 
     setDocuments1(formData);
     console.log(documents1);

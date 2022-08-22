@@ -9,6 +9,8 @@ interface SelectProps {
   setShowSelect: (bool: boolean) => void;
   setSelectItem: (item: any) => void;
   items: Array<any>;
+  haveButton?: boolean;
+  callback?: () => void;
 }
 
 const Select: FC<SelectProps> = ({
@@ -17,6 +19,8 @@ const Select: FC<SelectProps> = ({
   setShowSelect,
   setSelectItem,
   items,
+  haveButton,
+  callback,
 }) => {
   const handleClick = () => {
     setShowSelect(!showSelect);
@@ -24,7 +28,7 @@ const Select: FC<SelectProps> = ({
 
   const selectItem = (item: any) => {
     setShowSelect(false);
-    setSelectItem(item.text);
+    setSelectItem(item.title);
   };
 
   return (
@@ -50,10 +54,15 @@ const Select: FC<SelectProps> = ({
                 {items.map((item, index) => {
                   return (
                     <li key={index} onClick={() => selectItem(item)}>
-                      {item.text}
+                      {item.title}
                     </li>
                   );
                 })}
+                {haveButton && (
+                  <li className={styles.button} onClick={callback}>
+                    Добавить хаб
+                  </li>
+                )}
               </ul>
             </div>
           </motion.div>

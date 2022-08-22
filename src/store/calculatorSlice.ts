@@ -5,7 +5,7 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import CalculatorService from "../services/CalculatorService";
-import { ICity, IRegion } from "../types/types";
+import { ICity, IHub, IRegion } from "../types/types";
 
 export type CalculatorState = {
   loading: boolean;
@@ -16,6 +16,7 @@ export type CalculatorState = {
   cities: ICity[] | null;
   activeCity: ICity | null;
   filteredCities: ICity[] | [];
+  hubs: IHub[];
 };
 
 const initialState: CalculatorState = {
@@ -27,6 +28,7 @@ const initialState: CalculatorState = {
   cities: [],
   activeCity: null,
   filteredCities: [],
+  hubs: [],
 };
 
 export const getRegionsThunk = createAsyncThunk<
@@ -38,6 +40,20 @@ export const getRegionsThunk = createAsyncThunk<
     const res = await CalculatorService.getCities();
 
     return res.data[0].areas;
+  } catch (e) {
+    return rejectWithValue("Error");
+  }
+});
+
+export const getHubsThunk = createAsyncThunk<
+  IHub[],
+  any,
+  { rejectValue: string }
+>("calculator/getHubsThunk", async ({ region, city }, { rejectWithValue }) => {
+  try {
+    const res = await CalculatorService.getHubs(region, city);
+
+    return res.data;
   } catch (e) {
     return rejectWithValue("Error");
   }
@@ -96,6 +112,15 @@ const calculatorSlice = createSlice({
       })
       .addCase(getRegionsThunk.rejected, (state, action) => {
         state.error = true;
+      })
+      .addCase(getHubsThunk.pending, (state) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(getHubsThunk.fulfilled, (state, action) => {
+        state.hubs = action.payload;
+        state.loading = false;
+        state.error = false;
       })
       .addMatcher(isError, (state) => {
         state.error = true;

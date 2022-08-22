@@ -9,6 +9,7 @@ import useOutside from "../../hooks/useOutside";
 import {
   filterCity,
   filterRegion,
+  getHubsThunk,
   getRegionsThunk,
   setActiveCity,
   setActiveRegion,
@@ -24,6 +25,7 @@ import {
 //@ts-ignore
 import ErrorComponent from "../errorComponent/ErrorComponent";
 import Loader from "../loader/Loader";
+import Modal from "../modal/Modal";
 import Select from "../select/Select";
 import Zone from "../zone/Zone";
 import styles from "./Calculator.module.scss";
@@ -43,6 +45,7 @@ const Calculator = () => {
   const activeRegion = useAppSelector((state) => state.calculator.activeRegion);
   const activeCity = useAppSelector((state) => state.calculator.activeCity);
   const zones = useAppSelector((state) => state.zone.zones);
+  const hubs = useAppSelector((state) => state.calculator.hubs);
   const dispatch = useAppDispatch();
 
   const loading = useAppSelector((state) => state.calculator.loading);
@@ -75,24 +78,35 @@ const Calculator = () => {
     ref: secondRef,
   } = useOutside(false);
 
+  console.log("test: ", hubs);
+
   const [state, setState] = useState(0);
   const [showColorSelect, setShowColorSelect] = useState(false);
   const [activeColor, setActiveColor] = useState("green");
   const [coordinates, setCoordinates] = useState("");
   const [showSelect, setShowSelect] = useState(false);
+  const [showSelectHubFrom, setShowSelectHubFrom] = useState(false);
   const [selectActiveItem, setSelectActiveItem] = useState("");
+
+  const [showSecondSelect, setShowSecondSelect] = useState(false);
+  const [selectSecondActiveItem, setSecondSelectActiveItem] = useState("");
+
+  const [showSelectHubTo, setShowSelectHubTo] = useState(false);
+  const [selectActiveHubTo, setSelectActiveHubTo] = useState("");
 
   const items = [
     {
-      text: "Хаб",
+      title: "Уникальный адрес",
     },
     {
-      text: "Уникальный адрес",
+      title: "Хаб",
     },
   ];
 
   const [fromCoordinates, setFromCoordinates] = useState({});
   const [toCoordinates, setToCoordinates] = useState({});
+
+  const [modalActive, setModalActive] = useState(false);
 
   const [additionalRaces, setAdditionalRaces] = useState<any[]>([
     {
@@ -101,6 +115,9 @@ const Calculator = () => {
       coordinates: [],
     },
   ]);
+
+  const [selectedHubFrom, setSelectedHubFrom] = useState("");
+  const [selectedHubTo, setSelectedHubTo] = useState("");
 
   const zoneColor = classNames([], {
     [styles.green]: activeColor === "green",
@@ -145,6 +162,15 @@ const Calculator = () => {
     })
     .join("");
 
+  const hubsCoords: string = hubs
+    .map((hub) => {
+      if (hub.title) {
+        return `&lat=${hub.latitude}&lon=${hub.longitude}`;
+      }
+      return;
+    })
+    .join("");
+
   console.log("main", iframeCoords);
 
   const createZone = () => {
@@ -170,14 +196,6 @@ const Calculator = () => {
     return <Loader />;
   }
 
-  // if (error) {
-  //   return <ErrorComponent text="Ошибка!" toggle={"dad"}/>;
-  // }
-
-  // @ts-ignore
-  // @ts-ignore
-  // @ts-ignore
-  // @ts-ignore
   return (
     <>
       <div className="calculator-wrap">
@@ -267,6 +285,12 @@ const Calculator = () => {
                                 dispatch(setActiveCity(city));
                                 setCityInputValue(city.name);
                                 dispatch(createCity(city.name));
+                                dispatch(
+                                  getHubsThunk({
+                                    region: activeRegion.name,
+                                    city: city.name,
+                                  })
+                                );
                               }}
                             >
                               {city.name}
@@ -281,6 +305,31 @@ const Calculator = () => {
             </div>
           </div>
         )}
+        <Modal active={modalActive} setActive={setModalActive}>
+          <form action="">
+            <div className={styles.addHub}>
+              <div>Название хаба</div>
+              <input
+                type="text"
+                placeholder={"Название"}
+                className={styles.hubInput}
+              />
+              <div>Описание хаба</div>
+              <input
+                type="text"
+                placeholder={"Описание"}
+                className={styles.hubInput}
+              />
+              <div>Координаты хаба</div>
+              <input
+                type="text"
+                placeholder={"Координаты"}
+                className={styles.hubInput}
+              />
+              <input type="submit" className={styles.hubInputSubmit} />
+            </div>
+          </form>
+        </Modal>
         {activeRegion &&
           (activeCity ||
             activeRegion?.name === "Москва" ||
@@ -298,7 +347,7 @@ const Calculator = () => {
                       rel="noreferrer"
                     >
                       карту
-                    </a>
+                    </a>{" "}
                     и с помощью инструмента многоугольник прозонируйте город.
                     Получившиеся координаты сохраните в отведенном поле, указав
                     цвет зоны.
@@ -402,36 +451,49 @@ const Calculator = () => {
                   showSelect={showSelect}
                   setSelectItem={setSelectActiveItem}
                   items={items}
-                  text={selectActiveItem || items[0].text}
+                  text={selectActiveItem || items[0].title}
                 />
-                <div style={{ marginTop: 20 }}>
-                  Откуда
-                  <input
-                    type="text"
-                    className="tariff-data-input"
-                    placeholder="Откуда"
-                    value={fromInputValue}
-                    onChange={async (e) => {
-                      setFromInputValue(e.target.value);
-                      const response = await axios.post(
-                        "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
-                        {
-                          query: e.target.value,
-                        },
-                        {
-                          headers: {
-                            Accept: "application/json",
-                            Authorization:
-                              "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",
+                {selectActiveItem === "Хаб" ? (
+                  <div style={{ marginTop: 20 }}>
+                    <div style={{ marginBottom: 10 }}>Откуда</div>
+                    <Select
+                      setShowSelect={setShowSelectHubFrom}
+                      showSelect={showSelectHubFrom}
+                      setSelectItem={setSelectedHubFrom}
+                      items={hubs}
+                      text={selectedHubFrom || hubs[0].title}
+                    />
+                  </div>
+                ) : (
+                  <div style={{ marginTop: 20 }}>
+                    Откуда
+                    <input
+                      type="text"
+                      className="tariff-data-input"
+                      placeholder="Откуда"
+                      value={fromInputValue}
+                      onChange={async (e) => {
+                        setFromInputValue(e.target.value);
+                        const response = await axios.post(
+                          "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
+                          {
+                            query: e.target.value,
                           },
-                        }
-                      );
-                      console.log(response.data.suggestions);
-                      setFromCoordinates({});
-                      setSuggestionsForFrom(response.data.suggestions);
-                    }}
-                  />
-                </div>
+                          {
+                            headers: {
+                              Accept: "application/json",
+                              Authorization:
+                                "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",
+                            },
+                          }
+                        );
+                        console.log(response.data.suggestions);
+                        setFromCoordinates({});
+                        setSuggestionsForFrom(response.data.suggestions);
+                      }}
+                    />
+                  </div>
+                )}
                 {fromInputValue.length !== 0 &&
                   Object.keys(fromCoordinates).length === 0 && (
                     <div className={styles.citySelect}>
@@ -456,40 +518,55 @@ const Calculator = () => {
               <img src={rightArrow} alt="" />
               <div className="to-calculator">
                 <Select
-                  setShowSelect={setShowSelect}
-                  showSelect={showSelect}
-                  setSelectItem={setSelectActiveItem}
+                  setShowSelect={setShowSecondSelect}
+                  showSelect={showSecondSelect}
+                  setSelectItem={setSecondSelectActiveItem}
                   items={items}
-                  text={selectActiveItem || items[0].text}
+                  text={selectSecondActiveItem || items[0].title}
                 />
-                <div style={{ marginTop: 20 }}>
-                  Куда
-                  <input
-                    type="text"
-                    className="tariff-data-input"
-                    placeholder="Куда"
-                    onChange={async (e) => {
-                      setToInputValue(e.target.value);
-                      const response = await axios.post(
-                        "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
-                        {
-                          query: e.target.value,
-                        },
-                        {
-                          headers: {
-                            Accept: "application/json",
-                            Authorization:
-                              "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",
+
+                {selectSecondActiveItem === "Хаб" ? (
+                  <div style={{ marginTop: 20 }}>
+                    <div style={{ marginBottom: 10 }}>Куда</div>
+                    <Select
+                      setShowSelect={setShowSelectHubTo}
+                      showSelect={showSelectHubTo}
+                      setSelectItem={setSelectedHubTo}
+                      items={hubs}
+                      text={selectedHubTo || items[0].title}
+                      haveButton={true}
+                    />
+                  </div>
+                ) : (
+                  <div style={{ marginTop: 20 }}>
+                    Куда
+                    <input
+                      type="text"
+                      className="tariff-data-input"
+                      placeholder="Куда"
+                      onChange={async (e) => {
+                        setToInputValue(e.target.value);
+                        const response = await axios.post(
+                          "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
+                          {
+                            query: e.target.value,
                           },
-                        }
-                      );
-                      console.log(response.data.suggestions);
-                      setToCoordinates({});
-                      setSuggestionsForTo(response.data.suggestions);
-                    }}
-                    value={toInputValue}
-                  />
-                </div>
+                          {
+                            headers: {
+                              Accept: "application/json",
+                              Authorization:
+                                "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",
+                            },
+                          }
+                        );
+                        console.log(response.data.suggestions);
+                        setToCoordinates({});
+                        setSuggestionsForTo(response.data.suggestions);
+                      }}
+                      value={toInputValue}
+                    />
+                  </div>
+                )}
                 {toInputValue.length !== 0 &&
                   Object.keys(toCoordinates).length === 0 && (
                     <div className={styles.citySelect}>

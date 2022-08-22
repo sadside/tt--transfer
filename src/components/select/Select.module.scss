@@ -12,6 +12,7 @@
 .wrap {
 		width: 100%;
 		position: relative;
+		z-index: 100000;
 }
 
 .rightSide {
@@ -52,4 +53,17 @@
 			cursor: pointer;
 		}
 	}
+}
+
+.button {
+	background: #8DC73F;
+	outline: none;
+	border: none;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	font-size: 14px;
+	height: 30px;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
 }

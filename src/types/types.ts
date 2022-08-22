@@ -80,3 +80,9 @@ export interface IGetZone {
   region: string;
   city: string;
 }
+
+export interface IHub {
+  title: string;
+  longitude: number;
+  latitude: number;
+}
