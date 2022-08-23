@@ -5,7 +5,7 @@ import drive from "../../assets/drive.png";
 import axios from "axios";
 import $api, { API_URL } from "../../http";
 import UserServices from "../../services/UserServices";
-import { addDocument, setAvatar } from "../../store/userSlice";
+import { setAvatar, setDocuments } from "../../store/userSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import ErrorComponent from "../errorComponent/ErrorComponent";
 
@@ -43,9 +43,9 @@ const UploadProfileImages = () => {
       formData.append("documents", e.target.files[i]);
     }
 
-    setDocuments1(formData);
-    console.log(documents1);
-    dispatch(addDocument(documents1));
+    // setDocuments1(formData);
+    // console.log(documents1);
+    dispatch(setDocuments(formData));
   };
 
   const handlePick = () => {
@@ -100,6 +100,11 @@ const UploadProfileImages = () => {
         <ErrorComponent text={error} />
         {/*<input type="submit" onClick={handleSubmit} />*/}
       </form>
+      {documents?.map((document) => {
+        return (
+          <img src={`http://localhost:8000${document}`} alt="" width={200} />
+        );
+      })}
     </div>
   );
 };

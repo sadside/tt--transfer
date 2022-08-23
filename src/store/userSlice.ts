@@ -212,11 +212,11 @@ export const setDocuments = createAsyncThunk<
   string[],
   FormData,
   { rejectValue: string }
->("user/setDocument", async (documents, { rejectWithValue }) => {
+>("user/setDocuments", async (documents, { rejectWithValue }) => {
   try {
     const response = await UserServices.postDocuments(documents);
 
-    return response.data.documents as string[];
+    return response.data.documents;
   } catch (e) {
     return rejectWithValue("Произошла ошибка, попробуйте позднее.");
   }
@@ -303,9 +303,6 @@ const userSlice = createSlice({
         ...action.payload,
       };
     },
-    addDocument(state, action) {
-      state.user.documents?.push(action.payload);
-    },
     setUser(state, action) {
       state.user = {
         ...state.user,
@@ -359,19 +356,21 @@ const userSlice = createSlice({
         state.loading = true;
       })
       .addCase(setAvatar.fulfilled, (state, action) => {
+        state.loading = false;
         state.user.avatar = action.payload;
       })
       .addCase(setDocuments.pending, (state) => {
         state.loading = true;
-        state.error = "";
       })
       .addCase(setDocuments.fulfilled, (state, action) => {
-        state.user.documents?.push(...action.payload);
+        state.loading = false;
+        // @ts-ignore
+        state.user.documents = action.payload;
       })
       .addCase(resetPassword.pending, (state) => {
         state.statusEmail = "loading";
       })
-      .addCase(resetPassword.fulfilled, (state, action) => {
+      .addCase(resetPassword.fulfilled, (state) => {
         state.statusEmail = "resolved";
       })
       .addCase(resetPassword.rejected, (state) => {
@@ -416,7 +415,6 @@ export const {
   setFullUser,
   setPasswordMatch,
   setStatus,
-  addDocument,
 } = userSlice.actions;
 
 export default userSlice.reducer;
