@@ -4,8 +4,9 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
+import calculator, { HubFormValues } from "../components/calculator/Calculator";
 import CalculatorService from "../services/CalculatorService";
-import { ICity, IHub, IRegion } from "../types/types";
+import { ICity, IFullHub, IHub, IRegion } from "../types/types";
 
 export type CalculatorState = {
   loading: boolean;
@@ -16,7 +17,10 @@ export type CalculatorState = {
   cities: ICity[] | null;
   activeCity: ICity | null;
   filteredCities: ICity[] | [];
-  hubs: IHub[];
+  hubs: IFullHub[];
+  showModal: boolean;
+  activeFromHub: IFullHub;
+  activeToHub: IFullHub;
 };
 
 const initialState: CalculatorState = {
@@ -29,6 +33,41 @@ const initialState: CalculatorState = {
   activeCity: null,
   filteredCities: [],
   hubs: [],
+  showModal: false,
+  activeFromHub: {
+    city: {
+      center: { id: null, latitude: null, longitude: null },
+      city: "",
+      country: "",
+      id: null,
+      region: "",
+    },
+    coordinate: {
+      id: null,
+      latitude: null,
+      longitude: null,
+    },
+    description: "",
+    id: null,
+    title: "",
+  },
+  activeToHub: {
+    city: {
+      center: { id: null, latitude: null, longitude: null },
+      city: "",
+      country: "",
+      id: null,
+      region: "",
+    },
+    coordinate: {
+      id: null,
+      latitude: null,
+      longitude: null,
+    },
+    description: "",
+    id: null,
+    title: "",
+  },
 };
 
 export const getRegionsThunk = createAsyncThunk<
@@ -45,8 +84,42 @@ export const getRegionsThunk = createAsyncThunk<
   }
 });
 
+export const addHubThunk = createAsyncThunk<
+  IFullHub,
+  any,
+  { rejectValue: string; state: { calculator: CalculatorState } }
+>(
+  "calculator/addHubThunk",
+  async (
+    { title, description, coordinates },
+    { getState, rejectWithValue }
+  ) => {
+    const region = getState().calculator.activeRegion?.name;
+    const city = getState().calculator.activeCity?.name;
+
+    const coords = coordinates.split(",");
+    console.log("coords", coords);
+
+    try {
+      const res = await CalculatorService.addHub({
+        title,
+        description,
+        coordinates: coords,
+        region,
+        city,
+      });
+
+      return res.data;
+    } catch (e: any) {
+      console.log("hub error", e.message());
+
+      return rejectWithValue(e.message());
+    }
+  }
+);
+
 export const getHubsThunk = createAsyncThunk<
-  IHub[],
+  IFullHub[],
   any,
   { rejectValue: string }
 >("calculator/getHubsThunk", async ({ region, city }, { rejectWithValue }) => {
@@ -72,6 +145,15 @@ const calculatorSlice = createSlice({
         state.cities = action.payload.areas;
       }
     },
+    setActiveFromHub(state, action: PayloadAction<IFullHub>) {
+      state.activeFromHub = action.payload;
+    },
+    setActiveToHub(state, action: PayloadAction<IFullHub>) {
+      state.activeToHub = action.payload;
+    },
+    setShowModal(state, action: PayloadAction<boolean>) {
+      state.showModal = action.payload;
+    },
     filterRegion(state, action) {
       if (action.payload === "") {
         state.filteredRegions = [];
@@ -80,6 +162,44 @@ const calculatorSlice = createSlice({
           return item.name.toLowerCase().includes(action.payload.toLowerCase());
         });
       }
+    },
+    clearFromHub(state) {
+      state.activeFromHub = {
+        city: {
+          center: { id: null, latitude: null, longitude: null },
+          city: "",
+          country: "",
+          id: null,
+          region: "",
+        },
+        coordinate: {
+          id: null,
+          latitude: null,
+          longitude: null,
+        },
+        description: "",
+        id: null,
+        title: "",
+      };
+    },
+    clearToHub(state) {
+      state.activeToHub = {
+        city: {
+          center: { id: null, latitude: null, longitude: null },
+          city: "",
+          country: "",
+          id: null,
+          region: "",
+        },
+        coordinate: {
+          id: null,
+          latitude: null,
+          longitude: null,
+        },
+        description: "",
+        id: null,
+        title: "",
+      };
     },
     setActiveCity(state, action) {
       state.activeCity = action.payload;
@@ -122,6 +242,13 @@ const calculatorSlice = createSlice({
         state.loading = false;
         state.error = false;
       })
+      .addCase(addHubThunk.pending, (state) => {
+        state.loading = false;
+      })
+      .addCase(addHubThunk.fulfilled, (state, action) => {
+        state.hubs.push(action.payload);
+        state.showModal = false;
+      })
       .addMatcher(isError, (state) => {
         state.error = true;
         state.loading = false;
@@ -129,8 +256,17 @@ const calculatorSlice = createSlice({
   },
 });
 
-export const { filterRegion, setActiveRegion, filterCity, setActiveCity } =
-  calculatorSlice.actions;
+export const {
+  filterRegion,
+  setActiveRegion,
+  filterCity,
+  setActiveCity,
+  setShowModal,
+  setActiveFromHub,
+  setActiveToHub,
+  clearFromHub,
+  clearToHub,
+} = calculatorSlice.actions;
 
 export default calculatorSlice.reducer;
 

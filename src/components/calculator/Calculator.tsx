@@ -1,18 +1,26 @@
 import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
+import { Resolver, SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import { log } from "util";
 import rightArrow from "../../assets/rightArrow.svg";
 import "./calculator.scss";
 import useOutside from "../../hooks/useOutside";
 
 import {
+  addHubThunk,
+  clearFromHub,
+  clearToHub,
   filterCity,
   filterRegion,
   getHubsThunk,
   getRegionsThunk,
   setActiveCity,
+  setActiveFromHub,
   setActiveRegion,
+  setActiveToHub,
+  setShowModal,
 } from "../../store/calculatorSlice";
 //@ts-ignore
 import downArrow from "../../assets/select-zone-color.svg";
@@ -30,11 +38,24 @@ import Select from "../select/Select";
 import Zone from "../zone/Zone";
 import styles from "./Calculator.module.scss";
 import Button from "../ui/button/Button";
-import { IZone } from "../../types/types";
+import { IFullHub, IZone } from "../../types/types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import axios from "axios";
 
+export type HubFormValues = {
+  name: string;
+  description: string;
+  coords: string;
+};
+
 const Calculator = () => {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    setValue,
+  } = useForm<HubFormValues>();
+
   const filteredRegions = useAppSelector(
     (state) => state.calculator.filteredRegions
   );
@@ -45,7 +66,19 @@ const Calculator = () => {
   const activeRegion = useAppSelector((state) => state.calculator.activeRegion);
   const activeCity = useAppSelector((state) => state.calculator.activeCity);
   const zones = useAppSelector((state) => state.zone.zones);
-  const hubs = useAppSelector((state) => state.calculator.hubs);
+  let hubs = useAppSelector((state) => state.calculator.hubs);
+
+  const activeHubFrom = useAppSelector(
+    (state) => state.calculator.activeFromHub
+  );
+  const activeHubTo = useAppSelector((state) => state.calculator.activeToHub);
+
+  const filteredHubs = hubs.filter((hub: IFullHub) => {
+    return hub.id !== activeHubTo.id && hub.id !== activeHubFrom.id;
+  });
+
+  console.log("filtered hubs", filteredHubs);
+
   const dispatch = useAppDispatch();
 
   const loading = useAppSelector((state) => state.calculator.loading);
@@ -55,8 +88,14 @@ const Calculator = () => {
 
   const [regionInputValue, setRegionInputValue] = useState("");
   const [cityInputValue, setCityInputValue] = useState("");
+
   const [fromInputValue, setFromInputValue] = useState("");
   const [toInputValue, setToInputValue] = useState("");
+
+  useEffect(() => {
+    if (!coordinatesFrom && !coordinatesTo) {
+    }
+  }, [fromInputValue, toInputValue]);
 
   const [suggestionsForTo, setSuggestionsForTo] = useState<Array<any>>([]);
   const [suggestionsForFrom, setSuggestionsForFrom] = useState<Array<any>>([]);
@@ -91,8 +130,19 @@ const Calculator = () => {
   const [showSecondSelect, setShowSecondSelect] = useState(false);
   const [selectSecondActiveItem, setSecondSelectActiveItem] = useState("");
 
+  useEffect(() => {
+    if (selectSecondActiveItem === "Уникальный адрес") {
+      dispatch(clearToHub());
+    }
+  }, [selectSecondActiveItem]);
+
+  useEffect(() => {
+    if (selectActiveItem === "Уникальный адрес") {
+      dispatch(clearFromHub());
+    }
+  }, [selectActiveItem]);
+
   const [showSelectHubTo, setShowSelectHubTo] = useState(false);
-  const [selectActiveHubTo, setSelectActiveHubTo] = useState("");
 
   const items = [
     {
@@ -103,10 +153,22 @@ const Calculator = () => {
     },
   ];
 
-  const [fromCoordinates, setFromCoordinates] = useState({});
-  const [toCoordinates, setToCoordinates] = useState({});
+  const [fromCoordinates, setFromCoordinates] = useState<any>({});
+  const [toCoordinates, setToCoordinates] = useState<any>({});
 
-  const [modalActive, setModalActive] = useState(false);
+  const showModal = useAppSelector((state) => state.calculator.showModal);
+
+  const setModalActive = (bool: boolean) => {
+    dispatch(setShowModal(bool));
+  };
+
+  const onSubmit: SubmitHandler<HubFormValues> = ({
+    name,
+    description,
+    coords,
+  }) => {
+    dispatch(addHubThunk({ title: name, description, coordinates: coords }));
+  };
 
   const [additionalRaces, setAdditionalRaces] = useState<any[]>([
     {
@@ -115,9 +177,6 @@ const Calculator = () => {
       coordinates: [],
     },
   ]);
-
-  const [selectedHubFrom, setSelectedHubFrom] = useState("");
-  const [selectedHubTo, setSelectedHubTo] = useState("");
 
   const zoneColor = classNames([], {
     [styles.green]: activeColor === "green",
@@ -162,15 +221,6 @@ const Calculator = () => {
     })
     .join("");
 
-  const hubsCoords: string = hubs
-    .map((hub) => {
-      if (hub.title) {
-        return `&lat=${hub.latitude}&lon=${hub.longitude}`;
-      }
-      return;
-    })
-    .join("");
-
   console.log("main", iframeCoords);
 
   const createZone = () => {
@@ -192,9 +242,24 @@ const Calculator = () => {
     setIframeRef((prevState) => prevState + 1);
   }, [zones]);
 
+  useEffect(() => {
+    setValue("name", "");
+    setValue("description", "");
+    setValue("coords", "");
+    setIframeRef((prevState) => prevState + 1);
+  }, [hubs]);
+
   if (loading) {
     return <Loader />;
   }
+
+  const coordinatesFrom = activeHubFrom.id
+    ? `&lat=${activeHubFrom.coordinate.latitude}&lon=${activeHubFrom.coordinate.longitude}`
+    : `&lat=${fromCoordinates.lat}&lon=${fromCoordinates.lon}`;
+
+  const coordinatesTo = activeHubTo.id
+    ? `&lat=${activeHubTo.coordinate.latitude}&lon=${activeHubTo.coordinate.longitude}`
+    : `&lat=${toCoordinates.lat}&lon=${toCoordinates.lon}`;
 
   return (
     <>
@@ -305,27 +370,48 @@ const Calculator = () => {
             </div>
           </div>
         )}
-        <Modal active={modalActive} setActive={setModalActive}>
-          <form action="">
+        <Modal active={showModal} setActive={setModalActive}>
+          <form action="" onSubmit={handleSubmit(onSubmit)}>
             <div className={styles.addHub}>
               <div>Название хаба</div>
               <input
                 type="text"
                 placeholder={"Название"}
                 className={styles.hubInput}
+                {...register("name", {
+                  required: "Это поле обязательно для заполнения!",
+                })}
               />
+              {errors?.name && (
+                <div className="error-component">{errors.name.message}</div>
+              )}
               <div>Описание хаба</div>
               <input
                 type="text"
                 placeholder={"Описание"}
                 className={styles.hubInput}
+                {...register("description", {
+                  required: "Это поле обязательно для заполнения!",
+                })}
               />
+              {errors?.description && (
+                <div className="error-component">
+                  {errors.description.message}
+                </div>
+              )}
               <div>Координаты хаба</div>
               <input
                 type="text"
                 placeholder={"Координаты"}
                 className={styles.hubInput}
+                {...register("coords", {
+                  required: "Это поле обязательно для заполнения!",
+                })}
               />
+              {errors?.coords && (
+                <div className="error-component">{errors.coords.message}</div>
+              )}
+              {/*<div className={styles.hubInputSubmit}>Добавить хаб</div>*/}
               <input type="submit" className={styles.hubInputSubmit} />
             </div>
           </form>
@@ -459,9 +545,19 @@ const Calculator = () => {
                     <Select
                       setShowSelect={setShowSelectHubFrom}
                       showSelect={showSelectHubFrom}
-                      setSelectItem={setSelectedHubFrom}
-                      items={hubs}
-                      text={selectedHubFrom || hubs[0].title}
+                      items={filteredHubs}
+                      text={
+                        activeHubFrom.title ||
+                        hubs[0]?.title ||
+                        "Хабы отсутствуют"
+                      }
+                      haveButton={true}
+                      callback={() => {
+                        setModalActive(true);
+                      }}
+                      secondCallback={(item) => {
+                        dispatch(setActiveFromHub(item));
+                      }}
                     />
                   </div>
                 ) : (
@@ -531,10 +627,16 @@ const Calculator = () => {
                     <Select
                       setShowSelect={setShowSelectHubTo}
                       showSelect={showSelectHubTo}
-                      setSelectItem={setSelectedHubTo}
-                      items={hubs}
-                      text={selectedHubTo || items[0].title}
+                      items={filteredHubs}
+                      text={
+                        activeHubTo.title ||
+                        hubs[0]?.title ||
+                        "Хабы отсутствуют"
+                      }
                       haveButton={true}
+                      secondCallback={(item) => {
+                        dispatch(setActiveToHub(item));
+                      }}
                     />
                   </div>
                 ) : (
@@ -686,7 +788,9 @@ const Calculator = () => {
               <Button
                 text="Рассчитать"
                 style={{ height: 40, width: 180 }}
-                callback={() => setShowRoutes(true)}
+                callback={() => {
+                  setShowRoutes(true);
+                }}
               />
             </div>
             <div className="route-info">
@@ -714,21 +818,14 @@ const Calculator = () => {
         {showRotes && activeCity && activeRegion && (
           <div className={styles.iframeWrap}>
             <iframe
-              //@ts-ignore
               src={`http://localhost:8000/map/route/?region=${
                 activeRegion?.name
-                //@ts-ignore
-              }&city=${activeCity?.name}&lat=${fromCoordinates?.lat}&lon=${
-                //@ts-ignore
-                fromCoordinates?.lon
-              }${additionalRaces.length !== 0 && iframeCoords}&lat=${
-                //@ts-ignore
-                toCoordinates.lat
-                //@ts-ignore
-              }&lon=${toCoordinates.lon}`}
-              frameBorder="0"
+              }&city=${activeCity?.name}${coordinatesFrom}${
+                additionalRaces.length !== 0 && iframeCoords
+              }${coordinatesTo}`}
               width="100%"
               height={480}
+              frameBorder="none"
             ></iframe>
           </div>
         )}

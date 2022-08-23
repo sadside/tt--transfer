@@ -83,6 +83,31 @@ export interface IGetZone {
 
 export interface IHub {
   title: string;
+  description: string;
+  city: string;
+  region: string;
   longitude: number;
   latitude: number;
+}
+
+export interface IFullHub {
+  city: {
+    center: {
+      id: number | null;
+      latitude: number | null;
+      longitude: number | null;
+    };
+    city: string;
+    country: string;
+    id: number | null;
+    region: string;
+  };
+  coordinate: {
+    id: number | null;
+    latitude: number | null;
+    longitude: number | null;
+  };
+  description: string;
+  id: number | null;
+  title: string;
 }

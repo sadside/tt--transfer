@@ -72,7 +72,7 @@ export const addZoneThunk = createAsyncThunk<
   async (data, { rejectWithValue, dispatch, getState }) => {
     const region = getState().calculator.activeRegion?.name;
     const city = getState().calculator.activeCity?.name;
-    console.log({ ...data, region, city });
+
     try {
       const response = await ZoneService.addZone({ ...data, region, city });
 

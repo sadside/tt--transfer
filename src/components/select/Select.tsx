@@ -1,16 +1,20 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { FC } from "react";
+import { useAppDispatch } from "../../store/hooks";
+import { IFullHub } from "../../types/types";
 import styles from "./Select.module.scss";
 import reactangle from "../../assets/rec.svg";
+import { setActiveFromHub } from "../../store/calculatorSlice";
 
 interface SelectProps {
   showSelect?: boolean;
   text?: string;
   setShowSelect: (bool: boolean) => void;
-  setSelectItem: (item: any) => void;
+  setSelectItem?: (item: any) => void;
   items: Array<any>;
   haveButton?: boolean;
   callback?: () => void;
+  secondCallback?: (item: any) => void;
 }
 
 const Select: FC<SelectProps> = ({
@@ -21,6 +25,7 @@ const Select: FC<SelectProps> = ({
   items,
   haveButton,
   callback,
+  secondCallback,
 }) => {
   const handleClick = () => {
     setShowSelect(!showSelect);
@@ -28,7 +33,12 @@ const Select: FC<SelectProps> = ({
 
   const selectItem = (item: any) => {
     setShowSelect(false);
-    setSelectItem(item.title);
+    if (setSelectItem) {
+      setSelectItem(item.title);
+    }
+    if (secondCallback) {
+      secondCallback(item);
+    }
   };
 
   return (

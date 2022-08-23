@@ -9,4 +9,8 @@ export default class CalculatorService {
   static getHubs(region, city) {
     return $api.get(`address/hub/?region=${region}&city=${city}`);
   }
+
+  static addHub(data) {
+    return $api.post("address/hub/", data);
+  }
 }
