@@ -3,6 +3,7 @@
 	justify-content: center;
 	margin-top: 36px;
 	padding: 0 40px;
+	height: calc(100vh - 200px);
 	overflow-y: auto;
 }
 
@@ -12,9 +13,6 @@
 }
 
 .car-items-main-wrap {
-	height: calc(100vh - 200px);
-	overflow-y: auto;
-	overflow-x: hidden;
 	width: 100%;
 }
 

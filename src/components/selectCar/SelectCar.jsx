@@ -64,6 +64,23 @@ const SelectCar = () => {
               </div>
             ))}
           </div>
+          <div className="car-items-wrap">
+            {carsClasses.slice(9, 12).map((item, index) => (
+              <div
+                className="car-item"
+                key={index}
+                onClick={() => setSelectedCar(index + 9)}
+              >
+                <img src={item.img} alt="" width={250} height={200} />
+                <div className="car-descr">{item.carClass}</div>
+                {selectedCar === index + 9 && (
+                  <div className="car-selected-indicator">
+                    <img src={carSelected} alt="" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
         <div className={"submit-buttons-wrap"}>
           <EditSidebarSubmitButtons

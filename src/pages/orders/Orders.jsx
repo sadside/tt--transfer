@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import ActionMenu from "../../components/actionMenu/ActionMenu";
+import AddOrder from "../../components/addOrder/AddOrder";
 import ArchiveActionMenu from "../../components/archiveActionMenu/ArchiveActionMenu";
 import BlockHeader from "../../components/blockHeader/BlockHeader";
 import EditOrder from "../../components/editOrder/EditOrder";
@@ -202,7 +203,8 @@ const Orders = () => {
               toggleSidebar={setShowSidebar}
               title={"Добавить/изменить тариф"}
             >
-              <EditOrder />
+              {/* <EditOrder /> */}
+              <AddOrder />
             </EditSidebar>
           </motion.div>
         )}

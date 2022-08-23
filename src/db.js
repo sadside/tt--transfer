@@ -7,6 +7,9 @@ import car6 from "./assets/car6.png";
 import car7 from "./assets/car7.png";
 import car8 from "./assets/car8.png";
 import car9 from "./assets/car9.png";
+import car10 from "./assets/car10.png";
+import car11 from "./assets/car11.png";
+import car12 from "./assets/car12.png";
 
 export const driversTabs = ["Текущие", "Архив"];
 export const requestsTabs = ["Текущие", "Архив", "Калькулятор"];
@@ -19,40 +22,52 @@ export const ordersTabs = ["Заказы", "Архив"];
 
 export const carsClasses = [
   {
-    carClass: "Бизнес класс",
+    carClass: "Стандарт",
     img: car1,
   },
   {
-    carClass: "Стандарт",
+    carClass: "Комфорт",
     img: car2,
   },
   {
-    carClass: "Представительский",
+    carClass: "Минивен",
     img: car3,
   },
   {
-    carClass: "Минивен",
+    carClass: "Бизнес класс",
     img: car4,
   },
   {
-    carClass: "Микроавтобус",
+    carClass: "Представительский",
     img: car5,
   },
   {
-    carClass: "Комфорт",
+    carClass: "SUV",
     img: car6,
   },
   {
-    carClass: "Бизнес плюс",
+    carClass: "Микроавтобус",
     img: car7,
   },
   {
-    carClass: "Грузовой",
+    carClass: "Минивен Бизнес",
     img: car8,
   },
   {
-    carClass: "Автобус",
+    carClass: "Микроавтобус Бизнес",
     img: car9,
+  },
+  {
+    carClass: "Автобус 30+",
+    img: car10,
+  },
+  {
+    carClass: "Автобус 43+",
+    img: car11,
+  },
+  {
+    carClass: "Автобус 50+",
+    img: car12,
   },
 ];
 

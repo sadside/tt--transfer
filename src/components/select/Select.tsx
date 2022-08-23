@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { FC } from "react";
 import styles from "./Select.module.scss";
 import reactangle from "../../assets/rec.svg";
+import useOutside from "../../hooks/useOutside";
 
 interface SelectProps {
   showSelect?: boolean;
@@ -22,18 +23,21 @@ const Select: FC<SelectProps> = ({
   haveButton,
   callback,
 }) => {
+
+  const { ref, isShow, setIsShow } = useOutside(false)
+
   const handleClick = () => {
-    setShowSelect(!showSelect);
+    setIsShow(!isShow);
   };
 
   const selectItem = (item: any) => {
-    setShowSelect(false);
+    setIsShow(false);
     setSelectItem(item.title);
   };
 
   return (
-    <div className={styles.wrap}>
-      <div className={styles.select} onClick={handleClick}>
+    <div  className={styles.wrap} >
+      <div ref={ref} className={styles.select} onClick={handleClick}>
         <div className={styles.mainText}>{text}</div>
         <div className={styles.rightSide}>
           Выбрать
@@ -41,7 +45,7 @@ const Select: FC<SelectProps> = ({
         </div>
       </div>
       <AnimatePresence>
-        {showSelect && (
+        {isShow && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
