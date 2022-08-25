@@ -364,7 +364,6 @@ const userSlice = createSlice({
       })
       .addCase(setDocuments.fulfilled, (state, action) => {
         state.loading = false;
-        // @ts-ignore
         state.user.documents = action.payload;
       })
       .addCase(resetPassword.pending, (state) => {

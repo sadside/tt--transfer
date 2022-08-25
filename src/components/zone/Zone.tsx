@@ -78,8 +78,6 @@ const Zone: React.FC<ZoneProps> = ({
         id,
         coordinates: JSON.parse(newCoords),
         color,
-        region,
-        city,
       })
     );
     setEdit(false);

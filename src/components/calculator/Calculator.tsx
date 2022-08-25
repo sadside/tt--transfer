@@ -1,3 +1,11 @@
+import {
+  YMaps,
+  Map,
+  Polygon,
+  Placemark,
+  ZoomControl,
+  ObjectManager,
+} from "@pbe/react-yandex-maps";
 import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
@@ -18,6 +26,7 @@ import {
   getRegionsThunk,
   setActiveCity,
   setActiveFromHub,
+  setActiveHub,
   setActiveRegion,
   setActiveToHub,
   setShowModal,
@@ -28,7 +37,7 @@ import {
   addZone,
   addZoneThunk,
   createCity,
-  getZone,
+  getZonesById,
 } from "../../store/zoneSlice";
 //@ts-ignore
 import ErrorComponent from "../errorComponent/ErrorComponent";
@@ -68,21 +77,20 @@ const Calculator = () => {
   const zones = useAppSelector((state) => state.zone.zones);
   let hubs = useAppSelector((state) => state.calculator.hubs);
 
-  const activeHubFrom = useAppSelector(
-    (state) => state.calculator.activeFromHub
-  );
+  // const activeHub = useAppSelector(
+  //   (state) => state.calculator.activeFromHub
+  // );
   const activeHubTo = useAppSelector((state) => state.calculator.activeToHub);
 
-  const filteredHubs = hubs.filter((hub: IFullHub) => {
-    return hub.id !== activeHubTo.id && hub.id !== activeHubFrom.id;
-  });
-
-  console.log("filtered hubs", filteredHubs);
+  // const filteredHubs = hubs.filter((hub: IFullHub) => {
+  //   return hub.id !== activeHubTo.id && hub.id !== activeHubFrom.id;
+  // });
 
   const dispatch = useAppDispatch();
 
   const loading = useAppSelector((state) => state.calculator.loading);
   const error = useAppSelector((state) => state.calculator.error);
+  const activeHub = useAppSelector((state) => state.calculator.activeHub);
 
   const [iframeRef, setIframeRef] = useState(0);
 
@@ -91,11 +99,6 @@ const Calculator = () => {
 
   const [fromInputValue, setFromInputValue] = useState("");
   const [toInputValue, setToInputValue] = useState("");
-
-  useEffect(() => {
-    if (!coordinatesFrom && !coordinatesTo) {
-    }
-  }, [fromInputValue, toInputValue]);
 
   const [suggestionsForTo, setSuggestionsForTo] = useState<Array<any>>([]);
   const [suggestionsForFrom, setSuggestionsForFrom] = useState<Array<any>>([]);
@@ -161,6 +164,8 @@ const Calculator = () => {
   const setModalActive = (bool: boolean) => {
     dispatch(setShowModal(bool));
   };
+
+  const [showMap, setShowMap] = useState(false);
 
   const onSubmit: SubmitHandler<HubFormValues> = ({
     name,
@@ -249,18 +254,66 @@ const Calculator = () => {
     setIframeRef((prevState) => prevState + 1);
   }, [hubs]);
 
+  const [carClass, setCarClass] = useState("");
+  const [showCarClassSelect, setShowCarClassSelect] = useState(false);
+  const cityCenterCoordinates = useAppSelector(
+    (state) => state.calculator.hubCity.center
+  );
+
   if (loading) {
     return <Loader />;
   }
 
-  const coordinatesFrom = activeHubFrom.id
-    ? `&lat=${activeHubFrom.coordinate.latitude}&lon=${activeHubFrom.coordinate.longitude}`
-    : `&lat=${fromCoordinates.lat}&lon=${fromCoordinates.lon}`;
+  // const coordinatesFrom = activeHubFrom.id
+  //   ? `&lat=${activeHubFrom.coordinate.latitude}&lon=${activeHubFrom.coordinate.longitude}`
+  //   : `&lat=${fromCoordinates.lat}&lon=${fromCoordinates.lon}`;
 
   const coordinatesTo = activeHubTo.id
     ? `&lat=${activeHubTo.coordinate.latitude}&lon=${activeHubTo.coordinate.longitude}`
     : `&lat=${toCoordinates.lat}&lon=${toCoordinates.lon}`;
 
+  const carClasses: Array<any> = [
+    {
+      title: "Стандарт",
+    },
+    {
+      title: "Комфорт",
+    },
+    {
+      title: "Минивен",
+    },
+    {
+      title: "Бизнес класс",
+    },
+    {
+      title: "Представительский",
+    },
+    {
+      title: "SUV",
+    },
+    {
+      title: "Микроавтобус",
+    },
+    {
+      title: "Минивен Бизнес",
+    },
+    {
+      title: "Микроавтобус Бизнес",
+    },
+    {
+      title: "Автобус 30+",
+    },
+    {
+      title: "Автобус 43+",
+    },
+    {
+      title: "Автобус 50+",
+    },
+  ];
+
+  // @ts-ignore
+  // @ts-ignore
+  // @ts-ignore
   return (
     <>
       <div className="calculator-wrap">
@@ -316,7 +369,7 @@ const Calculator = () => {
         {activeRegion && cities?.length !== 0 && (
           <div className={styles.selectCity}>
             <label>
-              Введите <strong>город</strong>
+              Введите <strong>город:</strong>
             </label>
             <div className={styles.citySelectWrap}>
               <input
@@ -370,6 +423,62 @@ const Calculator = () => {
             </div>
           </div>
         )}
+        <Modal active={showMap} setActive={setShowMap}>
+          {cityCenterCoordinates.latitude && cityCenterCoordinates.longitude && (
+            <YMaps>
+              <Map
+                defaultState={{
+                  center: [
+                    cityCenterCoordinates.latitude,
+                    cityCenterCoordinates.longitude,
+                  ],
+                  zoom: 12,
+                }}
+                modules={["control.ZoomControl"]}
+                width={"85vw"}
+                height={"85vh"}
+              >
+                {hubs.map((hub) => (
+                  <Placemark
+                    geometry={[
+                      hub.coordinate.latitude,
+                      hub.coordinate.longitude,
+                    ]}
+                    options={{
+                      preset: "islands#circleIcon",
+                      iconColor: "orange",
+                    }}
+                  />
+                ))}
+                <ZoomControl
+                  options={{
+                    //@ts-ignore
+                    float: "right",
+                  }}
+                />
+                <Polygon
+                  geometry={[
+                    [
+                      [55.80816874150234, 37.54518870312501],
+                      [55.80816874150234, 37.806113996093764],
+                      [55.678022224242454, 37.86104563671875],
+                      [55.55211057833611, 37.534202375],
+                      [55.80816874150234, 37.54518870312501],
+                    ],
+                  ]}
+                  options={{
+                    //@ts-ignore
+                    fillColor: "#00FF00",
+                    strokeColor: "#0000FF",
+                    opacity: 0.5,
+                    strokeWidth: 5,
+                  }}
+                />
+              </Map>
+            </YMaps>
+          )}
+        </Modal>
+
         <Modal active={showModal} setActive={setModalActive}>
           <form action="" onSubmit={handleSubmit(onSubmit)}>
             <div className={styles.addHub}>
@@ -416,118 +525,287 @@ const Calculator = () => {
             </div>
           </form>
         </Modal>
-        {activeRegion &&
-          (activeCity ||
-            activeRegion?.name === "Москва" ||
-            activeRegion?.name === "Санкт-Петербург") && (
-            <div>
-              <div>
-                <div className={styles.howToUse}>
-                  <div>
-                    Для зонирования города{" "}
-                    <strong>{activeCity?.name || activeRegion?.name}</strong>{" "}
-                    откройте{" "}
-                    <a
-                      href="https://yandex.ru/map-constructor/location-tool/?from=club"
-                      target={"_blank"}
-                      rel="noreferrer"
-                    >
-                      карту
-                    </a>{" "}
-                    и с помощью инструмента многоугольник прозонируйте город.
-                    Получившиеся координаты сохраните в отведенном поле, указав
-                    цвет зоны.
-                  </div>
-                </div>
-              </div>
-              <h2 className={styles.calculatorSubTitle}>
-                Добавьте зоны для расчета
-              </h2>
-              <div className={styles.zonesWrap}>
-                <div className={styles.addZone}>
-                  <input
-                    type="text"
-                    className={styles.coords}
-                    placeholder="Введите текст"
-                    value={coordinates}
-                    onChange={(e) => setCoordinates(e.target.value)}
-                  />
-                  <div className={styles.selectZoneColor}>
-                    <div
-                      className={styles.selectZoneColorBlock}
-                      onClick={() =>
-                        setShowColorSelect((prevState) => !prevState)
-                      }
-                    >
-                      <div className={zoneColor}>Выберите цвет</div>
-                      <img src={downArrow} alt="" />
-                    </div>
-                    {showColorSelect && (
-                      <div className={styles.selectZoneColorMenu}>
-                        <div
-                          className={styles.selectZoneColorMenuItem}
-                          onClick={() => setActiveColor("green")}
-                        >
-                          <div className={styles.zoneIndicatorGreen}></div>
-                          <div className={styles.zoneColorText}>Зеленый</div>
-                        </div>
-                        <div
-                          className={styles.selectZoneColorMenuItem}
-                          onClick={() => setActiveColor("blue")}
-                        >
-                          <div className={styles.zoneIndicatorBlue}></div>
-                          <div className={styles.zoneColorText}>Синий</div>
-                        </div>
-
-                        <div
-                          className={styles.selectZoneColorMenuItem}
-                          onClick={() => setActiveColor("red")}
-                        >
-                          <div className={styles.zoneIndicatorRed}></div>
-                          <div className={styles.zoneColorText}>Красный</div>
-                        </div>
-
-                        <div
-                          className={styles.selectZoneColorMenuItem}
-                          onClick={() => setActiveColor("yellow")}
-                        >
-                          <div className={styles.zoneIndicatorYellow}></div>
-                          <div className={styles.zoneColorText}>Желтый</div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                  <button className={styles.addZoneBtn} onClick={createZone}>
-                    Добавить
-                  </button>
-                </div>
-                {zones?.length !== 0 && (
-                  <div className={styles.zones}>
-                    {zones?.map((zone) => (
-                      <Zone
-                        key={zone.id}
-                        id={zone.id}
-                        coordinates={zone.coordinates}
-                        color={zone.color}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
+        {activeCity?.id && (
+          <div className={styles.hubActions}>
+            <div className={styles.selectHubWrap}>
+              <Select
+                setShowSelect={setShowSelectHubFrom}
+                showSelect={showSelectHubFrom}
+                items={hubs}
+                text={activeHub.title || "Выберите хаб" || "Хабы отсутствуют"}
+                secondCallback={(item: IFullHub) => {
+                  dispatch(setActiveHub(item));
+                  if (item.id) dispatch(getZonesById(item.id));
+                }}
+              />
             </div>
-          )}
-        {zones?.length !== 0 && activeCity && activeRegion && (
-          <div className={styles.iframeWrap}>
-            <iframe
-              src={`http://localhost:8000/map/zones/?region=${activeRegion?.name}&city=${activeCity?.name}`}
-              frameBorder="0"
-              width="100%"
-              height={480}
-              id="iframeid"
-              key={iframeRef}
-            ></iframe>
+            <div className={styles.hubBtn}>
+              <Button
+                text={"Показать карту"}
+                callback={() => setShowMap(true)}
+              />
+            </div>
+            <div className={styles.hubBtn}>
+              <Button
+                text={"Добавить хаб"}
+                callback={() => setModalActive(true)}
+                style={{ backgroundColor: "#364150" }}
+              />
+            </div>
           </div>
         )}
+        {activeHub?.id && (
+          <div>
+            <div>
+              <div className={styles.howToUse}>
+                <div>
+                  Для зонирования хаба{" "}
+                  <strong>{activeHub?.title || activeRegion?.name}</strong>{" "}
+                  откройте{" "}
+                  <a
+                    href="https://yandex.ru/map-constructor/location-tool/?from=club"
+                    target={"_blank"}
+                    rel="noreferrer"
+                  >
+                    карту
+                  </a>{" "}
+                  и с помощью инструмента многоугольник прозонируйте хаб.
+                  Получившиеся координаты сохраните в отведенном поле, указав
+                  цвет зоны.
+                </div>
+              </div>
+            </div>
+            <h2 className={styles.calculatorSubTitle}>
+              Добавьте зоны для расчета
+            </h2>
+            <div className={styles.zonesWrap}>
+              <div className={styles.addZone}>
+                <input
+                  type="text"
+                  className={styles.coords}
+                  placeholder="Введите текст"
+                  value={coordinates}
+                  onChange={(e) => setCoordinates(e.target.value)}
+                />
+                <div className={styles.selectZoneColor}>
+                  <div
+                    className={styles.selectZoneColorBlock}
+                    onClick={() =>
+                      setShowColorSelect((prevState) => !prevState)
+                    }
+                  >
+                    <div className={zoneColor}>Выберите цвет</div>
+                    <img src={downArrow} alt="" />
+                  </div>
+                  {showColorSelect && (
+                    <div className={styles.selectZoneColorMenu}>
+                      <div
+                        className={styles.selectZoneColorMenuItem}
+                        onClick={() => setActiveColor("green")}
+                      >
+                        <div className={styles.zoneIndicatorGreen}></div>
+                        <div className={styles.zoneColorText}>Зеленый</div>
+                      </div>
+                      <div
+                        className={styles.selectZoneColorMenuItem}
+                        onClick={() => setActiveColor("blue")}
+                      >
+                        <div className={styles.zoneIndicatorBlue}></div>
+                        <div className={styles.zoneColorText}>Синий</div>
+                      </div>
+
+                      <div
+                        className={styles.selectZoneColorMenuItem}
+                        onClick={() => setActiveColor("red")}
+                      >
+                        <div className={styles.zoneIndicatorRed}></div>
+                        <div className={styles.zoneColorText}>Красный</div>
+                      </div>
+
+                      <div
+                        className={styles.selectZoneColorMenuItem}
+                        onClick={() => setActiveColor("yellow")}
+                      >
+                        <div className={styles.zoneIndicatorYellow}></div>
+                        <div className={styles.zoneColorText}>Желтый</div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                <button className={styles.addZoneBtn} onClick={createZone}>
+                  Добавить
+                </button>
+              </div>
+              {zones?.length !== 0 && (
+                <div className={styles.zones}>
+                  {zones?.map((zone) => (
+                    <Zone
+                      key={zone.id}
+                      id={zone.id}
+                      coordinates={zone.coordinates}
+                      color={zone.color}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+            {activeHub.coordinate.latitude && activeHub.coordinate.longitude && (
+              <YMaps>
+                <div style={{ marginTop: 20 }}>
+                  <Map
+                    defaultState={{
+                      center: [
+                        activeHub.coordinate.latitude,
+                        activeHub.coordinate.longitude,
+                      ],
+                      zoom: 12,
+                    }}
+                    instanceRef={(ref) => {
+                      ref && ref.behaviors.disable("scrollZoom");
+                    }}
+                    modules={["control.ZoomControl"]}
+                    width={"100%"}
+                    height={480}
+                  >
+                    {zones.map((zone) => {
+                      let color = "",
+                        ru_color = "",
+                        number;
+
+                      switch (zone.color) {
+                        case "green":
+                          color = "#8DC73F";
+                          ru_color = "Зеленая";
+                          break;
+                        case "blue":
+                          color = "#337AB7";
+                          ru_color = "Синяя";
+                          break;
+                        case "red":
+                          color = "#DB5454";
+                          ru_color = "Красная";
+                          break;
+                        case "yellow":
+                          color = "#EAE509";
+                          ru_color = "Желтая";
+                          break;
+                      }
+
+                      return (
+                        <Polygon
+                          //@ts-ignore
+                          geometry={[zone.coordinates]}
+                          options={{
+                            //@ts-ignore
+                            fillColor: color,
+                            strokeColor: "#0000FF",
+                            opacity: 0.5,
+                            strokeWidth: 0,
+                          }}
+                        />
+                      );
+                    })}
+                    <Placemark
+                      geometry={[
+                        activeHub.coordinate.latitude,
+                        activeHub.coordinate.longitude,
+                      ]}
+                      options={{
+                        preset: "islands#circleIcon",
+                        iconColor: "orange",
+                        balloonContent: "hello",
+                        openBalloonOnClick: true,
+                      }}
+                      modules={[
+                        "objectManager.addon.objectsBalloon",
+                        "objectManager.addon.objectsHint",
+                      ]}
+                      // properties={{
+                      //   balloonContent: "hello",
+                      // }}
+                    />
+
+                    <ZoomControl
+                      options={{
+                        //@ts-ignore
+                        float: "right",
+                      }}
+                    />
+                  </Map>
+                </div>
+              </YMaps>
+            )}
+          </div>
+        )}
+
+        {zones?.length !== 0 &&
+          activeCity &&
+          activeRegion &&
+          cityCenterCoordinates.latitude &&
+          cityCenterCoordinates.longitude && (
+            <div className={styles.iframeWrap}>
+              {/*<YMaps>*/}
+              {/*  <Map*/}
+              {/*    defaultState={{*/}
+              {/*      center: [*/}
+              {/*        cityCenterCoordinates.latitude,*/}
+              {/*        cityCenterCoordinates.longitude,*/}
+              {/*      ],*/}
+              {/*      zoom: 12,*/}
+              {/*    }}*/}
+              {/*    modules={["control.ZoomControl"]}*/}
+              {/*    width={"100%"}*/}
+              {/*    height={480}*/}
+              {/*  >*/}
+              {/*    {hubs.map((hub) => (*/}
+              {/*      <Placemark*/}
+              {/*        geometry={[*/}
+              {/*          hub.coordinate.latitude,*/}
+              {/*          hub.coordinate.longitude,*/}
+              {/*        ]}*/}
+              {/*        options={{*/}
+              {/*          preset: "islands#circleIcon",*/}
+              {/*          iconColor: "orange",*/}
+              {/*        }}*/}
+              {/*      />*/}
+              {/*    ))}*/}
+              {/*    <ZoomControl*/}
+              {/*      options={{*/}
+              {/*        //@ts-ignore*/}
+              {/*        float: "right",*/}
+              {/*      }}*/}
+              {/*    />*/}
+              {/*    <Polygon*/}
+              {/*      geometry={[*/}
+              {/*        [*/}
+              {/*          [55.80816874150234, 37.54518870312501],*/}
+              {/*          [55.80816874150234, 37.806113996093764],*/}
+              {/*          [55.678022224242454, 37.86104563671875],*/}
+              {/*          [55.55211057833611, 37.534202375],*/}
+              {/*          [55.80816874150234, 37.54518870312501],*/}
+              {/*        ],*/}
+              {/*      ]}*/}
+              {/*      options={{*/}
+              {/*        //@ts-ignore*/}
+              {/*        fillColor: "#00FF00",*/}
+              {/*        strokeColor: "#0000FF",*/}
+              {/*        opacity: 0.5,*/}
+              {/*        strokeWidth: 5,*/}
+              {/*      }}*/}
+              {/*    />*/}
+              {/*  </Map>*/}
+              {/*</YMaps>*/}
+              {/*<iframe*/}
+              {/*  src={`http://localhost:8000/map/zones/?region=${activeRegion?.name}&city=${activeCity?.name}`}*/}
+              {/*  frameBorder="0"*/}
+              {/*  width="100%"*/}
+              {/*  height={480}*/}
+              {/*  id="iframeid"*/}
+              {/*  key={iframeRef}*/}
+              {/*></iframe>*/}
+            </div>
+          )}
+
         {zones?.length > 0 && activeRegion && activeCity && (
           <div className={styles.transferCalculatorWrap}>
             <div className="destination-selection calculator-inputs">
@@ -545,18 +823,16 @@ const Calculator = () => {
                     <Select
                       setShowSelect={setShowSelectHubFrom}
                       showSelect={showSelectHubFrom}
-                      items={filteredHubs}
+                      items={hubs}
                       text={
-                        activeHubFrom.title ||
-                        hubs[0]?.title ||
-                        "Хабы отсутствуют"
+                        activeHub.title || "Выберите хаб" || "Хабы отсутствуют"
                       }
                       haveButton={true}
                       callback={() => {
                         setModalActive(true);
                       }}
                       secondCallback={(item) => {
-                        dispatch(setActiveFromHub(item));
+                        dispatch(setActiveHub(item));
                       }}
                     />
                   </div>
@@ -627,10 +903,10 @@ const Calculator = () => {
                     <Select
                       setShowSelect={setShowSelectHubTo}
                       showSelect={showSelectHubTo}
-                      items={filteredHubs}
+                      items={hubs}
                       text={
                         activeHubTo.title ||
-                        hubs[0]?.title ||
+                        "Выберите хаб" ||
                         "Хабы отсутствуют"
                       }
                       haveButton={true}
@@ -756,17 +1032,17 @@ const Calculator = () => {
                   );
                 })}
               </div>
-              <div className="select-car-class">
-                <span style={{ color: "red" }}>*</span>Выберите класс авто
-                <select name="" id="" className="tariff-data-input">
-                  <option value="">Премиум</option>
-
-                  <option value="">Премиум</option>
-
-                  <option value="">Премиум</option>
-
-                  <option value="">Премиум</option>
-                </select>
+              <div className={"select-car-class"}>
+                <div style={{ marginBottom: 10 }}>
+                  <span style={{ color: "red" }}>*</span>Выберите класс авто
+                </div>
+                <Select
+                  setShowSelect={setShowCarClassSelect}
+                  showSelect={showCarClassSelect}
+                  items={carClasses}
+                  setSelectItem={setCarClass}
+                  text={carClass || carClasses[0].title}
+                />
               </div>
             </div>
             <div
@@ -817,16 +1093,16 @@ const Calculator = () => {
         )}
         {showRotes && activeCity && activeRegion && (
           <div className={styles.iframeWrap}>
-            <iframe
-              src={`http://localhost:8000/map/route/?region=${
-                activeRegion?.name
-              }&city=${activeCity?.name}${coordinatesFrom}${
-                additionalRaces.length !== 0 && iframeCoords
-              }${coordinatesTo}`}
-              width="100%"
-              height={480}
-              frameBorder="none"
-            ></iframe>
+            {/*<iframe*/}
+            {/*  src={`http://localhost:8000/map/route/?region=${*/}
+            {/*    activeRegion?.name*/}
+            {/*  }&city=${activeCity?.name}${coordinatesFrom}${*/}
+            {/*    additionalRaces.length !== 0 && iframeCoords*/}
+            {/*  }${coordinatesTo}`}*/}
+            {/*  width="100%"*/}
+            {/*  height={480}*/}
+            {/*  frameBorder="none"*/}
+            {/*></iframe>*/}
           </div>
         )}
       </div>

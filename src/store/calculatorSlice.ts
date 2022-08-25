@@ -4,9 +4,17 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
+import { AxiosResponse } from "axios";
 import calculator, { HubFormValues } from "../components/calculator/Calculator";
 import CalculatorService from "../services/CalculatorService";
-import { ICity, IFullHub, IHub, IRegion } from "../types/types";
+import {
+  ICity,
+  IFullHub,
+  IHub,
+  IHubCity,
+  IHubs,
+  IRegion,
+} from "../types/types";
 
 export type CalculatorState = {
   loading: boolean;
@@ -21,6 +29,8 @@ export type CalculatorState = {
   showModal: boolean;
   activeFromHub: IFullHub;
   activeToHub: IFullHub;
+  hubCity: IHubCity;
+  activeHub: IFullHub;
 };
 
 const initialState: CalculatorState = {
@@ -52,6 +62,34 @@ const initialState: CalculatorState = {
     title: "",
   },
   activeToHub: {
+    city: {
+      center: { id: null, latitude: null, longitude: null },
+      city: "",
+      country: "",
+      id: null,
+      region: "",
+    },
+    coordinate: {
+      id: null,
+      latitude: null,
+      longitude: null,
+    },
+    description: "",
+    id: null,
+    title: "",
+  },
+  hubCity: {
+    country: "",
+    region: "",
+    city: "",
+    id: null,
+    center: {
+      id: null,
+      latitude: null,
+      longitude: null,
+    },
+  },
+  activeHub: {
     city: {
       center: { id: null, latitude: null, longitude: null },
       city: "",
@@ -119,12 +157,15 @@ export const addHubThunk = createAsyncThunk<
 );
 
 export const getHubsThunk = createAsyncThunk<
-  IFullHub[],
+  IHubs,
   any,
   { rejectValue: string }
 >("calculator/getHubsThunk", async ({ region, city }, { rejectWithValue }) => {
   try {
-    const res = await CalculatorService.getHubs(region, city);
+    const res: AxiosResponse<IHubs> = await CalculatorService.getHubs(
+      region,
+      city
+    );
 
     return res.data;
   } catch (e) {
@@ -144,6 +185,9 @@ const calculatorSlice = createSlice({
         state.activeRegion = action.payload;
         state.cities = action.payload.areas;
       }
+    },
+    setActiveHub(state, action) {
+      state.activeHub = action.payload;
     },
     setActiveFromHub(state, action: PayloadAction<IFullHub>) {
       state.activeFromHub = action.payload;
@@ -238,7 +282,8 @@ const calculatorSlice = createSlice({
         state.error = false;
       })
       .addCase(getHubsThunk.fulfilled, (state, action) => {
-        state.hubs = action.payload;
+        state.hubs = action.payload.hubs;
+        state.hubCity = action.payload.city;
         state.loading = false;
         state.error = false;
       })
@@ -266,6 +311,7 @@ export const {
   setActiveToHub,
   clearFromHub,
   clearToHub,
+  setActiveHub,
 } = calculatorSlice.actions;
 
 export default calculatorSlice.reducer;

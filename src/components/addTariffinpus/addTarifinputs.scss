@@ -33,6 +33,7 @@
 .tariff-data-input {
 	display: block;
 	height: 40px;
+	font-weight: 300 !important;
 	padding: 0 14px;
 	box-sizing: border-box;
 	border: none;
@@ -51,6 +52,8 @@
 .required {
 	color: #CF1616;
 }
+
+
 
 .tariff-data {
 	label {

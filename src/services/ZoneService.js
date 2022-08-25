@@ -1,28 +1,26 @@
 import $api from "../http";
 
 export class ZoneService {
-  static getZones(region, city) {
-    return $api.get("address/zones/", {
-      params: {
-        region: region,
-        city: city,
-      },
-    });
+  static getZonesById(id) {
+    return $api.get(`address/hub-zones/${id}/`);
   }
 
   static createCity(data) {
     return $api.post("address/city/", data);
   }
 
-  static async addZone(data) {
-    return $api.post("address/zones/", data);
+  static addZone(id, color, coordinates) {
+    return $api.post(`address/hub-zones/${id}/`, {
+      color,
+      coordinates,
+    });
   }
 
-  static async editZone(zone) {
-    return $api.put(`address/zones/${zone.id}`, zone);
+  static editZone(zone) {
+    return $api.put(`address/edit-hub-zone/${zone.id}/`, zone);
   }
 
-  static async deleteZone(id) {
-    return $api.delete(`address/zones/${id}`);
+  static deleteZone(id) {
+    return $api.delete(`address/edit-hub-zone/${id}/`);
   }
 }

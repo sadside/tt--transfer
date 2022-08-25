@@ -111,3 +111,20 @@ export interface IFullHub {
   id: number | null;
   title: string;
 }
+
+export interface IHubs {
+  hubs: IFullHub[];
+  city: any;
+}
+
+export interface IHubCity {
+  country: string;
+  region: string;
+  city: string;
+  id: number | null;
+  center: {
+    id: number | null;
+    latitude: number | null;
+    longitude: number | null;
+  };
+}

@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import { FC, ReactNode } from "react";
+import { FC, ReactNode, useEffect } from "react";
 import styles from "./Modal.module.scss";
 
 interface ModalProps {

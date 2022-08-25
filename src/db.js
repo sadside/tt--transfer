@@ -9,7 +9,7 @@ import car8 from "./assets/car8.png";
 import car9 from "./assets/car9.png";
 
 export const driversTabs = ["Текущие", "Архив"];
-export const requestsTabs = ["Текущие", "Архив", "Калькулятор"];
+export const requestsTabs = ["Текущие", "Архив", "Зонирование", "Калькулятор"];
 export const tariffsTabs = ["Тариф"];
 export const clientsTabs = ["Клиенты", "Контрагенты"];
 export const carsTabs = ["Текущие", "Архив"];

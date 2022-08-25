@@ -53,13 +53,25 @@ const Select: FC<SelectProps> = ({
       <AnimatePresence>
         {showSelect && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             transition={{ type: "Tween" }}
-            style={{ overflow: "hidden", zIndex: 1000 }}
+            style={{
+              zIndex: 99999,
+              position: "absolute",
+              top: 50,
+              left: 0,
+              height: "max-content",
+              width: "100%",
+              background: "#E8E8E8",
+              boxShadow: "1px 1px 10px rgba(0, 0, 0, 0.25)",
+              marginTop: 10,
+              maxHeight: 200,
+              borderRadius: 3,
+            }}
           >
-            <div className={styles.suggestionsWrap}>
+            <div className={styles.suggestionsWrap1}>
               <ul>
                 {items.map((item, index) => {
                   return (

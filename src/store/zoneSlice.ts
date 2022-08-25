@@ -36,30 +36,38 @@ export const createCity = createAsyncThunk<
         city: activeCity,
       });
 
-      dispatch(getZone());
+      dispatch(getZonesById(10));
     } catch (e: any) {
       rejectWithValue(e.message);
     }
   }
 );
 
-export const getZone = createAsyncThunk<
-  IZone[],
-  undefined,
-  { rejectValue: string; state: { calculator: CalculatorState } }
->("zone/getZone", async (_, { rejectWithValue, getState }) => {
-  const activeRegion = getState().calculator.activeRegion?.name;
-  const activeCity = getState().calculator.activeCity?.name;
+// export const getZones = createAsyncThunk<
+//   IZone[],
+//   undefined,
+//   { rejectValue: string; state: { calculator: CalculatorState } }
+// >("zone/getZone", async (_, { rejectWithValue }) => {
+//   try {
+//     const res: AxiosResponse<any> = await ZoneService.getZones();
+//
+//     return res.data;
+//   } catch (e: any) {
+//     return rejectWithValue(e.message);
+//   }
+// });
 
+export const getZonesById = createAsyncThunk<
+  IZone[],
+  number,
+  { rejectValue: string; state: { calculator: CalculatorState } }
+>("zone/getZone", async (hubId, { rejectWithValue }) => {
   try {
-    const res: AxiosResponse<any> = await ZoneService.getZones(
-      activeRegion,
-      activeCity
-    );
+    const res: AxiosResponse<any> = await ZoneService.getZonesById(hubId);
 
     return res.data;
   } catch (e: any) {
-    rejectWithValue(e.message);
+    return rejectWithValue(e.message);
   }
 });
 
@@ -69,15 +77,13 @@ export const addZoneThunk = createAsyncThunk<
   { rejectValue: string; state: { calculator: CalculatorState } }
 >(
   "zone/addZoneThunk",
-  async (data, { rejectWithValue, dispatch, getState }) => {
-    const region = getState().calculator.activeRegion?.name;
-    const city = getState().calculator.activeCity?.name;
+  async ({ color, coordinates }, { rejectWithValue, dispatch, getState }) => {
+    const hubId = getState().calculator.activeHub.id;
 
     try {
-      const response = await ZoneService.addZone({ ...data, region, city });
+      await ZoneService.addZone(hubId, color, coordinates);
 
-      // @ts-ignore
-      dispatch(getZone());
+      if (hubId) dispatch(getZonesById(hubId));
     } catch (e) {
       return rejectWithValue("error");
     }
@@ -85,14 +91,14 @@ export const addZoneThunk = createAsyncThunk<
 );
 
 export const editZoneThunk = createAsyncThunk<
-  IZone,
+  IZone[],
   IZone,
   { rejectValue: string }
 >("zone/editZoneThunk", async (zone, { rejectWithValue }) => {
   try {
     const res = await ZoneService.editZone(zone);
 
-    return zone;
+    return res.data;
   } catch (e: any) {
     return rejectWithValue(e.messages);
   }
@@ -138,19 +144,15 @@ const zoneSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      .addCase(getZone.fulfilled, (state, action) => {
+      .addCase(getZonesById.fulfilled, (state, action) => {
         state.zones = action.payload;
       })
-      .addCase(getZone.pending, (state) => {
+      .addCase(getZonesById.pending, (state) => {
         state.loading = true;
       })
       .addCase(editZoneThunk.fulfilled, (state, action) => {
-        state.zones = state.zones.map((zone) => {
-          if (zone.id === action.payload.id) {
-            return action.payload;
-          }
-          return zone;
-        });
+        state.loading = false;
+        state.zones = action.payload;
       })
       .addCase(editZoneThunk.pending, (state) => {
         state.loading = true;

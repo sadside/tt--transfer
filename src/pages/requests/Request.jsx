@@ -10,6 +10,7 @@ import EditRequest from "../../components/editRequest/EditRequest";
 import EditSidebar from "../../components/editSidebar/EditSidebar";
 import MainTable from "../../components/mainTable/MainTable";
 import Pagination from "../../components/pagination/Pagination";
+import Routes from "../../components/routes/Routes";
 import SmartFilter from "../../components/smartFilter/SmartFilter";
 import Tabs from "../../components/tabs/Tabs";
 import rightArrow from "../../assets/rightArrow.svg";
@@ -132,194 +133,193 @@ const Request = () => {
 
   return (
     <>
-      <YMaps>
-        <Tabs items={requestsTabs} handleTabClick={handleTabClick} />
-        <div
-          className={`requests-wrap ${
-            activeTab === 2 && "active-tab-requests-wrap"
-          }`}
-        >
-          {activeTab === 0 && (
-            <>
-              <BlockHeader
-                showSmartFilter={showSmartFilter}
-                FilterVisible={setShowSmartFilter}
-                buttonText={"Добавить заказ"}
-                callback={() => setShowSidebar(true)}
-              />
-              <AnimatePresence>
-                {showSmartFilter && !showSidebar && !showDriverAndCarSidebar && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    style={{ overflow: "hidden" }}
-                    transition={{ type: "Tween" }}
-                  >
-                    <SmartFilter
-                      filterData={filterData}
-                      closeSmartFilter={closeSmartFilter}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              <MainTable
-                body={currentCountry}
-                headers={requestsTableHeaders}
-                haveInputs={true}
-                handleShowActionMenu={handleShowActionMenu}
-                showSmartFilter={showSmartFilter}
-                activeTab={activeTab}
-                setOnlyOneSelected={setOnlyOneSelected}
-                setShowEditSidebar={setShowSidebar}
-                isRequests={true}
-              />
-            </>
-          )}
-          {activeTab === 1 && (
-            <>
-              <BlockHeader
-                showSmartFilter={showSmartFilter}
-                FilterVisible={setShowSmartFilter}
-                buttonText={"Добавить заказ"}
-                isArchive
-              />
-              <AnimatePresence>
-                {showSmartFilter && !showSidebar && !showDriverAndCarSidebar && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    style={{ overflow: "hidden" }}
-                    transition={{ type: "Tween" }}
-                  >
-                    <SmartFilter
-                      filterData={filterData}
-                      closeSmartFilter={closeSmartFilter}
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              <MainTable
-                body={currentCountry}
-                headers={requestsTableHeaders}
-                haveInputs={true}
-                handleShowActionMenu={handleShowActionMenu}
-                showSmartFilter={showSmartFilter}
-                activeTab={activeTab}
-                handleShowActionMenuArchive={setShowActionMenuArchive}
-                isRequests={true}
-              />
-            </>
-          )}
-          {activeTab === 2 && <Calculator />}
-        </div>
-        {activeTab !== 2 && (
+      <Tabs items={requestsTabs} handleTabClick={handleTabClick} />
+      <div
+        className={`requests-wrap ${
+          activeTab === 2 && "active-tab-requests-wrap"
+        }`}
+      >
+        {activeTab === 0 && (
           <>
-            {" "}
+            <BlockHeader
+              showSmartFilter={showSmartFilter}
+              FilterVisible={setShowSmartFilter}
+              buttonText={"Добавить заказ"}
+              callback={() => setShowSidebar(true)}
+            />
             <AnimatePresence>
-              {showActionMenu && (
+              {showSmartFilter && !showSidebar && !showDriverAndCarSidebar && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   style={{ overflow: "hidden" }}
+                  transition={{ type: "Tween" }}
                 >
-                  <ActionMenu handleItemClick={onlyOneSelected} />
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <AnimatePresence>
-              {!showActionMenu && !showActionMenuArchive && (
-                <motion.div
-                  initial={{ height: 0, opacity: 0 }}
-                  animate={{ height: "auto", opacity: 1 }}
-                  exit={{ height: 0, opacity: 0 }}
-                >
-                  <Pagination
-                    countriesPerPage={countriesPerPage}
-                    totalCountries={requestsTableBody.length}
-                    paginate={paginate}
-                    nextPage={nextPage}
-                    prevPage={prevPage}
-                    currentPage={currentPage}
-                    setCountriesPerPage={setCountriesPerPage}
-                    setCurrentPage={setCurrentPage}
+                  <SmartFilter
+                    filterData={filterData}
+                    closeSmartFilter={closeSmartFilter}
                   />
                 </motion.div>
               )}
             </AnimatePresence>
+            <MainTable
+              body={currentCountry}
+              headers={requestsTableHeaders}
+              haveInputs={true}
+              handleShowActionMenu={handleShowActionMenu}
+              showSmartFilter={showSmartFilter}
+              activeTab={activeTab}
+              setOnlyOneSelected={setOnlyOneSelected}
+              setShowEditSidebar={setShowSidebar}
+              isRequests={true}
+            />
+          </>
+        )}
+        {activeTab === 1 && (
+          <>
+            <BlockHeader
+              showSmartFilter={showSmartFilter}
+              FilterVisible={setShowSmartFilter}
+              buttonText={"Добавить заказ"}
+              isArchive
+            />
             <AnimatePresence>
-              {showActionMenuArchive && (
+              {showSmartFilter && !showSidebar && !showDriverAndCarSidebar && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   style={{ overflow: "hidden" }}
-                >
-                  <ArchiveActionMenu />
-                </motion.div>
-              )}
-            </AnimatePresence>
-            <AnimatePresence>
-              {showSidebar && (
-                <motion.div
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: 1070, opacity: 1 }}
-                  exit={{ width: 0, opacity: 0 }}
-                  style={{
-                    overflow: "hidden",
-                    display: "flex",
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    zIndex: 2200,
-                  }}
                   transition={{ type: "Tween" }}
                 >
-                  <EditSidebar
-                    isVisible={showSidebar}
-                    toggleSidebar={setShowSidebar}
-                    title={"Добавить/изменить тариф"}
-                    isGray={true}
-                  >
-                    <EditRequest
-                      setShowCarAndDriver={setShowDriverAndCarSidebar}
-                    />
-                  </EditSidebar>
+                  <SmartFilter
+                    filterData={filterData}
+                    closeSmartFilter={closeSmartFilter}
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
-            <AnimatePresence>
-              {showDriverAndCarSidebar && (
-                <motion.div
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: 1070, opacity: 1 }}
-                  exit={{ width: 0, opacity: 0 }}
-                  style={{
-                    overflow: "hidden",
-                    display: "flex",
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    zIndex: 2200,
-                  }}
-                  transition={{ type: "Tween" }}
-                >
-                  <EditSidebar
-                    isVisible={showDriverAndCarSidebar}
-                    toggleSidebar={setShowDriverAndCarSidebar}
-                    title={"Добавить/изменить тариф"}
-                    isGray={true}
-                  >
-                    <CarAndDriver />
-                  </EditSidebar>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <MainTable
+              body={currentCountry}
+              headers={requestsTableHeaders}
+              haveInputs={true}
+              handleShowActionMenu={handleShowActionMenu}
+              showSmartFilter={showSmartFilter}
+              activeTab={activeTab}
+              handleShowActionMenuArchive={setShowActionMenuArchive}
+              isRequests={true}
+            />
           </>
         )}
-      </YMaps>
+        {activeTab === 2 && <Calculator />}
+        {activeTab === 3 && <Routes />}
+      </div>
+      {activeTab !== 2 && (
+        <>
+          {" "}
+          <AnimatePresence>
+            {showActionMenu && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                style={{ overflow: "hidden" }}
+              >
+                <ActionMenu handleItemClick={onlyOneSelected} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {!showActionMenu && !showActionMenuArchive && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+              >
+                <Pagination
+                  countriesPerPage={countriesPerPage}
+                  totalCountries={requestsTableBody.length}
+                  paginate={paginate}
+                  nextPage={nextPage}
+                  prevPage={prevPage}
+                  currentPage={currentPage}
+                  setCountriesPerPage={setCountriesPerPage}
+                  setCurrentPage={setCurrentPage}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {showActionMenuArchive && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                style={{ overflow: "hidden" }}
+              >
+                <ArchiveActionMenu />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {showSidebar && (
+              <motion.div
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: 1070, opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                style={{
+                  overflow: "hidden",
+                  display: "flex",
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  zIndex: 2200,
+                }}
+                transition={{ type: "Tween" }}
+              >
+                <EditSidebar
+                  isVisible={showSidebar}
+                  toggleSidebar={setShowSidebar}
+                  title={"Добавить/изменить тариф"}
+                  isGray={true}
+                >
+                  <EditRequest
+                    setShowCarAndDriver={setShowDriverAndCarSidebar}
+                  />
+                </EditSidebar>
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <AnimatePresence>
+            {showDriverAndCarSidebar && (
+              <motion.div
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: 1070, opacity: 1 }}
+                exit={{ width: 0, opacity: 0 }}
+                style={{
+                  overflow: "hidden",
+                  display: "flex",
+                  position: "absolute",
+                  top: 0,
+                  right: 0,
+                  zIndex: 2200,
+                }}
+                transition={{ type: "Tween" }}
+              >
+                <EditSidebar
+                  isVisible={showDriverAndCarSidebar}
+                  toggleSidebar={setShowDriverAndCarSidebar}
+                  title={"Добавить/изменить тариф"}
+                  isGray={true}
+                >
+                  <CarAndDriver />
+                </EditSidebar>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
+      )}
     </>
   );
 };
