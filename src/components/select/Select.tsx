@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { FC } from "react";
+import useOutside from "../../hooks/useOutside";
 import { useAppDispatch } from "../../store/hooks";
 import { IFullHub } from "../../types/types";
 import styles from "./Select.module.scss";
@@ -27,12 +28,14 @@ const Select: FC<SelectProps> = ({
   callback,
   secondCallback,
 }) => {
+  const { ref, isShow, setIsShow } = useOutside(false);
+
   const handleClick = () => {
-    setShowSelect(!showSelect);
+    if (items.length > 0) setIsShow(!showSelect);
   };
 
   const selectItem = (item: any) => {
-    setShowSelect(false);
+    setIsShow(false);
     if (setSelectItem) {
       setSelectItem(item.title);
     }
@@ -42,7 +45,7 @@ const Select: FC<SelectProps> = ({
   };
 
   return (
-    <div className={styles.wrap}>
+    <div className={styles.wrap} ref={ref}>
       <div className={styles.select} onClick={handleClick}>
         <div className={styles.mainText}>{text}</div>
         <div className={styles.rightSide}>
@@ -51,7 +54,7 @@ const Select: FC<SelectProps> = ({
         </div>
       </div>
       <AnimatePresence>
-        {showSelect && (
+        {isShow && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -62,11 +65,11 @@ const Select: FC<SelectProps> = ({
               position: "absolute",
               top: 50,
               left: 0,
-              height: "max-content",
               width: "100%",
               background: "#E8E8E8",
               boxShadow: "1px 1px 10px rgba(0, 0, 0, 0.25)",
               marginTop: 10,
+              overflowY: "auto",
               maxHeight: 200,
               borderRadius: 3,
             }}

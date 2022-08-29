@@ -202,6 +202,7 @@
 	background: #E8E8E8;
 	border: 1px solid #D9D9D9;
 	border-radius: 3px;
+	z-index: 4500;
 	padding: 5px 13px;
 }
 
@@ -348,4 +349,16 @@ border-radius: 3px;
 
 .selectHubWrap {
 	flex: 1 1;
+}
+
+.mapIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #8DC73F;
+	width: 40px;
+	height: 40px;
+	border-radius: 3px;
+	margin-left: 20px;
+	cursor: pointer;
 }

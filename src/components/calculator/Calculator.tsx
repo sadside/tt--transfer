@@ -15,6 +15,7 @@ import { log } from "util";
 import rightArrow from "../../assets/rightArrow.svg";
 import "./calculator.scss";
 import useOutside from "../../hooks/useOutside";
+import mapIcon from "../../assets/map.png";
 
 import {
   addHubThunk,
@@ -76,15 +77,6 @@ const Calculator = () => {
   const activeCity = useAppSelector((state) => state.calculator.activeCity);
   const zones = useAppSelector((state) => state.zone.zones);
   let hubs = useAppSelector((state) => state.calculator.hubs);
-
-  // const activeHub = useAppSelector(
-  //   (state) => state.calculator.activeFromHub
-  // );
-  const activeHubTo = useAppSelector((state) => state.calculator.activeToHub);
-
-  // const filteredHubs = hubs.filter((hub: IFullHub) => {
-  //   return hub.id !== activeHubTo.id && hub.id !== activeHubFrom.id;
-  // });
 
   const dispatch = useAppDispatch();
 
@@ -156,6 +148,12 @@ const Calculator = () => {
     },
   ];
 
+  const {
+    ref: colorSelectRef,
+    isShow: colorSelectIsShow,
+    setIsShow: colorSelectSetIsShow,
+  } = useOutside(false);
+
   const [fromCoordinates, setFromCoordinates] = useState<any>({});
   const [toCoordinates, setToCoordinates] = useState<any>({});
 
@@ -215,7 +213,7 @@ const Calculator = () => {
   };
 
   useEffect(() => {
-    setShowColorSelect(false);
+    colorSelectSetIsShow(false);
   }, [activeColor]);
 
   const iframeCoords: string = additionalRaces
@@ -267,10 +265,6 @@ const Calculator = () => {
   // const coordinatesFrom = activeHubFrom.id
   //   ? `&lat=${activeHubFrom.coordinate.latitude}&lon=${activeHubFrom.coordinate.longitude}`
   //   : `&lat=${fromCoordinates.lat}&lon=${fromCoordinates.lon}`;
-
-  const coordinatesTo = activeHubTo.id
-    ? `&lat=${activeHubTo.coordinate.latitude}&lon=${activeHubTo.coordinate.longitude}`
-    : `&lat=${toCoordinates.lat}&lon=${toCoordinates.lon}`;
 
   const carClasses: Array<any> = [
     {
@@ -399,10 +393,10 @@ const Calculator = () => {
                           return (
                             <li
                               key={city.id}
+                              //@ts-ignore
                               onClick={(): void => {
                                 dispatch(setActiveCity(city));
                                 setCityInputValue(city.name);
-                                dispatch(createCity(city.name));
                                 dispatch(
                                   getHubsThunk({
                                     region: activeRegion.name,
@@ -525,14 +519,17 @@ const Calculator = () => {
             </div>
           </form>
         </Modal>
-        {activeCity?.id && (
+        {activeCity?.id && activeRegion?.id && (
           <div className={styles.hubActions}>
             <div className={styles.selectHubWrap}>
               <Select
                 setShowSelect={setShowSelectHubFrom}
                 showSelect={showSelectHubFrom}
                 items={hubs}
-                text={activeHub.title || "Выберите хаб" || "Хабы отсутствуют"}
+                text={
+                  activeHub.title ||
+                  (hubs.length > 0 ? "Выберите хаб" : "Хабы отсутствуют")
+                }
                 secondCallback={(item: IFullHub) => {
                   dispatch(setActiveHub(item));
                   if (item.id) dispatch(getZonesById(item.id));
@@ -551,6 +548,14 @@ const Calculator = () => {
                 callback={() => setModalActive(true)}
                 style={{ backgroundColor: "#364150" }}
               />
+            </div>
+            <div className={styles.mapIcon}>
+              <a
+                href="https://yandex.ru/map-constructor/location-tool/?from=club"
+                target="_blank"
+              >
+                <img src={mapIcon} alt="" width={30} />
+              </a>
             </div>
           </div>
         )}
@@ -587,17 +592,18 @@ const Calculator = () => {
                   value={coordinates}
                   onChange={(e) => setCoordinates(e.target.value)}
                 />
-                <div className={styles.selectZoneColor}>
+                <div className={styles.selectZoneColor} ref={colorSelectRef}>
                   <div
                     className={styles.selectZoneColorBlock}
-                    onClick={() =>
-                      setShowColorSelect((prevState) => !prevState)
-                    }
+                    onClick={() => {
+                      // setShowColorSelect((prevState) => !prevState);
+                      colorSelectSetIsShow(!colorSelectIsShow);
+                    }}
                   >
                     <div className={zoneColor}>Выберите цвет</div>
                     <img src={downArrow} alt="" />
                   </div>
-                  {showColorSelect && (
+                  {colorSelectIsShow && (
                     <div className={styles.selectZoneColorMenu}>
                       <div
                         className={styles.selectZoneColorMenuItem}
@@ -667,7 +673,7 @@ const Calculator = () => {
                     width={"100%"}
                     height={480}
                   >
-                    {zones.map((zone) => {
+                    {zones?.map((zone) => {
                       let color = "",
                         ru_color = "",
                         number;
@@ -806,305 +812,291 @@ const Calculator = () => {
             </div>
           )}
 
-        {zones?.length > 0 && activeRegion && activeCity && (
-          <div className={styles.transferCalculatorWrap}>
-            <div className="destination-selection calculator-inputs">
-              <div className="from-calculator">
-                <Select
-                  setShowSelect={setShowSelect}
-                  showSelect={showSelect}
-                  setSelectItem={setSelectActiveItem}
-                  items={items}
-                  text={selectActiveItem || items[0].title}
-                />
-                {selectActiveItem === "Хаб" ? (
-                  <div style={{ marginTop: 20 }}>
-                    <div style={{ marginBottom: 10 }}>Откуда</div>
-                    <Select
-                      setShowSelect={setShowSelectHubFrom}
-                      showSelect={showSelectHubFrom}
-                      items={hubs}
-                      text={
-                        activeHub.title || "Выберите хаб" || "Хабы отсутствуют"
-                      }
-                      haveButton={true}
-                      callback={() => {
-                        setModalActive(true);
-                      }}
-                      secondCallback={(item) => {
-                        dispatch(setActiveHub(item));
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div style={{ marginTop: 20 }}>
-                    Откуда
-                    <input
-                      type="text"
-                      className="tariff-data-input"
-                      placeholder="Откуда"
-                      value={fromInputValue}
-                      onChange={async (e) => {
-                        setFromInputValue(e.target.value);
-                        const response = await axios.post(
-                          "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
-                          {
-                            query: e.target.value,
-                          },
-                          {
-                            headers: {
-                              Accept: "application/json",
-                              Authorization:
-                                "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",
-                            },
-                          }
-                        );
-                        console.log(response.data.suggestions);
-                        setFromCoordinates({});
-                        setSuggestionsForFrom(response.data.suggestions);
-                      }}
-                    />
-                  </div>
-                )}
-                {fromInputValue.length !== 0 &&
-                  Object.keys(fromCoordinates).length === 0 && (
-                    <div className={styles.citySelect}>
-                      <ul>
-                        {suggestionsForFrom.map((suggestion, index: number) => {
-                          return (
-                            <li
-                              key={index}
-                              onClick={() => {
-                                handleSuggestionFromClick(suggestion);
-                                console.log(fromCoordinates);
-                              }}
-                            >
-                              {suggestion.value}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  )}
-              </div>
-              <img src={rightArrow} alt="" />
-              <div className="to-calculator">
-                <Select
-                  setShowSelect={setShowSecondSelect}
-                  showSelect={showSecondSelect}
-                  setSelectItem={setSecondSelectActiveItem}
-                  items={items}
-                  text={selectSecondActiveItem || items[0].title}
-                />
+        {/*{zones?.length > 0 && activeRegion && activeCity && (*/}
+        {/*  <div className={styles.transferCalculatorWrap}>*/}
+        {/*    <div className="destination-selection calculator-inputs">*/}
+        {/*      <div className="from-calculator">*/}
+        {/*        <Select*/}
+        {/*          setShowSelect={setShowSelect}*/}
+        {/*          showSelect={showSelect}*/}
+        {/*          setSelectItem={setSelectActiveItem}*/}
+        {/*          items={items}*/}
+        {/*          text={selectActiveItem || items[0].title}*/}
+        {/*        />*/}
+        {/*        {selectActiveItem === "Хаб" ? (*/}
+        {/*          <div style={{ marginTop: 20 }}>*/}
+        {/*            <div style={{ marginBottom: 10 }}>Откуда</div>*/}
+        {/*            <Select*/}
+        {/*              setShowSelect={setShowSelectHubFrom}*/}
+        {/*              showSelect={showSelectHubFrom}*/}
+        {/*              items={hubs}*/}
+        {/*              text={*/}
+        {/*                activeHub.title || "Выберите хаб" || "Хабы отсутствуют"*/}
+        {/*              }*/}
+        {/*              haveButton={true}*/}
+        {/*              callback={() => {*/}
+        {/*                setModalActive(true);*/}
+        {/*              }}*/}
+        {/*              secondCallback={(item) => {*/}
+        {/*                dispatch(setActiveHub(item));*/}
+        {/*              }}*/}
+        {/*            />*/}
+        {/*          </div>*/}
+        {/*        ) : (*/}
+        {/*          <div style={{ marginTop: 20 }}>*/}
+        {/*            Откуда*/}
+        {/*            <input*/}
+        {/*              type="text"*/}
+        {/*              className="tariff-data-input"*/}
+        {/*              placeholder="Откуда"*/}
+        {/*              value={fromInputValue}*/}
+        {/*              onChange={async (e) => {*/}
+        {/*                setFromInputValue(e.target.value);*/}
+        {/*                const response = await axios.post(*/}
+        {/*                  "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",*/}
+        {/*                  {*/}
+        {/*                    query: e.target.value,*/}
+        {/*                  },*/}
+        {/*                  {*/}
+        {/*                    headers: {*/}
+        {/*                      Accept: "application/json",*/}
+        {/*                      Authorization:*/}
+        {/*                        "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",*/}
+        {/*                    },*/}
+        {/*                  }*/}
+        {/*                );*/}
+        {/*                console.log(response.data.suggestions);*/}
+        {/*                setFromCoordinates({});*/}
+        {/*                setSuggestionsForFrom(response.data.suggestions);*/}
+        {/*              }}*/}
+        {/*            />*/}
+        {/*          </div>*/}
+        {/*        )}*/}
+        {/*        {fromInputValue.length !== 0 &&*/}
+        {/*          Object.keys(fromCoordinates).length === 0 && (*/}
+        {/*            <div className={styles.citySelect}>*/}
+        {/*              <ul>*/}
+        {/*                {suggestionsForFrom.map((suggestion, index: number) => {*/}
+        {/*                  return (*/}
+        {/*                    <li*/}
+        {/*                      key={index}*/}
+        {/*                      onClick={() => {*/}
+        {/*                        handleSuggestionFromClick(suggestion);*/}
+        {/*                        console.log(fromCoordinates);*/}
+        {/*                      }}*/}
+        {/*                    >*/}
+        {/*                      {suggestion.value}*/}
+        {/*                    </li>*/}
+        {/*                  );*/}
+        {/*                })}*/}
+        {/*              </ul>*/}
+        {/*            </div>*/}
+        {/*          )}*/}
+        {/*      </div>*/}
+        {/*      <img src={rightArrow} alt="" />*/}
+        {/*      <div className="to-calculator">*/}
+        {/*        <Select*/}
+        {/*          setShowSelect={setShowSecondSelect}*/}
+        {/*          showSelect={showSecondSelect}*/}
+        {/*          setSelectItem={setSecondSelectActiveItem}*/}
+        {/*          items={items}*/}
+        {/*          text={selectSecondActiveItem || items[0].title}*/}
+        {/*        />*/}
 
-                {selectSecondActiveItem === "Хаб" ? (
-                  <div style={{ marginTop: 20 }}>
-                    <div style={{ marginBottom: 10 }}>Куда</div>
-                    <Select
-                      setShowSelect={setShowSelectHubTo}
-                      showSelect={showSelectHubTo}
-                      items={hubs}
-                      text={
-                        activeHubTo.title ||
-                        "Выберите хаб" ||
-                        "Хабы отсутствуют"
-                      }
-                      haveButton={true}
-                      secondCallback={(item) => {
-                        dispatch(setActiveToHub(item));
-                      }}
-                    />
-                  </div>
-                ) : (
-                  <div style={{ marginTop: 20 }}>
-                    Куда
-                    <input
-                      type="text"
-                      className="tariff-data-input"
-                      placeholder="Куда"
-                      onChange={async (e) => {
-                        setToInputValue(e.target.value);
-                        const response = await axios.post(
-                          "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
-                          {
-                            query: e.target.value,
-                          },
-                          {
-                            headers: {
-                              Accept: "application/json",
-                              Authorization:
-                                "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",
-                            },
-                          }
-                        );
-                        console.log(response.data.suggestions);
-                        setToCoordinates({});
-                        setSuggestionsForTo(response.data.suggestions);
-                      }}
-                      value={toInputValue}
-                    />
-                  </div>
-                )}
-                {toInputValue.length !== 0 &&
-                  Object.keys(toCoordinates).length === 0 && (
-                    <div className={styles.citySelect}>
-                      <ul>
-                        {suggestionsForTo.map((suggestion, index: number) => {
-                          return (
-                            <li
-                              key={index}
-                              onClick={() => {
-                                handleSuggestionToClick(suggestion);
-                                console.log(fromCoordinates);
-                              }}
-                            >
-                              {suggestion.value}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  )}
-              </div>
-            </div>
-            <div className="calculator-additional-inputs">
-              <div>
-                <span style={{ color: "red" }}>*</span>Дополнительные заезды
-                {additionalRaces.map((item, index) => {
-                  return (
-                    <div style={{ position: "relative" }}>
-                      <input
-                        type="text"
-                        className="tariff-data-input"
-                        placeholder="Откуда"
-                        value={item.state}
-                        onChange={(e) => {
-                          console.log(e.target.value);
-                          item.state = e.target.value;
+        {/*        {selectSecondActiveItem === "Хаб" ? (*/}
+        {/*          <div style={{ marginTop: 20 }}>*/}
+        {/*            <div style={{ marginBottom: 10 }}>Куда</div>*/}
+        {/*            <Select*/}
+        {/*              setShowSelect={setShowSelectHubTo}*/}
+        {/*              showSelect={showSelectHubTo}*/}
+        {/*              items={hubs}*/}
+        {/*              text={*/}
+        {/*                activeHub.title ||*/}
+        {/*                "Выберите хаб" ||*/}
+        {/*                "Хабы отсутствуют"*/}
+        {/*              }*/}
+        {/*              haveButton={true}*/}
+        {/*              secondCallback={(item) => {*/}
+        {/*                dispatch(setActiveToHub(item));*/}
+        {/*              }}*/}
+        {/*            />*/}
+        {/*          </div>*/}
+        {/*        ) : (*/}
+        {/*          <div style={{ marginTop: 20 }}>*/}
+        {/*            Куда*/}
+        {/*            <input*/}
+        {/*              type="text"*/}
+        {/*              className="tariff-data-input"*/}
+        {/*              placeholder="Куда"*/}
+        {/*              onChange={async (e) => {*/}
+        {/*                setToInputValue(e.target.value);*/}
+        {/*                const response = await axios.post(*/}
+        {/*                  "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",*/}
+        {/*                  {*/}
+        {/*                    query: e.target.value,*/}
+        {/*                  },*/}
+        {/*                  {*/}
+        {/*                    headers: {*/}
+        {/*                      Accept: "application/json",*/}
+        {/*                      Authorization:*/}
+        {/*                        "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",*/}
+        {/*                    },*/}
+        {/*                  }*/}
+        {/*                );*/}
+        {/*                console.log(response.data.suggestions);*/}
+        {/*                setToCoordinates({});*/}
+        {/*                setSuggestionsForTo(response.data.suggestions);*/}
+        {/*              }}*/}
+        {/*              value={toInputValue}*/}
+        {/*            />*/}
+        {/*          </div>*/}
+        {/*        )}*/}
+        {/*        {toInputValue.length !== 0 &&*/}
+        {/*          Object.keys(toCoordinates).length === 0 && (*/}
+        {/*            <div className={styles.citySelect}>*/}
+        {/*              <ul>*/}
+        {/*                {suggestionsForTo.map((suggestion, index: number) => {*/}
+        {/*                  return (*/}
+        {/*                    <li*/}
+        {/*                      key={index}*/}
+        {/*                      onClick={() => {*/}
+        {/*                        handleSuggestionToClick(suggestion);*/}
+        {/*                        console.log(fromCoordinates);*/}
+        {/*                      }}*/}
+        {/*                    >*/}
+        {/*                      {suggestion.value}*/}
+        {/*                    </li>*/}
+        {/*                  );*/}
+        {/*                })}*/}
+        {/*              </ul>*/}
+        {/*            </div>*/}
+        {/*          )}*/}
+        {/*      </div>*/}
+        {/*    </div>*/}
+        {/*    <div className="calculator-additional-inputs">*/}
+        {/*      <div>*/}
+        {/*        <span style={{ color: "red" }}>*</span>Дополнительные заезды*/}
+        {/*        {additionalRaces.map((item, index) => {*/}
+        {/*          return (*/}
+        {/*            <div style={{ position: "relative" }}>*/}
+        {/*              <input*/}
+        {/*                type="text"*/}
+        {/*                className="tariff-data-input"*/}
+        {/*                placeholder="Откуда"*/}
+        {/*                value={item.state}*/}
+        {/*                onChange={(e) => {*/}
+        {/*                  console.log(e.target.value);*/}
+        {/*                  item.state = e.target.value;*/}
 
-                          axios
-                            .post(
-                              "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
-                              {
-                                query: e.target.value,
-                              },
-                              {
-                                headers: {
-                                  Accept: "application/json",
-                                  Authorization:
-                                    "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",
-                                },
-                              }
-                            )
-                            .then((response) => {
-                              item.suggestions = response.data.suggestions;
-                              item.coordinates = [];
-                            });
-                          setState(() => Math.random());
-                        }}
-                      />
-                      {item.state.length !== 0 &&
-                        item.coordinates.length === 0 && (
-                          <div className={styles.citySelect}>
-                            <ul>
-                              {item.suggestions.map(
-                                (suggestion: any, index: number) => {
-                                  return (
-                                    <li
-                                      key={index}
-                                      onClick={() => {
-                                        handleAdditionalRaceClick(
-                                          suggestion,
-                                          item
-                                        );
-                                        setState(() => Math.random());
-                                      }}
-                                    >
-                                      {suggestion.value}
-                                    </li>
-                                  );
-                                }
-                              )}
-                            </ul>
-                          </div>
-                        )}
-                    </div>
-                  );
-                })}
-              </div>
-              <div className={"select-car-class"}>
-                <div style={{ marginBottom: 10 }}>
-                  <span style={{ color: "red" }}>*</span>Выберите класс авто
-                </div>
-                <Select
-                  setShowSelect={setShowCarClassSelect}
-                  showSelect={showCarClassSelect}
-                  items={carClasses}
-                  setSelectItem={setCarClass}
-                  text={carClass || carClasses[0].title}
-                />
-              </div>
-            </div>
-            <div
-              className="add-race"
-              onClick={() =>
-                setAdditionalRaces((prevState) => [
-                  ...prevState,
-                  {
-                    state: "",
-                    suggestions: [],
-                    coordinates: [],
-                  },
-                ])
-              }
-            >
-              Добавить еще адрес
-            </div>
-            <div className="calculator-calc-button">
-              <Button
-                text="Рассчитать"
-                style={{ height: 40, width: 180 }}
-                callback={() => {
-                  setShowRoutes(true);
-                }}
-              />
-            </div>
-            <div className="route-info">
-              <div className="left-route-info">
-                <div>Расстояние: 421км</div>
-                <div>Время: 7ч 9мин</div>
-              </div>
-              <div className="right-route-info">
-                <div>Рекомендуемая стоимость:</div>
-                <div
-                  style={{ display: "flex", justifyContent: "space-between" }}
-                >
-                  <div style={{ marginRight: 30 }}>
-                    Заказчик: <span>15 000</span>
-                  </div>
+        {/*                  axios*/}
+        {/*                    .post(*/}
+        {/*                      "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",*/}
+        {/*                      {*/}
+        {/*                        query: e.target.value,*/}
+        {/*                      },*/}
+        {/*                      {*/}
+        {/*                        headers: {*/}
+        {/*                          Accept: "application/json",*/}
+        {/*                          Authorization:*/}
+        {/*                            "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",*/}
+        {/*                        },*/}
+        {/*                      }*/}
+        {/*                    )*/}
+        {/*                    .then((response) => {*/}
+        {/*                      item.suggestions = response.data.suggestions;*/}
+        {/*                      item.coordinates = [];*/}
+        {/*                    });*/}
+        {/*                  setState(() => Math.random());*/}
+        {/*                }}*/}
+        {/*              />*/}
+        {/*              {item.state.length !== 0 &&*/}
+        {/*                item.coordinates.length === 0 && (*/}
+        {/*                  <div className={styles.citySelect}>*/}
+        {/*                    <ul>*/}
+        {/*                      {item.suggestions.map(*/}
+        {/*                        (suggestion: any, index: number) => {*/}
+        {/*                          return (*/}
+        {/*                            <li*/}
+        {/*                              key={index}*/}
+        {/*                              onClick={() => {*/}
+        {/*                                handleAdditionalRaceClick(*/}
+        {/*                                  suggestion,*/}
+        {/*                                  item*/}
+        {/*                                );*/}
+        {/*                                setState(() => Math.random());*/}
+        {/*                              }}*/}
+        {/*                            >*/}
+        {/*                              {suggestion.value}*/}
+        {/*                            </li>*/}
+        {/*                          );*/}
+        {/*                        }*/}
+        {/*                      )}*/}
+        {/*                    </ul>*/}
+        {/*                  </div>*/}
+        {/*                )}*/}
+        {/*            </div>*/}
+        {/*          );*/}
+        {/*        })}*/}
+        {/*      </div>*/}
+        {/*      <div className={"select-car-class"}>*/}
+        {/*        <div style={{ marginBottom: 10 }}>*/}
+        {/*          <span style={{ color: "red" }}>*</span>Выберите класс авто*/}
+        {/*        </div>*/}
+        {/*        <Select*/}
+        {/*          setShowSelect={setShowCarClassSelect}*/}
+        {/*          showSelect={showCarClassSelect}*/}
+        {/*          items={carClasses}*/}
+        {/*          setSelectItem={setCarClass}*/}
+        {/*          text={carClass || carClasses[0].title}*/}
+        {/*        />*/}
+        {/*      </div>*/}
+        {/*    </div>*/}
+        {/*    <div*/}
+        {/*      className="add-race"*/}
+        {/*      onClick={() =>*/}
+        {/*        setAdditionalRaces((prevState) => [*/}
+        {/*          ...prevState,*/}
+        {/*          {*/}
+        {/*            state: "",*/}
+        {/*            suggestions: [],*/}
+        {/*            coordinates: [],*/}
+        {/*          },*/}
+        {/*        ])*/}
+        {/*      }*/}
+        {/*    >*/}
+        {/*      Добавить еще адрес*/}
+        {/*    </div>*/}
+        {/*    <div className="calculator-calc-button">*/}
+        {/*      <Button*/}
+        {/*        text="Рассчитать"*/}
+        {/*        style={{ height: 40, width: 180 }}*/}
+        {/*        callback={() => {*/}
+        {/*          setShowRoutes(true);*/}
+        {/*        }}*/}
+        {/*      />*/}
+        {/*    </div>*/}
+        {/*    <div className="route-info">*/}
+        {/*      <div className="left-route-info">*/}
+        {/*        <div>Расстояние: 421км</div>*/}
+        {/*        <div>Время: 7ч 9мин</div>*/}
+        {/*      </div>*/}
+        {/*      <div className="right-route-info">*/}
+        {/*        <div>Рекомендуемая стоимость:</div>*/}
+        {/*        <div*/}
+        {/*          style={{ display: "flex", justifyContent: "space-between" }}*/}
+        {/*        >*/}
+        {/*          <div style={{ marginRight: 30 }}>*/}
+        {/*            Заказчик: <span>15 000</span>*/}
+        {/*          </div>*/}
 
-                  <div>
-                    Водитель: <span>10 000</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        {showRotes && activeCity && activeRegion && (
-          <div className={styles.iframeWrap}>
-            {/*<iframe*/}
-            {/*  src={`http://localhost:8000/map/route/?region=${*/}
-            {/*    activeRegion?.name*/}
-            {/*  }&city=${activeCity?.name}${coordinatesFrom}${*/}
-            {/*    additionalRaces.length !== 0 && iframeCoords*/}
-            {/*  }${coordinatesTo}`}*/}
-            {/*  width="100%"*/}
-            {/*  height={480}*/}
-            {/*  frameBorder="none"*/}
-            {/*></iframe>*/}
-          </div>
-        )}
+        {/*          <div>*/}
+        {/*            Водитель: <span>10 000</span>*/}
+        {/*          </div>*/}
+        {/*        </div>*/}
+        {/*      </div>*/}
+        {/*    </div>*/}
+        {/*  </div>*/}
+        {/*)}*/}
       </div>
     </>
   );

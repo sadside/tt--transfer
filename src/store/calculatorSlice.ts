@@ -7,7 +7,9 @@ import {
 import { AxiosResponse } from "axios";
 import calculator, { HubFormValues } from "../components/calculator/Calculator";
 import CalculatorService from "../services/CalculatorService";
+import { ZoneService } from "../services/ZoneService";
 import {
+  IAddress,
   ICity,
   IFullHub,
   IHub,
@@ -31,6 +33,10 @@ export type CalculatorState = {
   activeToHub: IFullHub;
   hubCity: IHubCity;
   activeHub: IFullHub;
+  activeAddressFrom: IAddress;
+  activeAddressTo: IAddress;
+  addressFromType: string;
+  addressToType: string;
 };
 
 const initialState: CalculatorState = {
@@ -106,6 +112,22 @@ const initialState: CalculatorState = {
     id: null,
     title: "",
   },
+  activeAddressFrom: {
+    address: "",
+    coordinates: {
+      lat: null,
+      lon: null,
+    },
+  },
+  activeAddressTo: {
+    address: "",
+    coordinates: {
+      lat: null,
+      lon: null,
+    },
+  },
+  addressFromType: "",
+  addressToType: "",
 };
 
 export const getRegionsThunk = createAsyncThunk<
@@ -160,18 +182,26 @@ export const getHubsThunk = createAsyncThunk<
   IHubs,
   any,
   { rejectValue: string }
->("calculator/getHubsThunk", async ({ region, city }, { rejectWithValue }) => {
-  try {
-    const res: AxiosResponse<IHubs> = await CalculatorService.getHubs(
-      region,
-      city
-    );
+>(
+  "calculator/getHubsThunk",
+  async ({ region, city }, { rejectWithValue, getState }) => {
+    try {
+      await ZoneService.createCity({
+        region: region,
+        city: city,
+      });
 
-    return res.data;
-  } catch (e) {
-    return rejectWithValue("Error");
+      const res: AxiosResponse<IHubs> = await CalculatorService.getHubs(
+        region,
+        city
+      );
+
+      return res.data;
+    } catch (e) {
+      return rejectWithValue("Error");
+    }
   }
-});
+);
 
 const calculatorSlice = createSlice({
   name: "calculator",
@@ -184,6 +214,7 @@ const calculatorSlice = createSlice({
       } else {
         state.activeRegion = action.payload;
         state.cities = action.payload.areas;
+        state.activeCity = null;
       }
     },
     setActiveHub(state, action) {
@@ -206,6 +237,12 @@ const calculatorSlice = createSlice({
           return item.name.toLowerCase().includes(action.payload.toLowerCase());
         });
       }
+    },
+    setActiveAddressFrom(state, action) {
+      state.activeAddressFrom = action.payload;
+    },
+    setActiveAddressTo(state, action) {
+      state.activeAddressTo = action.payload;
     },
     clearFromHub(state) {
       state.activeFromHub = {
@@ -247,6 +284,29 @@ const calculatorSlice = createSlice({
     },
     setActiveCity(state, action) {
       state.activeCity = action.payload;
+      state.activeHub = {
+        city: {
+          center: { id: null, latitude: null, longitude: null },
+          city: "",
+          country: "",
+          id: null,
+          region: "",
+        },
+        coordinate: {
+          id: null,
+          latitude: null,
+          longitude: null,
+        },
+        description: "",
+        id: null,
+        title: "",
+      };
+    },
+    setAddressFromType(state, action) {
+      state.addressFromType = action.payload;
+    },
+    setAddressToType(state, action) {
+      state.addressToType = action.payload;
     },
     filterCity(state, action) {
       if (action.payload === "") {
@@ -312,6 +372,10 @@ export const {
   clearFromHub,
   clearToHub,
   setActiveHub,
+  setAddressFromType,
+  setAddressToType,
+  setActiveAddressTo,
+  setActiveAddressFrom,
 } = calculatorSlice.actions;
 
 export default calculatorSlice.reducer;

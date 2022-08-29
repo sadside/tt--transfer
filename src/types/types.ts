@@ -128,3 +128,11 @@ export interface IHubCity {
     longitude: number | null;
   };
 }
+
+export interface IAddress {
+  address: string;
+  coordinates: {
+    lat: number | null;
+    lon: number | null;
+  };
+}

@@ -136,7 +136,7 @@ const Request = () => {
       <Tabs items={requestsTabs} handleTabClick={handleTabClick} />
       <div
         className={`requests-wrap ${
-          activeTab === 2 && "active-tab-requests-wrap"
+          (activeTab === 2 || activeTab === 3) && "active-tab-requests-wrap"
         }`}
       >
         {activeTab === 0 && (
@@ -215,9 +215,8 @@ const Request = () => {
         {activeTab === 2 && <Calculator />}
         {activeTab === 3 && <Routes />}
       </div>
-      {activeTab !== 2 && (
+      {activeTab !== 2 && activeTab !== 3 && (
         <>
-          {" "}
           <AnimatePresence>
             {showActionMenu && (
               <motion.div

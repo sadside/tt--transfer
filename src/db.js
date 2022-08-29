@@ -17,6 +17,45 @@ export const orderTabs = ["Форма заявки"];
 export const selectCarTabs = ["Форма заявки"];
 export const ordersTabs = ["Заказы", "Архив"];
 
+export const carClasses = [
+  {
+    title: "Стандарт",
+  },
+  {
+    title: "Комфорт",
+  },
+  {
+    title: "Минивен",
+  },
+  {
+    title: "Бизнес класс",
+  },
+  {
+    title: "Представительский",
+  },
+  {
+    title: "SUV",
+  },
+  {
+    title: "Микроавтобус",
+  },
+  {
+    title: "Минивен Бизнес",
+  },
+  {
+    title: "Микроавтобус Бизнес",
+  },
+  {
+    title: "Автобус 30+",
+  },
+  {
+    title: "Автобус 43+",
+  },
+  {
+    title: "Автобус 50+",
+  },
+];
+
 export const carsClasses = [
   {
     carClass: "Бизнес класс",

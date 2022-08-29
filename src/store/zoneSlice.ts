@@ -25,23 +25,18 @@ export const createCity = createAsyncThunk<
   void,
   string,
   { rejectValue: string; state: { calculator: CalculatorState } }
->(
-  "zone/getZone",
-  async (activeCity, { rejectWithValue, getState, dispatch }) => {
-    const activeRegion = getState().calculator.activeRegion?.name;
+>("zone/getZone", async (activeCity, { rejectWithValue, getState }) => {
+  const activeRegion = getState().calculator.activeRegion?.name;
 
-    try {
-      const res: AxiosResponse<any> = await ZoneService.createCity({
-        region: activeRegion,
-        city: activeCity,
-      });
-
-      dispatch(getZonesById(10));
-    } catch (e: any) {
-      rejectWithValue(e.message);
-    }
+  try {
+    const res: AxiosResponse<any> = await ZoneService.createCity({
+      region: activeRegion,
+      city: activeCity,
+    });
+  } catch (e: any) {
+    rejectWithValue(e.message);
   }
-);
+});
 
 // export const getZones = createAsyncThunk<
 //   IZone[],
