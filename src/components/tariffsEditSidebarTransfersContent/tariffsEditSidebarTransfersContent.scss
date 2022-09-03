@@ -121,13 +121,13 @@
 }
 
 .scroll-table-body-tariff {
-	overflow-x: auto;
+	overflow: auto;
 	margin-top: 0;
 	height: 100%;
 }
 
 .scroll-table-transfer table {
-	width: 100%;
+	// width: 100%;
 	table-layout: fixed;
 	border: none;
 	border-collapse: collapse;
@@ -187,15 +187,17 @@
 	border: none;
 	outline: none;
 	padding: 0 10px;
+	text-align: center;
 }
 
 .tariff-price-wrap {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	
-	div {
-		margin-left: 10px;
-	}
+	// div {
+	// 	margin-left: 10px;
+	// }
 }
 
 .tariff-price-wrap:first-child {

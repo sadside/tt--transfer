@@ -1,52 +1,89 @@
+import { nanoid } from "@reduxjs/toolkit";
 import axios from "axios";
 import { FC, useState } from "react";
-import { carClasses } from "../../db";
+import { carsClasses } from "../../db";
 import {
+  addAdditionalRace,
+  clearFromHub,
+  clearToHub,
   setActiveAddressFrom,
+  setActiveAddressTo,
   setActiveFromHub,
   setActiveHub,
   setActiveToHub,
   setAddressFromType,
+  setAddressToType,
   setShowModal,
 } from "../../store/calculatorSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { IFullHub } from "../../types/types";
+import { getSuggestions } from "../../store/zoneSlice";
+import { IAdditionalRace, IFullHub } from "../../types/types";
+import AdditionalRace from "../additionalRace/AdditionalRace";
+import EditAddress from "../editAddress/EditAddress";
+import Modal from "../modal/Modal";
 import Select from "../select/Select";
 import Button from "../ui/button/Button";
+import lodash from "lodash";
 import styles from "./Routes.module.scss";
 import rightArrow from "../../assets/rightArrow.svg";
 
 const Routes: FC = () => {
   const activeRegion = useAppSelector((state) => state.calculator.activeRegion);
   const activeCity = useAppSelector((state) => state.calculator.activeCity);
-  const activeHub = useAppSelector((state) => state.calculator.activeHub);
   const hubs = useAppSelector((state) => state.calculator.hubs);
   const activeHubTo = useAppSelector((state) => state.calculator.activeToHub);
+  const additionalRaces = useAppSelector(
+    (state) => state.calculator.additionalRaces
+  );
 
   const [showSelect, setShowSelect] = useState(false);
   const [showSelectHubFrom, setShowSelectHubFrom] = useState(false);
-  // const [selectActiveItem, setSelectActiveItem] = useState("");
-
-  const [fromInputValue, setFromInputValue] = useState("");
-  const [toInputValue, setToInputValue] = useState("");
-  const [additionalRaces, setAdditionalRaces] = useState<any[]>([
-    {
-      state: "",
-      suggestions: [],
-      coordinates: [],
-    },
-  ]);
 
   const addressFromType = useAppSelector(
     (state) => state.calculator.addressFromType
   );
 
+  const addressToType = useAppSelector(
+    (state) => state.calculator.addressToType
+  );
+
   const setSelectActiveItem = (type: string) => {
     dispatch(setAddressFromType(type));
+    dispatch(
+      setActiveAddressFrom({
+        address: "",
+        coordinates: {
+          lat: null,
+          lon: null,
+        },
+      })
+    );
+    dispatch(clearFromHub());
+  };
+
+  const setSecondSelectActiveItem = (type: string) => {
+    dispatch(setAddressToType(type));
+    dispatch(
+      setActiveAddressTo({
+        address: "",
+        coordinates: {
+          lat: null,
+          lon: null,
+        },
+      })
+    );
+    dispatch(clearToHub());
   };
 
   const activeHubFrom = useAppSelector(
     (state) => state.calculator.activeFromHub
+  );
+
+  const activeAddressFrom = useAppSelector(
+    (state) => state.calculator.activeAddressFrom
+  );
+  const activeAddressTo = useAppSelector(
+    (state) => state.calculator.activeAddressTo
   );
 
   const filteredHubs = hubs.filter((hub: IFullHub) => {
@@ -56,21 +93,21 @@ const Routes: FC = () => {
 
   const coordinatesFrom = activeHubFrom.id
     ? `&lat=${activeHubFrom.coordinate.latitude}&lon=${activeHubFrom.coordinate.longitude}`
-    : `&lat=${fromCoordinates.lat}&lon=${fromCoordinates.lon}`;
+    : `&lat=${activeAddressFrom.coordinates.lat}&lon=${activeAddressFrom.coordinates.lon}`;
 
   console.log("coooords: ", coordinatesFrom);
 
   const [toCoordinates, setToCoordinates] = useState<any>({});
-  const [state, setState] = useState(0);
 
   const [suggestionsForTo, setSuggestionsForTo] = useState<Array<any>>([]);
   const [suggestionsForFrom, setSuggestionsForFrom] = useState<Array<any>>([]);
   const [carClass, setCarClass] = useState("");
 
   const [showSecondSelect, setShowSecondSelect] = useState(false);
-  const [selectSecondActiveItem, setSecondSelectActiveItem] = useState("");
   const [showSelectHubTo, setShowSelectHubTo] = useState(false);
   const [showCarClassSelect, setShowCarClassSelect] = useState(false);
+
+  const [additionalRacesValue, setAdditionalRacesValue] = useState("");
 
   const dispatch = useAppDispatch();
 
@@ -82,46 +119,67 @@ const Routes: FC = () => {
       title: "Хаб",
     },
   ];
-  const setModalActive = (bool: boolean) => {
-    dispatch(setShowModal(bool));
-  };
+
+  const [showModal, setShowModal] = useState(false);
 
   const handleSuggestionFromClick = (suggestion: any) => {
-    setFromInputValue(suggestion.value);
-    setFromCoordinates({
-      lat: suggestion.data["geo_lat"],
-      lon: suggestion.data["geo_lon"],
-    });
+    setShowSelect(false);
+    dispatch(
+      setActiveAddressFrom({
+        address: suggestion.value,
+        coordinates: {
+          lat: suggestion.data["geo_lat"],
+          lon: suggestion.data["geo_lon"],
+        },
+      })
+    );
   };
 
   const handleSuggestionToClick = (suggestion: any) => {
-    setToInputValue(suggestion.value);
-    setToCoordinates({
-      lat: suggestion.data["geo_lat"],
-      lon: suggestion.data["geo_lon"],
-    });
+    dispatch(
+      setActiveAddressTo({
+        address: suggestion.value,
+        coordinates: {
+          lat: suggestion.data["geo_lat"],
+          lon: suggestion.data["geo_lon"],
+        },
+      })
+    );
   };
 
-  const [showRotes, setShowRoutes] = useState(false);
+  const suggestions = useAppSelector((state) => state.zone.suggestions);
+  console.log(suggestions);
 
-  const handleAdditionalRaceClick = (suggestion: any, input: any) => {
-    input.state = suggestion.value;
-    input.coordinates = [
-      suggestion.data["geo_lat"],
-      suggestion.data["geo_lon"],
-    ];
+  const handleAdditionalRaceClick = (suggestion: any) => {
+    dispatch(
+      addAdditionalRace({
+        id: nanoid(),
+        value: suggestion.value,
+        coordinates: suggestion.coordinates,
+      })
+    );
+    setAdditionalRacesValue("");
   };
+
   const coordinatesTo = activeHubTo.id
     ? `&lat=${activeHubTo.coordinate.latitude}&lon=${activeHubTo.coordinate.longitude}`
-    : `&lat=${toCoordinates.lat}&lon=${toCoordinates.lon}`;
+    : `&lat=${activeAddressTo.coordinates.lat}&lon=${activeAddressTo.coordinates.lon}`;
+
+  const showRoutes =
+    coordinatesTo.indexOf("null") === -1 &&
+    coordinatesFrom.indexOf("null") === -1;
 
   const iframeCoords: string = additionalRaces
-    .map((item) => {
+    .map((item: IAdditionalRace) => {
       if (item.coordinates.length !== 0) {
         return `&lat=${item.coordinates[0]}&lon=${item.coordinates[1]}`;
       }
     })
     .join("");
+
+  if (!activeCity || !activeRegion) {
+    return <div>Введите город и регион в разделе "Зонирование"</div>;
+  }
 
   return (
     <div className={styles.mainWrap}>
@@ -158,9 +216,17 @@ const Routes: FC = () => {
                   type="text"
                   className="tariff-data-input"
                   placeholder="Откуда"
-                  value={fromInputValue}
+                  value={activeAddressFrom.address}
                   onChange={async (e) => {
-                    setFromInputValue(e.target.value);
+                    dispatch(
+                      setActiveAddressFrom({
+                        address: e.target.value,
+                        coordinates: {
+                          lat: null,
+                          lon: null,
+                        },
+                      })
+                    );
                     const response = await axios.post(
                       "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
                       {
@@ -181,8 +247,8 @@ const Routes: FC = () => {
                 />
               </div>
             )}
-            {fromInputValue.length !== 0 &&
-              Object.keys(fromCoordinates).length === 0 && (
+            {activeAddressFrom.address.length !== 0 &&
+              !activeAddressFrom.coordinates.lat && (
                 <div className={styles.citySelect}>
                   <ul>
                     {suggestionsForFrom.map((suggestion, index: number) => {
@@ -209,16 +275,16 @@ const Routes: FC = () => {
               showSelect={showSecondSelect}
               setSelectItem={setSecondSelectActiveItem}
               items={items}
-              text={selectSecondActiveItem || items[0].title}
+              text={addressToType || items[0].title}
             />
 
-            {selectSecondActiveItem === "Хаб" ? (
+            {addressToType === "Хаб" ? (
               <div style={{ marginTop: 20 }}>
                 <div style={{ marginBottom: 10 }}>Куда</div>
                 <Select
                   setShowSelect={setShowSelectHubTo}
                   showSelect={showSelectHubTo}
-                  items={hubs}
+                  items={filteredHubs}
                   text={
                     activeHubTo.title || "Выберите хаб" || "Хабы отсутствуют"
                   }
@@ -236,7 +302,16 @@ const Routes: FC = () => {
                   className="tariff-data-input"
                   placeholder="Куда"
                   onChange={async (e) => {
-                    setToInputValue(e.target.value);
+                    dispatch(
+                      setActiveAddressTo({
+                        address: e.target.value,
+                        coordinates: {
+                          lat: null,
+                          lon: null,
+                        },
+                      })
+                    );
+
                     const response = await axios.post(
                       "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
                       {
@@ -254,12 +329,12 @@ const Routes: FC = () => {
                     setToCoordinates({});
                     setSuggestionsForTo(response.data.suggestions);
                   }}
-                  value={toInputValue}
+                  value={activeAddressTo.address}
                 />
               </div>
             )}
-            {toInputValue.length !== 0 &&
-              Object.keys(toCoordinates).length === 0 && (
+            {activeAddressTo.address.length !== 0 &&
+              !activeAddressTo.coordinates.lat && (
                 <div className={styles.citySelect}>
                   <ul>
                     {suggestionsForTo.map((suggestion, index: number) => {
@@ -283,100 +358,69 @@ const Routes: FC = () => {
         <div className="calculator-additional-inputs">
           <div>
             <span style={{ color: "red" }}>*</span>Дополнительные заезды
-            {additionalRaces.map((item, index) => {
-              return (
-                <div style={{ position: "relative" }}>
-                  <input
-                    type="text"
-                    className="tariff-data-input"
-                    placeholder="Откуда"
-                    value={item.state}
-                    onChange={(e) => {
-                      console.log(e.target.value);
-                      item.state = e.target.value;
-
-                      axios
-                        .post(
-                          "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
-                          {
-                            query: e.target.value,
-                          },
-                          {
-                            headers: {
-                              Accept: "application/json",
-                              Authorization:
-                                "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",
-                            },
-                          }
-                        )
-                        .then((response) => {
-                          item.suggestions = response.data.suggestions;
-                          item.coordinates = [];
-                        });
-                      setState(() => Math.random());
-                    }}
-                  />
-                  {item.state.length !== 0 && item.coordinates.length === 0 && (
-                    <div className={styles.citySelect}>
-                      <ul>
-                        {item.suggestions.map(
-                          (suggestion: any, index: number) => {
-                            return (
-                              <li
-                                key={index}
-                                onClick={() => {
-                                  handleAdditionalRaceClick(suggestion, item);
-                                  setState(() => Math.random());
-                                }}
-                              >
-                                {suggestion.value}
-                              </li>
-                            );
-                          }
-                        )}
-                      </ul>
-                    </div>
-                  )}
+            <div style={{ position: "relative" }}>
+              <input
+                type="text"
+                className="tariff-data-input"
+                style={{ width: "100%" }}
+                placeholder="Откуда"
+                value={additionalRacesValue}
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  setAdditionalRacesValue(e.target.value);
+                  dispatch(getSuggestions(e.target.value));
+                }}
+              />
+              {additionalRacesValue.length !== 0 && (
+                <div className={styles.citySelect}>
+                  <ul>
+                    {suggestions.map((suggestion: any, index: number) => {
+                      return (
+                        <li
+                          key={index}
+                          onClick={() => {
+                            handleAdditionalRaceClick(suggestion);
+                          }}
+                        >
+                          {suggestion.value}
+                        </li>
+                      );
+                    })}
+                  </ul>
                 </div>
-              );
-            })}
+              )}
+            </div>
+            {additionalRaces.map((additionalRace: IAdditionalRace) => (
+              <AdditionalRace
+                value={additionalRace.value}
+                id={additionalRace.id}
+              />
+            ))}
           </div>
           <div className={"select-car-class"}>
-            <div style={{ marginBottom: 10 }}>
-              <span style={{ color: "red" }}>*</span>Выберите класс авто
+            <div>
+              <div style={{ marginBottom: 10 }}>
+                <span style={{ color: "red" }}>*</span>Выберите класс авто
+              </div>
+              <Select
+                setShowSelect={setShowCarClassSelect}
+                showSelect={showCarClassSelect}
+                items={carsClasses}
+                setSelectItem={setCarClass}
+                //@ts-ignore
+                text={carClass || carsClasses[0].title}
+              />
             </div>
-            <Select
-              setShowSelect={setShowCarClassSelect}
-              showSelect={showCarClassSelect}
-              items={carClasses}
-              setSelectItem={setCarClass}
-              text={carClass || carClasses[0].title}
-            />
+            {(activeAddressFrom.address || activeAddressTo.address) && (
+              <div className="calculator-calc-button">
+                <Button
+                  text="Редактировать адреса"
+                  width={350}
+                  callback={() => setShowModal(true)}
+                />
+              </div>
+            )}
           </div>
-        </div>
-        <div
-          className="add-race"
-          onClick={() =>
-            setAdditionalRaces((prevState) => [
-              ...prevState,
-              {
-                state: "",
-                suggestions: [],
-                coordinates: [],
-              },
-            ])
-          }
-        >
-          Добавить еще адрес
-        </div>
-        <div className="calculator-calc-button">
-          <Button
-            text="Рассчитать"
-            style={{ height: 40, width: 180 }}
-            callback={() => {
-              setShowRoutes(true);
-            }}
-          />
         </div>
         <div className="route-info">
           <div className="left-route-info">
@@ -396,21 +440,27 @@ const Routes: FC = () => {
             </div>
           </div>
         </div>
-        <div>
-          <div className={styles.iframeWrap}>
-            <iframe
-              src={`http://localhost:8000/map/route/?region=${
-                activeRegion?.name
-              }&city=${activeCity?.name}${coordinatesFrom}${
-                additionalRaces.length !== 0 && iframeCoords
-              }${coordinatesTo}`}
-              width="100%"
-              height={480}
-              frameBorder="none"
-            ></iframe>
+        {showRoutes && (
+          <div>
+            <div className={styles.iframeWrap}>
+              <iframe
+                src={`http://localhost:8000/map/route/?region=${
+                  activeRegion?.name
+                }&city=${activeCity?.name}${coordinatesFrom}${
+                  additionalRaces.length !== 0 && iframeCoords
+                }${coordinatesTo}`}
+                width="100%"
+                height={480}
+                frameBorder="none"
+              ></iframe>
+            </div>
           </div>
-        </div>
+        )}
       </div>
+
+      <Modal active={showModal} setActive={setShowModal}>
+        <EditAddress />
+      </Modal>
     </div>
   );
 };

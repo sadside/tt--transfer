@@ -9,7 +9,9 @@ import calculator, { HubFormValues } from "../components/calculator/Calculator";
 import CalculatorService from "../services/CalculatorService";
 import { ZoneService } from "../services/ZoneService";
 import {
+  IAdditionalRace,
   IAddress,
+  IBrokenAddress,
   ICity,
   IFullHub,
   IHub,
@@ -37,6 +39,7 @@ export type CalculatorState = {
   activeAddressTo: IAddress;
   addressFromType: string;
   addressToType: string;
+  additionalRaces: IAdditionalRace[];
 };
 
 const initialState: CalculatorState = {
@@ -128,7 +131,16 @@ const initialState: CalculatorState = {
   },
   addressFromType: "",
   addressToType: "",
+  additionalRaces: [],
 };
+
+export const addBrokenAddress = createAsyncThunk<void, IBrokenAddress>(
+  "calculator/addBrokenAddress",
+  async ({ address, coordinates }, { rejectWithValue }) => {
+    try {
+    } catch (e) {}
+  }
+);
 
 export const getRegionsThunk = createAsyncThunk<
   IRegion[],
@@ -152,13 +164,12 @@ export const addHubThunk = createAsyncThunk<
   "calculator/addHubThunk",
   async (
     { title, description, coordinates },
-    { getState, rejectWithValue }
+    { getState, rejectWithValue, dispatch }
   ) => {
     const region = getState().calculator.activeRegion?.name;
     const city = getState().calculator.activeCity?.name;
 
     const coords = coordinates.split(",");
-    console.log("coords", coords);
 
     try {
       const res = await CalculatorService.addHub({
@@ -168,6 +179,8 @@ export const addHubThunk = createAsyncThunk<
         region,
         city,
       });
+
+      dispatch(setShowModal(false));
 
       return res.data;
     } catch (e: any) {
@@ -238,7 +251,7 @@ const calculatorSlice = createSlice({
         });
       }
     },
-    setActiveAddressFrom(state, action) {
+    setActiveAddressFrom(state, action: PayloadAction<IAddress>) {
       state.activeAddressFrom = action.payload;
     },
     setActiveAddressTo(state, action) {
@@ -321,6 +334,14 @@ const calculatorSlice = createSlice({
         }
       }
     },
+    addAdditionalRace(state, action: PayloadAction<IAdditionalRace>) {
+      state.additionalRaces.push(action.payload);
+    },
+    removeAdditionalRace(state, action: PayloadAction<string>) {
+      state.additionalRaces = state.additionalRaces.filter(
+        (race) => race.id !== action.payload
+      );
+    },
   },
 
   extraReducers: (builder) => {
@@ -376,6 +397,8 @@ export const {
   setAddressToType,
   setActiveAddressTo,
   setActiveAddressFrom,
+  addAdditionalRace,
+  removeAdditionalRace,
 } = calculatorSlice.actions;
 
 export default calculatorSlice.reducer;

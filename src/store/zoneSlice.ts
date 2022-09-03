@@ -4,23 +4,27 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
+import { Simulate } from "react-dom/test-utils";
 import $api from "../http";
 import { ZoneService } from "../services/ZoneService";
-import { ICity, IGetZone, IZone } from "../types/types";
+import { ICity, IGetZone, ISuggestion, IZone } from "../types/types";
 import { CalculatorState } from "./calculatorSlice";
 
 type ZonesState = {
   zones: IZone[];
   loading: boolean;
   error: boolean;
+  suggestions: ISuggestion[];
 };
 
 const initialState: ZonesState = {
   zones: [],
   loading: false,
   error: false,
+  suggestions: [],
 };
+
 export const createCity = createAsyncThunk<
   void,
   string,
@@ -38,19 +42,35 @@ export const createCity = createAsyncThunk<
   }
 });
 
-// export const getZones = createAsyncThunk<
-//   IZone[],
-//   undefined,
-//   { rejectValue: string; state: { calculator: CalculatorState } }
-// >("zone/getZone", async (_, { rejectWithValue }) => {
-//   try {
-//     const res: AxiosResponse<any> = await ZoneService.getZones();
-//
-//     return res.data;
-//   } catch (e: any) {
-//     return rejectWithValue(e.message);
-//   }
-// });
+export const getSuggestions = createAsyncThunk<
+  ISuggestion[],
+  string,
+  { rejectValue: string }
+>("zone/getSuggestions", async (value, { rejectWithValue }) => {
+  try {
+    const response = await axios.post(
+      "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",
+      {
+        query: value,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          Authorization: "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",
+        },
+      }
+    );
+
+    return response.data.suggestions.map((suggestion: any) => {
+      return {
+        value: suggestion.value,
+        coordinates: [suggestion.data["geo_lat"], suggestion.data["geo_lon"]],
+      };
+    });
+  } catch (e: any) {
+    return rejectWithValue(e.message());
+  }
+});
 
 export const getZonesById = createAsyncThunk<
   IZone[],
@@ -154,6 +174,9 @@ const zoneSlice = createSlice({
       })
       .addCase(deleteZoneThunk.fulfilled, (state, action) => {
         state.zones = state.zones.filter((item) => item.id !== action.payload);
+      })
+      .addCase(getSuggestions.fulfilled, (state, action) => {
+        state.suggestions = action.payload;
       })
       .addMatcher(isError, (state) => {
         state.error = true;

@@ -3,7 +3,7 @@
 }
 
 .scroll-table-body-tariff {
-	overflow-x: auto;
+	overflow: auto;
 	margin-top: 0;
 	height: 100%;
 }
@@ -45,4 +45,8 @@
 	height: 70px;
 	box-sizing: border-box;
 	border: 1px solid #CCCCCC;
+}
+
+.transferLink-item {
+	padding-right: 23px;
 }

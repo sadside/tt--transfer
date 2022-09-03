@@ -5,9 +5,11 @@ import drive from "../../assets/drive.png";
 import axios from "axios";
 import $api, { API_URL } from "../../http";
 import UserServices from "../../services/UserServices";
-import { setAvatar, setDocuments } from "../../store/userSlice";
+import { setAvatar } from "../../store/userSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import ErrorComponent from "../errorComponent/ErrorComponent";
+import image from "../../assets/заглушка для картинки.jpg";
+import UploadProfileFile from "../uploadProfileFile/UploadProfileFile";
 
 const UploadProfileImages = () => {
   const dispatch = useAppDispatch();
@@ -43,9 +45,9 @@ const UploadProfileImages = () => {
       formData.append("documents", e.target.files[i]);
     }
 
-    // setDocuments1(formData);
-    // console.log(documents1);
-    dispatch(setDocuments(formData));
+    setDocuments1(formData);
+    console.log(documents1);
+    // dispatch(addDocument(documents1));
   };
 
   const handlePick = () => {
@@ -57,8 +59,15 @@ const UploadProfileImages = () => {
   //5242880
 
   const handleUpload = () => {};
+
   return (
-    <div>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+      }}
+    >
       <div style={{ marginBottom: 15 }}>Аватарка</div>
       <button
         onClick={handlePick}
@@ -100,11 +109,58 @@ const UploadProfileImages = () => {
         <ErrorComponent text={error} />
         {/*<input type="submit" onClick={handleSubmit} />*/}
       </form>
-      {documents?.map((document) => {
-        return (
-          <img src={`http://localhost:8000${document}`} alt="" width={200} />
-        );
-      })}
+
+      <div className="upload-image-wrapper">
+        <div className="upload-image-container">
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+          <div className="image-item">
+            <img src={image} alt="" />
+          </div>
+
+          <UploadProfileFile
+            title={"word"}
+            type={"exel"} // word, exel, pdf, file
+          />
+        </div>
+      </div>
     </div>
   );
 };

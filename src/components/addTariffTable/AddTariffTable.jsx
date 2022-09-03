@@ -1,6 +1,7 @@
 import "./addTariffTable.scss";
 import { useForm } from "react-hook-form";
-import { tariffSidebarTableBody } from "../../db";
+import { carsClasses, tariffSidebarTableBody } from "../../db";
+import TariffCell from "../tariffCell/TariffCell";
 
 const AddTariffTable = ({ showTransfersSidebar }) => {
   const { register, handleSubmit, setValue } = useForm();
@@ -53,168 +54,92 @@ const AddTariffTable = ({ showTransfersSidebar }) => {
   return (
     <>
       <div className="scroll-table-tariff">
-        <table>
-          <thead>
-            <tr>
-              <th height="60">Типы услуг</th>
-              <th height="60">Стандарт</th>
-              <th height="60">Бизнес</th>
-              <th height="60">Представительский</th>
-              <th height="60">Минивен</th>
-            </tr>
-          </thead>
-        </table>
         <div className="scroll-table-body-tariff">
+          <table>
+            <thead>
+              <tr>
+                <th height="60" width="190">Типы услуг</th>
+                {carsClasses.map((row) => (
+                  <th height="60" width="190">
+                    {row.carClass}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+          </table>
           <table>
             <tbody>
               {/*Аренда по времени*/}
               {tariffSidebarTableBody.map((row) => (
                 <tr>
                   <td>{row.title}</td>
-                  <td>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <div className={"tariff-price-wrap"}>
-                        <input
-                          type="text"
-                          className={"tariff-price-input"}
-                          {...register(row.nameClientStandard)}
-                        />
-                        <div>Заказчик</div>
-                      </div>
-                      <div className={"tariff-price-wrap"}>
-                        <input
-                          type="text"
-                          className={"tariff-price-input"}
-                          {...register(row.nameDriverStandard)}
-                        />
-                        <div>Водитель</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <div className={"tariff-price-wrap"}>
-                        <input
-                          type="text"
-                          className={"tariff-price-input"}
-                          {...register(row.nameClientBusiness)}
-                        />
-                        <div>Заказчик</div>
-                      </div>
-                      <div className={"tariff-price-wrap"}>
-                        <input
-                          type="text"
-                          className={"tariff-price-input"}
-                          {...register(row.nameDriverBusiness)}
-                        />
-                        <div>Водитель</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <div className={"tariff-price-wrap"}>
-                        <input
-                          type="text"
-                          className={"tariff-price-input"}
-                          {...register(row.nameClientExecutive)}
-                        />
-                        <div>Заказчик</div>
-                      </div>
-                      <div className={"tariff-price-wrap"}>
-                        <input
-                          type="text"
-                          className={"tariff-price-input"}
-                          {...register(row.nameDriverExecutive)}
-                        />
-                        <div>Водитель</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <div className={"tariff-price-wrap"}>
-                        <input
-                          type="text"
-                          className={"tariff-price-input"}
-                          {...register(row.nameClientMinivan)}
-                        />
-                        <div>Заказчик</div>
-                      </div>
-                      <div className={"tariff-price-wrap"}>
-                        <input
-                          type="text"
-                          className={"tariff-price-input"}
-                          {...register(row.nameDriverMinivan)}
-                        />
-                        <div>Водитель</div>
-                      </div>
-                    </div>
-                  </td>
+                  <TariffCell
+                    register={register}
+                    row={row}  
+                  />
+                  <TariffCell
+                    register={register}
+                    row={row}
+                  />
+                  <TariffCell
+                    register={register}
+                    row={row}
+                  />
+                  <TariffCell
+                    register={register}
+                    row={row}
+                  />
                 </tr>
               ))}
-              <tr>
-                <td
-                  onClick={() => showTransfersSidebar(true)}
-                  className={"region transferLink"}
-                >
-                  <div className={"transferLink-item"}>Трансферы (руб.)</div>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>
-                  <div>Оренбург</div>
-                  <div>Оренбург, вокзал</div>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>
-                  <div>Оренбург</div>
-                  <div>Оренбург, вокзал</div>
-                </td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
             </tbody>
           </table>
+
+          <table>
+            <thead>
+              <tr>
+                <th height="60" width="190">Хабы</th>
+              {carsClasses.map((row) => (
+                <th height="60" width="190">
+                  {row.carClass}
+                </th>
+              ))}
+              </tr>
+            </thead>
+          </table>
+
+          <table>
+            <tbody>
+              {tariffSidebarTableBody.map((row) => (
+                <tr>
+                  <td
+                    onClick={() => showTransfersSidebar(true)}
+                    className={"region transferLink"}
+                  >
+                    <div
+                      className={"transferLink-item"}
+                    >Оренбург, аэропорт</div>
+                  </td>
+                  <TariffCell
+                    register={register}
+                    row={row}
+                  />
+                  <TariffCell
+                    register={register}
+                    row={row}
+                  />
+                  <TariffCell
+                    register={register}
+                    row={row}
+                  />
+                  <TariffCell
+                    register={register}
+                    row={row} 
+                  />
+                </tr>
+              ))}
+            </tbody>
+          </table>  
+          
         </div>
       </div>
     </>

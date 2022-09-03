@@ -12,6 +12,10 @@ import React, { useEffect, useRef, useState } from "react";
 import { Resolver, SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { log } from "util";
+import {
+  useCreateHubMutation,
+  useFetchAllHubsQuery,
+} from "../../api/ZoneService";
 import rightArrow from "../../assets/rightArrow.svg";
 import "./calculator.scss";
 import useOutside from "../../hooks/useOutside";
@@ -48,7 +52,7 @@ import Select from "../select/Select";
 import Zone from "../zone/Zone";
 import styles from "./Calculator.module.scss";
 import Button from "../ui/button/Button";
-import { IFullHub, IZone } from "../../types/types";
+import { IAdditionalRace, IFullHub, IZone } from "../../types/types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import axios from "axios";
 
@@ -76,6 +80,7 @@ const Calculator = () => {
   const activeRegion = useAppSelector((state) => state.calculator.activeRegion);
   const activeCity = useAppSelector((state) => state.calculator.activeCity);
   const zones = useAppSelector((state) => state.zone.zones);
+  const regions = useAppSelector((state) => state.calculator.regions);
   let hubs = useAppSelector((state) => state.calculator.hubs);
 
   const dispatch = useAppDispatch();
@@ -89,20 +94,8 @@ const Calculator = () => {
   const [regionInputValue, setRegionInputValue] = useState("");
   const [cityInputValue, setCityInputValue] = useState("");
 
-  const [fromInputValue, setFromInputValue] = useState("");
-  const [toInputValue, setToInputValue] = useState("");
-
-  const [suggestionsForTo, setSuggestionsForTo] = useState<Array<any>>([]);
-  const [suggestionsForFrom, setSuggestionsForFrom] = useState<Array<any>>([]);
-
-  const [showRotes, setShowRoutes] = useState(false);
-
   useEffect(() => {
-    dispatch(getRegionsThunk());
-    if (activeRegion && activeCity) {
-      setRegionInputValue(activeRegion.name);
-      setCityInputValue(activeCity.name);
-    }
+    if (regions.length === 0) dispatch(getRegionsThunk());
   }, []);
 
   const { isShow, setIsShow, ref } = useOutside(false);
@@ -114,15 +107,11 @@ const Calculator = () => {
 
   console.log("test: ", hubs);
 
-  const [state, setState] = useState(0);
-  const [showColorSelect, setShowColorSelect] = useState(false);
   const [activeColor, setActiveColor] = useState("green");
   const [coordinates, setCoordinates] = useState("");
-  const [showSelect, setShowSelect] = useState(false);
   const [showSelectHubFrom, setShowSelectHubFrom] = useState(false);
   const [selectActiveItem, setSelectActiveItem] = useState("");
 
-  const [showSecondSelect, setShowSecondSelect] = useState(false);
   const [selectSecondActiveItem, setSecondSelectActiveItem] = useState("");
 
   useEffect(() => {
@@ -137,25 +126,11 @@ const Calculator = () => {
     }
   }, [selectActiveItem]);
 
-  const [showSelectHubTo, setShowSelectHubTo] = useState(false);
-
-  const items = [
-    {
-      title: "Уникальный адрес",
-    },
-    {
-      title: "Хаб",
-    },
-  ];
-
   const {
     ref: colorSelectRef,
     isShow: colorSelectIsShow,
     setIsShow: colorSelectSetIsShow,
   } = useOutside(false);
-
-  const [fromCoordinates, setFromCoordinates] = useState<any>({});
-  const [toCoordinates, setToCoordinates] = useState<any>({});
 
   const showModal = useAppSelector((state) => state.calculator.showModal);
 
@@ -165,21 +140,13 @@ const Calculator = () => {
 
   const [showMap, setShowMap] = useState(false);
 
-  const onSubmit: SubmitHandler<HubFormValues> = ({
+  const onSubmit: SubmitHandler<HubFormValues> = async ({
     name,
     description,
     coords,
   }) => {
     dispatch(addHubThunk({ title: name, description, coordinates: coords }));
   };
-
-  const [additionalRaces, setAdditionalRaces] = useState<any[]>([
-    {
-      state: "",
-      suggestions: [],
-      coordinates: [],
-    },
-  ]);
 
   const zoneColor = classNames([], {
     [styles.green]: activeColor === "green",
@@ -188,43 +155,9 @@ const Calculator = () => {
     [styles.yellow]: activeColor === "yellow",
   });
 
-  const handleSuggestionFromClick = (suggestion: any) => {
-    setFromInputValue(suggestion.value);
-    setFromCoordinates({
-      lat: suggestion.data["geo_lat"],
-      lon: suggestion.data["geo_lon"],
-    });
-  };
-
-  const handleSuggestionToClick = (suggestion: any) => {
-    setToInputValue(suggestion.value);
-    setToCoordinates({
-      lat: suggestion.data["geo_lat"],
-      lon: suggestion.data["geo_lon"],
-    });
-  };
-
-  const handleAdditionalRaceClick = (suggestion: any, input: any) => {
-    input.state = suggestion.value;
-    input.coordinates = [
-      suggestion.data["geo_lat"],
-      suggestion.data["geo_lon"],
-    ];
-  };
-
   useEffect(() => {
     colorSelectSetIsShow(false);
   }, [activeColor]);
-
-  const iframeCoords: string = additionalRaces
-    .map((item) => {
-      if (item.coordinates.length !== 0) {
-        return `&lat=${item.coordinates[0]}&lon=${item.coordinates[1]}`;
-      }
-    })
-    .join("");
-
-  console.log("main", iframeCoords);
 
   const createZone = () => {
     if (coordinates.length !== 0) {
@@ -252,8 +185,6 @@ const Calculator = () => {
     setIframeRef((prevState) => prevState + 1);
   }, [hubs]);
 
-  const [carClass, setCarClass] = useState("");
-  const [showCarClassSelect, setShowCarClassSelect] = useState(false);
   const cityCenterCoordinates = useAppSelector(
     (state) => state.calculator.hubCity.center
   );
@@ -261,49 +192,6 @@ const Calculator = () => {
   if (loading) {
     return <Loader />;
   }
-
-  // const coordinatesFrom = activeHubFrom.id
-  //   ? `&lat=${activeHubFrom.coordinate.latitude}&lon=${activeHubFrom.coordinate.longitude}`
-  //   : `&lat=${fromCoordinates.lat}&lon=${fromCoordinates.lon}`;
-
-  const carClasses: Array<any> = [
-    {
-      title: "Стандарт",
-    },
-    {
-      title: "Комфорт",
-    },
-    {
-      title: "Минивен",
-    },
-    {
-      title: "Бизнес класс",
-    },
-    {
-      title: "Представительский",
-    },
-    {
-      title: "SUV",
-    },
-    {
-      title: "Микроавтобус",
-    },
-    {
-      title: "Минивен Бизнес",
-    },
-    {
-      title: "Микроавтобус Бизнес",
-    },
-    {
-      title: "Автобус 30+",
-    },
-    {
-      title: "Автобус 43+",
-    },
-    {
-      title: "Автобус 50+",
-    },
-  ];
 
   // @ts-ignore
   // @ts-ignore
@@ -324,7 +212,7 @@ const Calculator = () => {
                 dispatch(setActiveRegion(null));
                 setIsShow(true);
               }}
-              value={regionInputValue}
+              value={activeRegion?.name || regionInputValue}
             />
 
             <AnimatePresence>
@@ -374,7 +262,7 @@ const Calculator = () => {
                   dispatch(setActiveCity(null));
                   setIsSecond(true);
                 }}
-                value={cityInputValue}
+                value={activeCity?.name || cityInputValue}
               />
 
               <AnimatePresence>
@@ -432,18 +320,19 @@ const Calculator = () => {
                 width={"85vw"}
                 height={"85vh"}
               >
-                {hubs.map((hub) => (
-                  <Placemark
-                    geometry={[
-                      hub.coordinate.latitude,
-                      hub.coordinate.longitude,
-                    ]}
-                    options={{
-                      preset: "islands#circleIcon",
-                      iconColor: "orange",
-                    }}
-                  />
-                ))}
+                {hubs &&
+                  hubs.map((hub) => (
+                    <Placemark
+                      geometry={[
+                        hub.coordinate.latitude,
+                        hub.coordinate.longitude,
+                      ]}
+                      options={{
+                        preset: "islands#circleIcon",
+                        iconColor: "orange",
+                      }}
+                    />
+                  ))}
                 <ZoomControl
                   options={{
                     //@ts-ignore
@@ -514,7 +403,6 @@ const Calculator = () => {
               {errors?.coords && (
                 <div className="error-component">{errors.coords.message}</div>
               )}
-              {/*<div className={styles.hubInputSubmit}>Добавить хаб</div>*/}
               <input type="submit" className={styles.hubInputSubmit} />
             </div>
           </form>
@@ -525,10 +413,12 @@ const Calculator = () => {
               <Select
                 setShowSelect={setShowSelectHubFrom}
                 showSelect={showSelectHubFrom}
-                items={hubs}
+                items={hubs || []}
                 text={
                   activeHub.title ||
-                  (hubs.length > 0 ? "Выберите хаб" : "Хабы отсутствуют")
+                  (hubs && hubs.length > 0
+                    ? "Выберите хаб"
+                    : "Хабы отсутствуют")
                 }
                 secondCallback={(item: IFullHub) => {
                   dispatch(setActiveHub(item));
@@ -726,9 +616,6 @@ const Calculator = () => {
                         "objectManager.addon.objectsBalloon",
                         "objectManager.addon.objectsHint",
                       ]}
-                      // properties={{
-                      //   balloonContent: "hello",
-                      // }}
                     />
 
                     <ZoomControl
@@ -743,360 +630,6 @@ const Calculator = () => {
             )}
           </div>
         )}
-
-        {zones?.length !== 0 &&
-          activeCity &&
-          activeRegion &&
-          cityCenterCoordinates.latitude &&
-          cityCenterCoordinates.longitude && (
-            <div className={styles.iframeWrap}>
-              {/*<YMaps>*/}
-              {/*  <Map*/}
-              {/*    defaultState={{*/}
-              {/*      center: [*/}
-              {/*        cityCenterCoordinates.latitude,*/}
-              {/*        cityCenterCoordinates.longitude,*/}
-              {/*      ],*/}
-              {/*      zoom: 12,*/}
-              {/*    }}*/}
-              {/*    modules={["control.ZoomControl"]}*/}
-              {/*    width={"100%"}*/}
-              {/*    height={480}*/}
-              {/*  >*/}
-              {/*    {hubs.map((hub) => (*/}
-              {/*      <Placemark*/}
-              {/*        geometry={[*/}
-              {/*          hub.coordinate.latitude,*/}
-              {/*          hub.coordinate.longitude,*/}
-              {/*        ]}*/}
-              {/*        options={{*/}
-              {/*          preset: "islands#circleIcon",*/}
-              {/*          iconColor: "orange",*/}
-              {/*        }}*/}
-              {/*      />*/}
-              {/*    ))}*/}
-              {/*    <ZoomControl*/}
-              {/*      options={{*/}
-              {/*        //@ts-ignore*/}
-              {/*        float: "right",*/}
-              {/*      }}*/}
-              {/*    />*/}
-              {/*    <Polygon*/}
-              {/*      geometry={[*/}
-              {/*        [*/}
-              {/*          [55.80816874150234, 37.54518870312501],*/}
-              {/*          [55.80816874150234, 37.806113996093764],*/}
-              {/*          [55.678022224242454, 37.86104563671875],*/}
-              {/*          [55.55211057833611, 37.534202375],*/}
-              {/*          [55.80816874150234, 37.54518870312501],*/}
-              {/*        ],*/}
-              {/*      ]}*/}
-              {/*      options={{*/}
-              {/*        //@ts-ignore*/}
-              {/*        fillColor: "#00FF00",*/}
-              {/*        strokeColor: "#0000FF",*/}
-              {/*        opacity: 0.5,*/}
-              {/*        strokeWidth: 5,*/}
-              {/*      }}*/}
-              {/*    />*/}
-              {/*  </Map>*/}
-              {/*</YMaps>*/}
-              {/*<iframe*/}
-              {/*  src={`http://localhost:8000/map/zones/?region=${activeRegion?.name}&city=${activeCity?.name}`}*/}
-              {/*  frameBorder="0"*/}
-              {/*  width="100%"*/}
-              {/*  height={480}*/}
-              {/*  id="iframeid"*/}
-              {/*  key={iframeRef}*/}
-              {/*></iframe>*/}
-            </div>
-          )}
-
-        {/*{zones?.length > 0 && activeRegion && activeCity && (*/}
-        {/*  <div className={styles.transferCalculatorWrap}>*/}
-        {/*    <div className="destination-selection calculator-inputs">*/}
-        {/*      <div className="from-calculator">*/}
-        {/*        <Select*/}
-        {/*          setShowSelect={setShowSelect}*/}
-        {/*          showSelect={showSelect}*/}
-        {/*          setSelectItem={setSelectActiveItem}*/}
-        {/*          items={items}*/}
-        {/*          text={selectActiveItem || items[0].title}*/}
-        {/*        />*/}
-        {/*        {selectActiveItem === "Хаб" ? (*/}
-        {/*          <div style={{ marginTop: 20 }}>*/}
-        {/*            <div style={{ marginBottom: 10 }}>Откуда</div>*/}
-        {/*            <Select*/}
-        {/*              setShowSelect={setShowSelectHubFrom}*/}
-        {/*              showSelect={showSelectHubFrom}*/}
-        {/*              items={hubs}*/}
-        {/*              text={*/}
-        {/*                activeHub.title || "Выберите хаб" || "Хабы отсутствуют"*/}
-        {/*              }*/}
-        {/*              haveButton={true}*/}
-        {/*              callback={() => {*/}
-        {/*                setModalActive(true);*/}
-        {/*              }}*/}
-        {/*              secondCallback={(item) => {*/}
-        {/*                dispatch(setActiveHub(item));*/}
-        {/*              }}*/}
-        {/*            />*/}
-        {/*          </div>*/}
-        {/*        ) : (*/}
-        {/*          <div style={{ marginTop: 20 }}>*/}
-        {/*            Откуда*/}
-        {/*            <input*/}
-        {/*              type="text"*/}
-        {/*              className="tariff-data-input"*/}
-        {/*              placeholder="Откуда"*/}
-        {/*              value={fromInputValue}*/}
-        {/*              onChange={async (e) => {*/}
-        {/*                setFromInputValue(e.target.value);*/}
-        {/*                const response = await axios.post(*/}
-        {/*                  "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",*/}
-        {/*                  {*/}
-        {/*                    query: e.target.value,*/}
-        {/*                  },*/}
-        {/*                  {*/}
-        {/*                    headers: {*/}
-        {/*                      Accept: "application/json",*/}
-        {/*                      Authorization:*/}
-        {/*                        "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",*/}
-        {/*                    },*/}
-        {/*                  }*/}
-        {/*                );*/}
-        {/*                console.log(response.data.suggestions);*/}
-        {/*                setFromCoordinates({});*/}
-        {/*                setSuggestionsForFrom(response.data.suggestions);*/}
-        {/*              }}*/}
-        {/*            />*/}
-        {/*          </div>*/}
-        {/*        )}*/}
-        {/*        {fromInputValue.length !== 0 &&*/}
-        {/*          Object.keys(fromCoordinates).length === 0 && (*/}
-        {/*            <div className={styles.citySelect}>*/}
-        {/*              <ul>*/}
-        {/*                {suggestionsForFrom.map((suggestion, index: number) => {*/}
-        {/*                  return (*/}
-        {/*                    <li*/}
-        {/*                      key={index}*/}
-        {/*                      onClick={() => {*/}
-        {/*                        handleSuggestionFromClick(suggestion);*/}
-        {/*                        console.log(fromCoordinates);*/}
-        {/*                      }}*/}
-        {/*                    >*/}
-        {/*                      {suggestion.value}*/}
-        {/*                    </li>*/}
-        {/*                  );*/}
-        {/*                })}*/}
-        {/*              </ul>*/}
-        {/*            </div>*/}
-        {/*          )}*/}
-        {/*      </div>*/}
-        {/*      <img src={rightArrow} alt="" />*/}
-        {/*      <div className="to-calculator">*/}
-        {/*        <Select*/}
-        {/*          setShowSelect={setShowSecondSelect}*/}
-        {/*          showSelect={showSecondSelect}*/}
-        {/*          setSelectItem={setSecondSelectActiveItem}*/}
-        {/*          items={items}*/}
-        {/*          text={selectSecondActiveItem || items[0].title}*/}
-        {/*        />*/}
-
-        {/*        {selectSecondActiveItem === "Хаб" ? (*/}
-        {/*          <div style={{ marginTop: 20 }}>*/}
-        {/*            <div style={{ marginBottom: 10 }}>Куда</div>*/}
-        {/*            <Select*/}
-        {/*              setShowSelect={setShowSelectHubTo}*/}
-        {/*              showSelect={showSelectHubTo}*/}
-        {/*              items={hubs}*/}
-        {/*              text={*/}
-        {/*                activeHub.title ||*/}
-        {/*                "Выберите хаб" ||*/}
-        {/*                "Хабы отсутствуют"*/}
-        {/*              }*/}
-        {/*              haveButton={true}*/}
-        {/*              secondCallback={(item) => {*/}
-        {/*                dispatch(setActiveToHub(item));*/}
-        {/*              }}*/}
-        {/*            />*/}
-        {/*          </div>*/}
-        {/*        ) : (*/}
-        {/*          <div style={{ marginTop: 20 }}>*/}
-        {/*            Куда*/}
-        {/*            <input*/}
-        {/*              type="text"*/}
-        {/*              className="tariff-data-input"*/}
-        {/*              placeholder="Куда"*/}
-        {/*              onChange={async (e) => {*/}
-        {/*                setToInputValue(e.target.value);*/}
-        {/*                const response = await axios.post(*/}
-        {/*                  "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",*/}
-        {/*                  {*/}
-        {/*                    query: e.target.value,*/}
-        {/*                  },*/}
-        {/*                  {*/}
-        {/*                    headers: {*/}
-        {/*                      Accept: "application/json",*/}
-        {/*                      Authorization:*/}
-        {/*                        "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",*/}
-        {/*                    },*/}
-        {/*                  }*/}
-        {/*                );*/}
-        {/*                console.log(response.data.suggestions);*/}
-        {/*                setToCoordinates({});*/}
-        {/*                setSuggestionsForTo(response.data.suggestions);*/}
-        {/*              }}*/}
-        {/*              value={toInputValue}*/}
-        {/*            />*/}
-        {/*          </div>*/}
-        {/*        )}*/}
-        {/*        {toInputValue.length !== 0 &&*/}
-        {/*          Object.keys(toCoordinates).length === 0 && (*/}
-        {/*            <div className={styles.citySelect}>*/}
-        {/*              <ul>*/}
-        {/*                {suggestionsForTo.map((suggestion, index: number) => {*/}
-        {/*                  return (*/}
-        {/*                    <li*/}
-        {/*                      key={index}*/}
-        {/*                      onClick={() => {*/}
-        {/*                        handleSuggestionToClick(suggestion);*/}
-        {/*                        console.log(fromCoordinates);*/}
-        {/*                      }}*/}
-        {/*                    >*/}
-        {/*                      {suggestion.value}*/}
-        {/*                    </li>*/}
-        {/*                  );*/}
-        {/*                })}*/}
-        {/*              </ul>*/}
-        {/*            </div>*/}
-        {/*          )}*/}
-        {/*      </div>*/}
-        {/*    </div>*/}
-        {/*    <div className="calculator-additional-inputs">*/}
-        {/*      <div>*/}
-        {/*        <span style={{ color: "red" }}>*</span>Дополнительные заезды*/}
-        {/*        {additionalRaces.map((item, index) => {*/}
-        {/*          return (*/}
-        {/*            <div style={{ position: "relative" }}>*/}
-        {/*              <input*/}
-        {/*                type="text"*/}
-        {/*                className="tariff-data-input"*/}
-        {/*                placeholder="Откуда"*/}
-        {/*                value={item.state}*/}
-        {/*                onChange={(e) => {*/}
-        {/*                  console.log(e.target.value);*/}
-        {/*                  item.state = e.target.value;*/}
-
-        {/*                  axios*/}
-        {/*                    .post(*/}
-        {/*                      "https://suggestions.dadata.ru/suggestions/api/4_1/rs/suggest/address",*/}
-        {/*                      {*/}
-        {/*                        query: e.target.value,*/}
-        {/*                      },*/}
-        {/*                      {*/}
-        {/*                        headers: {*/}
-        {/*                          Accept: "application/json",*/}
-        {/*                          Authorization:*/}
-        {/*                            "Token 48ab36191d6ef5b11a3ae58d406b7d641a1fbd32",*/}
-        {/*                        },*/}
-        {/*                      }*/}
-        {/*                    )*/}
-        {/*                    .then((response) => {*/}
-        {/*                      item.suggestions = response.data.suggestions;*/}
-        {/*                      item.coordinates = [];*/}
-        {/*                    });*/}
-        {/*                  setState(() => Math.random());*/}
-        {/*                }}*/}
-        {/*              />*/}
-        {/*              {item.state.length !== 0 &&*/}
-        {/*                item.coordinates.length === 0 && (*/}
-        {/*                  <div className={styles.citySelect}>*/}
-        {/*                    <ul>*/}
-        {/*                      {item.suggestions.map(*/}
-        {/*                        (suggestion: any, index: number) => {*/}
-        {/*                          return (*/}
-        {/*                            <li*/}
-        {/*                              key={index}*/}
-        {/*                              onClick={() => {*/}
-        {/*                                handleAdditionalRaceClick(*/}
-        {/*                                  suggestion,*/}
-        {/*                                  item*/}
-        {/*                                );*/}
-        {/*                                setState(() => Math.random());*/}
-        {/*                              }}*/}
-        {/*                            >*/}
-        {/*                              {suggestion.value}*/}
-        {/*                            </li>*/}
-        {/*                          );*/}
-        {/*                        }*/}
-        {/*                      )}*/}
-        {/*                    </ul>*/}
-        {/*                  </div>*/}
-        {/*                )}*/}
-        {/*            </div>*/}
-        {/*          );*/}
-        {/*        })}*/}
-        {/*      </div>*/}
-        {/*      <div className={"select-car-class"}>*/}
-        {/*        <div style={{ marginBottom: 10 }}>*/}
-        {/*          <span style={{ color: "red" }}>*</span>Выберите класс авто*/}
-        {/*        </div>*/}
-        {/*        <Select*/}
-        {/*          setShowSelect={setShowCarClassSelect}*/}
-        {/*          showSelect={showCarClassSelect}*/}
-        {/*          items={carClasses}*/}
-        {/*          setSelectItem={setCarClass}*/}
-        {/*          text={carClass || carClasses[0].title}*/}
-        {/*        />*/}
-        {/*      </div>*/}
-        {/*    </div>*/}
-        {/*    <div*/}
-        {/*      className="add-race"*/}
-        {/*      onClick={() =>*/}
-        {/*        setAdditionalRaces((prevState) => [*/}
-        {/*          ...prevState,*/}
-        {/*          {*/}
-        {/*            state: "",*/}
-        {/*            suggestions: [],*/}
-        {/*            coordinates: [],*/}
-        {/*          },*/}
-        {/*        ])*/}
-        {/*      }*/}
-        {/*    >*/}
-        {/*      Добавить еще адрес*/}
-        {/*    </div>*/}
-        {/*    <div className="calculator-calc-button">*/}
-        {/*      <Button*/}
-        {/*        text="Рассчитать"*/}
-        {/*        style={{ height: 40, width: 180 }}*/}
-        {/*        callback={() => {*/}
-        {/*          setShowRoutes(true);*/}
-        {/*        }}*/}
-        {/*      />*/}
-        {/*    </div>*/}
-        {/*    <div className="route-info">*/}
-        {/*      <div className="left-route-info">*/}
-        {/*        <div>Расстояние: 421км</div>*/}
-        {/*        <div>Время: 7ч 9мин</div>*/}
-        {/*      </div>*/}
-        {/*      <div className="right-route-info">*/}
-        {/*        <div>Рекомендуемая стоимость:</div>*/}
-        {/*        <div*/}
-        {/*          style={{ display: "flex", justifyContent: "space-between" }}*/}
-        {/*        >*/}
-        {/*          <div style={{ marginRight: 30 }}>*/}
-        {/*            Заказчик: <span>15 000</span>*/}
-        {/*          </div>*/}
-
-        {/*          <div>*/}
-        {/*            Водитель: <span>10 000</span>*/}
-        {/*          </div>*/}
-        {/*        </div>*/}
-        {/*      </div>*/}
-        {/*    </div>*/}
-        {/*  </div>*/}
-        {/*)}*/}
       </div>
     </>
   );

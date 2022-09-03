@@ -1,3 +1,5 @@
+import moderation from "../components/moderation/Moderation";
+
 export interface IUser {
   id: number;
   name: string;
@@ -90,6 +92,11 @@ export interface IHub {
   latitude: number;
 }
 
+export interface ICarClass {
+  carClass: string;
+  img: any;
+}
+
 export interface IFullHub {
   city: {
     center: {
@@ -136,3 +143,96 @@ export interface IAddress {
     lon: number | null;
   };
 }
+
+export interface IAdditionalRace {
+  id: string;
+  value: string;
+  coordinates: Array<number>;
+}
+
+export interface ISuggestion {
+  value: string;
+  coordinates: number[];
+}
+
+export interface IBrokenAddress {
+  address: string;
+  coordinates: string;
+}
+
+export interface IServicePrice {
+  id: number;
+  car_class: string;
+  customer_price: number;
+  driver_price: number;
+}
+
+export interface IService {
+  id: number;
+  title: string;
+  slug: string;
+  prices: IServicePrice[];
+}
+
+export interface IHubPrice {
+  id: number;
+  car_class: string;
+  customer_price: number;
+  driver_price: number;
+}
+
+export interface IFullZone {
+  id: number;
+  color: string;
+  hub: number;
+  coordinates: number[];
+}
+
+export interface IAdditionalHubZonePrice {
+  id: number;
+  zone: IFullZone;
+}
+
+export interface IHubToPrice {
+  id: number;
+  hub: IFullHub;
+  prices: IHubPrice[];
+  additional_hubzone_prices: IAdditionalHubZonePrice[];
+}
+
+export interface IIntracityTariff {
+  id: number;
+  hub_to_prices: IHubToPrice[];
+}
+
+export interface ITariff {
+  id: number;
+  title: string;
+  city: {
+    id: number;
+    country: string;
+    region: string;
+    city: string;
+    center: {
+      id: number;
+      latitude: number;
+      longitude: number;
+    };
+  };
+  currency: string;
+  comments: string;
+  is_commission: string;
+  services: IService[];
+  intracity_tariff: IIntracityTariff;
+  intercity_tariff: {
+    id: number;
+    cities: [];
+    global_addresses: [];
+  };
+  lifetime: string;
+}
+
+export type CarClass = {
+  title: string;
+  slug: string;
+};

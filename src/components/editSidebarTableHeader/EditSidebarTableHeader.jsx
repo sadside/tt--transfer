@@ -5,7 +5,6 @@ const EditSidebarTableHeader = () => {
     <>
       <div className="table-custom-header">
         <div>Цены по типам услуг</div>
-        <div style={{ textDecoration: "underline" }}>Редактировать</div>
       </div>
     </>
   );

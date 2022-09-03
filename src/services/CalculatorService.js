@@ -13,4 +13,8 @@ export default class CalculatorService {
   static addHub(data) {
     return $api.post("address/hub/", data);
   }
+
+  static addBrokenAddress({ address, coordinates }) {
+    return $api.post("address/hub/", { address, coordinates });
+  }
 }

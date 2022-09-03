@@ -1,0 +1,47 @@
+.addHub {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	margin: 30px 50px 20px 50px;
+	font-size: 14px !important;
+//	div {
+//		font-size: 16px;
+//		font-weight: 400;
+//		margin: 12px 0;
+//		text-align: left;
+//				width: calc(40vw - 100px);
+//	}
+	input {
+	}
+}
+
+.hubInput {
+	height: 40px;
+		border: none;
+		width: calc(40vw - 100px);
+		background: #E8E8E8;
+		padding-left: 10px;
+		box-sizing: border-box;
+	margin-bottom: 5px;
+	margin-top: 20px;
+}
+
+.hubInputSubmit {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	width: 300px;
+	cursor: pointer;
+	border: none;
+	background: #8DC73F;
+	border-radius: 3px;
+	height: 40px;
+	color: #fff;
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+.addressCoordsTitle {
+	margin: 20px 0;
+}

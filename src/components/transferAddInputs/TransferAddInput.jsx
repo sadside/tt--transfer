@@ -33,7 +33,7 @@ const TransferAddInput = ({ intercity }) => {
             placeholder="Откуда"
           />
         </div>
-        <img src={rightArrow} alt="" />
+        <img src={rightArrow} alt="" className="from-to-arrow"/>
         <div className="to">
           Куда
           <input type="text" className="tariff-data-input" placeholder="Куда" />

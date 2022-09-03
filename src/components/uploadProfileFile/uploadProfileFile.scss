@@ -1,0 +1,22 @@
+.upload-file-conteiner {
+  background: #E8E8E8;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  overflow: hidden;
+  cursor: pointer;
+
+  .img-conteiner {
+    width: 100px;
+
+    img {
+      width: 100%;
+    }
+  }
+
+  .file-description {
+    text-decoration-line: underline;
+  }
+}

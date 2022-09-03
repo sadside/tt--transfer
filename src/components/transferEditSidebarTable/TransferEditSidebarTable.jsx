@@ -1,121 +1,60 @@
+import { carsClasses } from "../../db";
 import "./transferEditSidebarTable.scss";
+import TariffCellHubs from "../tariffCellHubs/TariffCellHubs";
 
 const TransferEditSidebarTable = ({
   showSecondRegion,
   setShowSecondRegion,
 }) => {
-  const tableContent = [
-    "Стандарт",
-    "Комфорт",
-    "Бизнес",
-    "Представительский",
-    "SUV",
-    "Минивен",
-    "Микроавтобус",
-    "Минивен бизнес",
-    "Микроавтобус бизнес",
-  ];
 
   return (
-    <div className="scroll-table-transfer">
-      <table>
-        <thead>
-          <tr>
-            <th height="60">Типы услуг</th>
-            <th height="60" className="green-zone">
-              Стоимость
-            </th>
-            <th
-              height="60"
-              onClick={() => setShowSecondRegion(true)}
-              className={`region transfer-link blue-zone ${
-                !showSecondRegion && "transferLink-item-region"
-              }`}
-            >
-              <div>Удаленный район</div>
-            </th>
-            {showSecondRegion && (
+    <div className="scroll-table-tariff ">
+      <div className="scroll-table-body-tariff">
+        <table>
+          <thead>
+            <tr>
+              <th height="60" width="190">Типы услуг</th>
+              <th height="60" width="190" className="green-zone">
+                Стоимость
+              </th>
               <th
                 height="60"
-                className={"region red-zone transferLink-item-region"}
+                width="190"
+                onClick={() => setShowSecondRegion(true)}
+                className={`region transfer-link blue-zone ${!showSecondRegion && "transferLink-item-region"
+                  }`}
               >
                 <div>Удаленный район</div>
               </th>
-            )}
-          </tr>
-        </thead>
-      </table>
-      <div className="scroll-table-body-tariff">
+              {showSecondRegion && (
+                <th
+                  height="60"
+                  width="190"
+                  className={"region red-zone transferLink-item-region"}
+                >
+                  <div>Удаленный район</div>
+                </th>
+              )}
+            </tr>
+          </thead>
+        </table>
         <table>
           <tbody>
-            {tableContent.map((item) => {
+            {carsClasses.map((title) => {
               return (
                 <tr>
-                  <td>{item}</td>
-                  <td>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <div className={"tariff-price-wrap"}>
-                        <input type="text" className={"tariff-price-input"} />
-                        <div>Заказчик</div>
-                      </div>
-                      <div className={"tariff-price-wrap"}>
-                        <input type="text" className={"tariff-price-input"} />
-                        <div>Водитель</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                        alignItems: "center",
-                      }}
-                    >
-                      <div className={"tariff-price-wrap"}>
-                        <input type="text" className={"tariff-price-input"} />
-                        <div>Заказчик</div>
-                      </div>
-                      <div className={"tariff-price-wrap"}>
-                        <input type="text" className={"tariff-price-input"} />
-                        <div>Водитель</div>
-                      </div>
-                    </div>
-                  </td>
+                  <td>{title.carClass}</td>
+                  <TariffCellHubs />
+                  <TariffCellHubs />
                   {showSecondRegion && (
-                    <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "center",
-                          flexDirection: "column",
-                          alignItems: "center",
-                        }}
-                      >
-                        <div className={"tariff-price-wrap"}>
-                          <input type="text" className={"tariff-price-input"} />
-                          <div>Заказчик</div>
-                        </div>
-                        <div className={"tariff-price-wrap"}>
-                          <input type="text" className={"tariff-price-input"} />
-                          <div>Водитель</div>
-                        </div>
-                      </div>
-                    </td>
+                    <TariffCellHubs />
                   )}
                 </tr>
               );
             })}
           </tbody>
         </table>
+
       </div>
     </div>
   );

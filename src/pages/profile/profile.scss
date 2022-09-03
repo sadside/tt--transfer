@@ -1,7 +1,9 @@
 .profile-wrap {
 	display: flex;
+	max-height: calc(100vh - 100px);
 	
 	.profile-control {
+		height: 500px;
 		background-color: #ffffff;
 		display: flex;
 		flex-direction: column;
@@ -73,10 +75,6 @@
 	}
 }
 
-.profile-image-layout-wrap {
-
-}
-
 .profile-data {
 	border: 1px solid rgba(216, 216, 216, 0.8);
 	border-radius: 3px;
@@ -84,5 +82,4 @@
 	margin-left: 20px;
 	padding: 25px;
 	flex-basis: 70%;
-	height: min-content;
 }

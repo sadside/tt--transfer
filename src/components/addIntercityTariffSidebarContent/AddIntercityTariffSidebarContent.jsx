@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AddIntercityTariff from "../addIntercityTariff/AddIntercityTariff";
-import AddTarifInputs from "../addTariffinpus/AddTarifInputs";
+import AddTariffInputs from "../addTariffinpus/AddTariffInputs";
 import EditSidebarSubmitButtons from "../editSidebarSubmitButtons/EditSidebarSubmitButtons";
 import EditSidebarTableHeader from "../editSidebarTableHeader/EditSidebarTableHeader";
 import Tabs from "../tabs/Tabs";
@@ -35,7 +35,7 @@ const AddIntercityTariffSidebarContent = ({ setTest }) => {
             handleTabClick={setActiveTab}
           />
           <form action="">
-            {activeTab === 0 && <AddTarifInputs intercity={true} />}
+            {activeTab === 0 && <AddTariffInputs intercity={true} />}
             {activeTab === 1 && (
               <div>
                 <EditSidebarTableHeader />

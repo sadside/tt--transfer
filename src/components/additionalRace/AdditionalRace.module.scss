@@ -1,0 +1,29 @@
+.wrap {
+	display: flex;
+	margin: 15px 0 0 0;
+	font-size: 14px;
+	width: 350px;
+}
+
+.raceContent {
+	display: flex;
+	align-items: center;
+	padding: 5px 10px;
+	border-radius: 3px;
+	background-color: #E8E8E8;
+	height: 40px;
+	box-sizing: border-box;
+	flex: 1 1;
+}
+
+.deleteRace {
+	height: 40px;
+	width: 40px;
+	background-color: #E8E8E8;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 3px;
+	margin-left: 20px;
+	cursor: pointer;
+}

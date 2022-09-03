@@ -1,14 +1,17 @@
 import classNames from "classnames";
-import { FC, ReactNode, useEffect } from "react";
+import { FC, PropsWithChildren, ReactNode, useEffect } from "react";
 import styles from "./Modal.module.scss";
 
-interface ModalProps {
+export type ModalProps = {
   active: boolean;
   setActive: (bool: boolean) => void;
-  children?: ReactNode;
-}
+};
 
-const Modal: FC<ModalProps> = ({ active, setActive, children }) => {
+const Modal: FC<PropsWithChildren<ModalProps>> = ({
+  active,
+  setActive,
+  children,
+}) => {
   const modal = classNames([styles.modal], {
     [styles.active]: active,
   });

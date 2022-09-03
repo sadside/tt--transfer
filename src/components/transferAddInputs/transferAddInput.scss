@@ -11,10 +11,11 @@
 .tariff-price-wrap {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	
-	div {
-		margin-left: 10px;
-	}
+	// div {
+	// 	margin-left: 10px;
+	// }
 }
 
 .tariff-price-wrap:first-child {
@@ -28,4 +29,8 @@
 	.submit-tariff-buttons {
 		display: flex;
 	}
+}
+
+.from-to-arrow {
+	margin: 55px 37px 25px 31px !important;
 }

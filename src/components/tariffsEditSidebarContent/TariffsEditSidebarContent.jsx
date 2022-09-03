@@ -2,7 +2,7 @@ import "./tariffsEditSidebarContent.scss";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import AddIntercityTariff from "../addIntercityTariff/AddIntercityTariff";
-import AddTarifInputs from "../addTariffinpus/AddTarifInputs";
+import AddTariffInputs from "../addTariffinpus/AddTariffInputs";
 import AddTariffTable from "../addTariffTable/AddTariffTable";
 import EditSidebarSubmitButtons from "../editSidebarSubmitButtons/EditSidebarSubmitButtons";
 import EditSidebarTableHeader from "../editSidebarTableHeader/EditSidebarTableHeader";
@@ -48,7 +48,7 @@ const TariffsEditSidebarContent = ({ showTransfersSidebar, setTest }) => {
               action=""
               onSubmit={handleSubmit((data) => alert(JSON.stringify(data)))}
             >
-              {activeTab === 0 && <AddTarifInputs />}
+              {activeTab === 0 && <AddTariffInputs />}
               {activeTab === 1 && (
                 <div>
                   <EditSidebarTableHeader />
@@ -69,7 +69,7 @@ const TariffsEditSidebarContent = ({ showTransfersSidebar, setTest }) => {
               handleTabClick={setActiveTab}
             />
             <form action="">
-              {activeTab === 0 && <AddTarifInputs intercity={true} />}
+              {activeTab === 0 && <AddTariffInputs intercity={true} />}
               {activeTab === 1 && (
                 <div>
                   <EditSidebarTableHeader />

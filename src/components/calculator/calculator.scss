@@ -49,8 +49,9 @@
 
 	input,
 	select {
-		width: 350px;
+		width: 350px !important;
 	}
+	
 }
 
 .select-car-class {
@@ -60,11 +61,10 @@
 }
 
 .calculator-calc-button {
-	margin-top: 25px;
-	margin-bottom: 53px;
+	margin-top: 15px;
 	display: flex;
 	justify-content: flex-end;
-	width: 800px;
+	width: 100%;
 }
 
 .add-race {
@@ -117,6 +117,7 @@
 
 .route-info {
 	margin-bottom: 20px;
+	margin-top: 60px;
 }
 
 //.map-wrapper {
