@@ -48,11 +48,11 @@ export const getCitySuggestionsThunk = createAsyncThunk<
   string,
   { rejectValue: string; state: { tariff: TariffState } }
 >("tariff/getCitySuggestions", async (string, { getState }) => {
-  const city = getState().tariff.tariffCity?.name;
+  const region = getState().tariff.tariffRegion?.name;
 
   try {
-    if (city) {
-      const { data } = await TariffService.getCitySuggestions(string, city);
+    if (region) {
+      const { data } = await TariffService.getCitySuggestions(string, region);
 
       return data;
     }
