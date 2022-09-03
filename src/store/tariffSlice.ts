@@ -8,8 +8,8 @@ import { TariffService } from "../services/TariffService";
 import { CarClass, ICity, IRegion } from "../types/types";
 
 type TariffState = {
-  tariffRegion: IRegion | null;
-  tariffCity: ICity | null;
+  tariffRegion: string;
+  tariffCity: string;
   regionSuggestions: string[];
   citySuggestions: string[];
   carClasses: CarClass[];
@@ -17,8 +17,8 @@ type TariffState = {
 };
 
 const initialState: TariffState = {
-  tariffRegion: null,
-  tariffCity: null,
+  tariffRegion: "",
+  tariffCity: "",
   regionSuggestions: [],
   citySuggestions: [],
   carClasses: [],
@@ -31,9 +31,8 @@ export const getRegionSuggestionsThunk = createAsyncThunk<
   { rejectValue: string }
 >(
   "tariff/getRegionSuggestions",
-  async (string: string, { rejectWithValue, dispatch }) => {
+  async (string: string, { rejectWithValue }) => {
     try {
-      dispatch(setTariffRegion(string));
       const { data } = await TariffService.getRegionSuggestions(string);
 
       return data;
@@ -48,11 +47,11 @@ export const getCitySuggestionsThunk = createAsyncThunk<
   string,
   { rejectValue: string; state: { tariff: TariffState } }
 >("tariff/getCitySuggestions", async (string, { getState }) => {
-  const region = getState().tariff.tariffRegion?.name;
+  const region = getState().tariff.tariffRegion;
 
   try {
     if (region) {
-      const { data } = await TariffService.getCitySuggestions(string, region);
+      const { data } = await TariffService.getCitySuggestions(region, string);
 
       return data;
     }
@@ -108,7 +107,9 @@ export const tariffSlice = createSlice({
           state.citySuggestions = action.payload;
         }
       );
-    build.addMatcher(isError, (state) => {});
+    build.addMatcher(isError, (state, action) => {
+      state.status = action.payload;
+    });
   },
 });
 
