@@ -46,8 +46,6 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = ({ intercity }) => {
             type="text"
             className="tariff-data-input"
             placeholder="Введите название"
-            value={region}
-            onChange={regionInputHandler}
           />
         </label>
         <label>
@@ -55,9 +53,9 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = ({ intercity }) => {
           <input
             type="text"
             className="tariff-data-input"
-            placeholder="Введите название"
-            value={city}
-            onChange={cityInputHandler}
+            placeholder="Введите название2"
+            value={region}
+            onChange={regionInputHandler}
           />
         </label>
 
@@ -68,6 +66,8 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = ({ intercity }) => {
               type="text"
               className="tariff-data-input"
               placeholder="Введите название"
+              onChange={cityInputHandler}
+              value={city}
             />
           </label>
         )}

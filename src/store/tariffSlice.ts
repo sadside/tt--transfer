@@ -31,8 +31,9 @@ export const getRegionSuggestionsThunk = createAsyncThunk<
   { rejectValue: string }
 >(
   "tariff/getRegionSuggestions",
-  async (string: string, { rejectWithValue }) => {
+  async (string: string, { rejectWithValue, dispatch }) => {
     try {
+      dispatch(setTariffRegion(string));
       const { data } = await TariffService.getRegionSuggestions(string);
 
       return data;

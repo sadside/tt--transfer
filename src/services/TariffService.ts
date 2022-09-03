@@ -11,7 +11,7 @@ export class TariffService {
   }
 
   static getRegionSuggestions(string: string) {
-    return $api.get("", {
+    return $api.get("address/filter-regions", {
       params: {
         search: string,
       },
@@ -19,7 +19,7 @@ export class TariffService {
   }
 
   static getCitySuggestions(region: string, string: string) {
-    return $api.get("", {
+    return $api.get("address/filter-cities", {
       params: {
         region,
         search: string,
