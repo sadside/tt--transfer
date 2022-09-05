@@ -17,9 +17,9 @@ type TariffState = {
 };
 
 const initialState: TariffState = {
-  tariffRegion: "",
+  tariffRegion: "Оренбургская область",
   tariffCity: "",
-  regionSuggestions: [],
+  regionSuggestions: ["бла бла ", "аыаыаы"],
   citySuggestions: [],
   carClasses: [],
   status: "",
@@ -46,17 +46,21 @@ export const getCitySuggestionsThunk = createAsyncThunk<
   string[],
   string,
   { rejectValue: string; state: { tariff: TariffState } }
->("tariff/getCitySuggestions", async (string, { getState }) => {
-  const region = getState().tariff.tariffRegion;
+>(
+  "tariff/getCitySuggestions",
+  async (string, { getState, rejectWithValue }) => {
+    const region = getState().tariff.tariffRegion;
+    try {
+      if (region) {
+        const { data } = await TariffService.getCitySuggestions(region, string);
 
-  try {
-    if (region) {
-      const { data } = await TariffService.getCitySuggestions(region, string);
-
-      return data;
+        return data;
+      }
+    } catch (e: any) {
+      rejectWithValue(e.message());
     }
-  } catch (e) {}
-});
+  }
+);
 
 export const getCarClassesThunk = createAsyncThunk<
   CarClass[],
@@ -83,18 +87,18 @@ export const tariffSlice = createSlice({
       state.tariffCity = action.payload;
     },
   },
-  extraReducers: (build) => {
-    build.addCase(getCarClassesThunk.pending, (state) => {
-      state.status = "loading";
-    });
-    build.addCase(
-      getCarClassesThunk.fulfilled,
-      (state, action: PayloadAction<CarClass[]>) => {
-        state.status = "idle";
-        state.carClasses = action.payload;
-      }
-    );
-    build
+  extraReducers: (builder) => {
+    builder
+      .addCase(getCarClassesThunk.pending, (state) => {
+        state.status = "loading";
+      })
+      .addCase(
+        getCarClassesThunk.fulfilled,
+        (state, action: PayloadAction<CarClass[]>) => {
+          state.status = "idle";
+          state.carClasses = action.payload;
+        }
+      )
       .addCase(
         getRegionSuggestionsThunk.fulfilled,
         (state, action: PayloadAction<string[]>) => {
@@ -106,10 +110,10 @@ export const tariffSlice = createSlice({
         (state, action: PayloadAction<string[]>) => {
           state.citySuggestions = action.payload;
         }
-      );
-    build.addMatcher(isError, (state, action) => {
-      state.status = action.payload;
-    });
+      )
+      .addMatcher(isError, (state, action) => {
+        state.status = action.payload;
+      });
   },
 });
 

@@ -27,16 +27,13 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
 
   const [region, setRegion] = useState<string>("");
   const [city, setCity] = useState<string>("");
-  const { isShow, setIsShow, ref } = useOutside(false);
 
   const regionInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === "") dispatch(setTariffRegion(""));
     setRegion(e.target.value);
     dispatch(getRegionSuggestionsThunk(e.target.value));
   };
 
   const cityInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.value === "") dispatch(setTariffCity(""));
     setCity(e.target.value);
     dispatch(getCitySuggestionsThunk(e.target.value));
   };
@@ -57,19 +54,18 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
           <input
             type="text"
             className="tariff-data-input"
-            placeholder="Введите название2"
+            placeholder="Введите название"
             value={region}
             onChange={regionInputHandler}
           />
           <AnimatePresence>
-            {regionSuggestions.length > 0 && isShow && (
+            {regionSuggestions.length > 0 && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ type: "Tween" }}
-                style={{ overflow: "hidden", zIndex: 1000 }}
-                ref={ref}
+                style={{ zIndex: 100000000, position: "relative" }}
               >
                 <div className={styles.citySelect}>
                   <ul>
@@ -104,14 +100,13 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
             value={city}
           />
           <AnimatePresence>
-            {citySuggestions.length > 0 && isShow && (
+            {citySuggestions?.length > 0 && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ type: "Tween" }}
                 style={{ overflow: "hidden", zIndex: 1000 }}
-                ref={ref}
               >
                 <div className={styles.citySelect}>
                   <ul>
