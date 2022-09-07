@@ -5,7 +5,14 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { TariffService } from "../services/TariffService";
-import { CarClass, ICity, IRegion } from "../types/types";
+import {
+  CarClass,
+  ICity,
+  IInitialTariff,
+  IRegion,
+  IService,
+  ITariff,
+} from "../types/types";
 
 type TariffState = {
   tariffRegion: string;
@@ -14,15 +21,21 @@ type TariffState = {
   citySuggestions: string[];
   carClasses: CarClass[];
   status: string;
+  services: IService[];
+  tariff: ITariff | null;
+  tariffName: string;
 };
 
 const initialState: TariffState = {
-  tariffRegion: "Оренбургская область",
+  tariffRegion: "",
   tariffCity: "",
-  regionSuggestions: ["бла бла ", "аыаыаы"],
+  regionSuggestions: [],
   citySuggestions: [],
   carClasses: [],
-  status: "",
+  status: "idle",
+  services: [],
+  tariff: null,
+  tariffName: "",
 };
 
 export const getRegionSuggestionsThunk = createAsyncThunk<
@@ -38,6 +51,25 @@ export const getRegionSuggestionsThunk = createAsyncThunk<
       return data;
     } catch (e: any) {
       rejectWithValue(e.message());
+    }
+  }
+);
+
+export const editTariffPriceThunk = createAsyncThunk<
+  ITariff,
+  any,
+  { rejectValue: string; state: { tariff: TariffState } }
+>(
+  "tariff/editTariffPriceThunk",
+  async (tariff, { rejectWithValue, getState }) => {
+    const id = getState().tariff.tariff?.id;
+
+    try {
+      const response = await TariffService.editTariffPrice(tariff, id);
+      console.log(response);
+      return response.data;
+    } catch (e: any) {
+      return rejectWithValue(e.message());
     }
   }
 );
@@ -76,6 +108,48 @@ export const getCarClassesThunk = createAsyncThunk<
   }
 });
 
+export const getTariffServicesThunk = createAsyncThunk<
+  IService[],
+  undefined,
+  { rejectValue: string }
+>("tariff/getTariffServices", async (_, { rejectWithValue }) => {
+  try {
+    const { data } = await TariffService.getTariffServices();
+
+    return data;
+  } catch (e: any) {
+    return rejectWithValue("Ошибка при загрузке текущих услуг");
+  }
+});
+
+export const getTariffByIdThunk = createAsyncThunk<
+  ITariff,
+  number,
+  { rejectValue: string }
+>("tariff/getTariffByIdThink", async (id, { rejectWithValue }) => {
+  try {
+    const { data } = await TariffService.getTariffById(id);
+
+    return data;
+  } catch (e: any) {
+    return rejectWithValue("error");
+  }
+});
+
+export const createTariffThunk = createAsyncThunk<
+  ITariff,
+  IInitialTariff,
+  { rejectValue: string }
+>("tariff/createTariffThunk", async (tariff, { rejectWithValue }) => {
+  try {
+    const response = await TariffService.createTariff(tariff);
+
+    return response.data;
+  } catch (e: any) {
+    return rejectWithValue(e.message());
+  }
+});
+
 export const tariffSlice = createSlice({
   name: "tariff",
   initialState,
@@ -85,6 +159,12 @@ export const tariffSlice = createSlice({
     },
     setTariffCity(state, action) {
       state.tariffCity = action.payload;
+    },
+    clearTariff(state) {
+      state.tariff = null;
+    },
+    setTariffName(state, action) {
+      state.tariffName = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -111,13 +191,38 @@ export const tariffSlice = createSlice({
           state.citySuggestions = action.payload;
         }
       )
+      .addCase(
+        getTariffServicesThunk.fulfilled,
+        (state, action: PayloadAction<IService[]>) => {
+          state.services = action.payload;
+        }
+      )
+      .addCase(getTariffByIdThunk.pending, (state) => {
+        state.status = "tariff loading";
+      })
+      .addCase(getTariffByIdThunk.fulfilled, (state, action) => {
+        state.status = "idle";
+
+        state.tariff = action.payload;
+      })
+      .addCase(createTariffThunk.pending, (state) => {
+        state.status = "tariff creating";
+      })
+      .addCase(createTariffThunk.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.tariff = action.payload;
+      })
+      .addCase(editTariffPriceThunk.fulfilled, (state, action) => {
+        state.tariff = action.payload;
+      })
       .addMatcher(isError, (state, action) => {
         state.status = action.payload;
       });
   },
 });
 
-export const { setTariffCity, setTariffRegion } = tariffSlice.actions;
+export const { setTariffCity, setTariffRegion, setTariffName } =
+  tariffSlice.actions;
 
 export default tariffSlice.reducer;
 

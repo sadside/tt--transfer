@@ -117,6 +117,7 @@ export interface IFullHub {
   description: string;
   id: number | null;
   title: string;
+  slug?: string;
 }
 
 export interface IHubs {
@@ -129,6 +130,7 @@ export interface IHubCity {
   region: string;
   city: string;
   id: number | null;
+
   center: {
     id: number | null;
     latitude: number | null;
@@ -171,7 +173,7 @@ export interface IService {
   id: number;
   title: string;
   slug: string;
-  prices: IServicePrice[];
+  prices?: IServicePrice[];
 }
 
 export interface IHubPrice {
@@ -236,3 +238,9 @@ export type CarClass = {
   title: string;
   slug: string;
 };
+
+export interface IInitialTariff {
+  name: string;
+  region: string;
+  city: string;
+}

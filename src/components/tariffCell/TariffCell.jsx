@@ -1,6 +1,15 @@
-import "./tariffCell.scss"
+import "./tariffCell.scss";
+import { useEffect } from "react";
 
-const TariffCell = ({register, row, isVisiablePlus}) => {
+const TariffCell = ({ register, id, driverPrice, customerPrice, setValue }) => {
+  const driverInput = `driver-${id}`;
+  const customerInput = `customer-${id}`;
+
+  useEffect(() => {
+    setValue(driverInput, driverPrice);
+    setValue(customerInput, customerPrice);
+  }, []);
+
   return (
     <td>
       <div
@@ -15,7 +24,13 @@ const TariffCell = ({register, row, isVisiablePlus}) => {
           <input
             type="text"
             className={"tariff-price-input"}
-            {...register(row.nameDriverStandard)}
+            {...register(driverInput, {
+              required: "Это поле обязательно",
+              min: {
+                error: "Введите неотрицательное число",
+                value: 0,
+              },
+            })}
           />
           <div>Заказчик</div>
         </div>
@@ -23,13 +38,19 @@ const TariffCell = ({register, row, isVisiablePlus}) => {
           <input
             type="text"
             className={"tariff-price-input"}
-            {...register(row.nameDriverStandard)}
+            {...register(customerInput, {
+              required: "Это поле обязательно",
+              min: {
+                error: "Введите неотрицательное число",
+                value: 0,
+              },
+            })}
           />
           <div>Водитель</div>
         </div>
       </div>
     </td>
-  )
-}
+  );
+};
 
-export default TariffCell
+export default TariffCell;
