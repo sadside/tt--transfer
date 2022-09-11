@@ -1,14 +1,24 @@
-import "./tariffCell.scss";
+import "./tariffCellHubs.scss";
 import { useEffect } from "react";
+import plus from "../../assets/+.svg";
 
-const TariffCell = ({
+interface TariffCellHubsProps {
+  register: any;
+  id: number | undefined;
+  driverPrice: number | undefined;
+  customerPrice: number | undefined;
+  setValue: any;
+  errors: any;
+}
+
+const TariffCellHubs = ({
   register,
   id,
   driverPrice,
   customerPrice,
   setValue,
   errors,
-}) => {
+}: TariffCellHubsProps) => {
   const driverInput = `driver-${id}`;
   const customerInput = `customer-${id}`;
 
@@ -24,10 +34,10 @@ const TariffCell = ({
           display: "flex",
           justifyContent: "center",
           flexDirection: "column",
-          width: "158px",
         }}
       >
         <div className={"tariff-price-wrap"}>
+          <img src={plus} alt="" />
           <input
             type="text"
             className={`tariff-price-input ${
@@ -44,6 +54,7 @@ const TariffCell = ({
           <div>Заказчик</div>
         </div>
         <div className={"tariff-price-wrap"}>
+          <img src={plus} alt="" />
           <input
             type="text"
             className={`tariff-price-input ${
@@ -64,4 +75,4 @@ const TariffCell = ({
   );
 };
 
-export default TariffCell;
+export default TariffCellHubs;

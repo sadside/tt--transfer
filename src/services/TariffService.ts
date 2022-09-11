@@ -1,6 +1,12 @@
 import axios, { AxiosResponse } from "axios";
 import $api from "../http";
-import { CarClass, IInitialTariff, IService, ITariff } from "../types/types";
+import {
+  CarClass,
+  IInitialTariff,
+  IService,
+  IShortTariff,
+  ITariff,
+} from "../types/types";
 
 export class TariffService {
   static getCarClasses() {
@@ -40,10 +46,21 @@ export class TariffService {
   }
 
   static getTariffById(id: number) {
-    return $api.get<ITariff>(`//${id}`);
+    return $api.get<ITariff>(`tariffs/tariff/${id}/`);
   }
 
   static postTariff(tariff: any) {
     return $api.post("", tariff);
+  }
+
+  static getShortTariffs() {
+    return $api.get<IShortTariff[]>("tariffs/tariff");
+  }
+
+  static createCity(id: any, region: string, city: string) {
+    return $api.post(`tariffs/tariff/${id}/intercity/city/`, {
+      region,
+      city,
+    });
   }
 }

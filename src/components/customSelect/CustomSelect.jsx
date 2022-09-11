@@ -7,7 +7,7 @@ const CustomSelect = ({
   items,
   setItem,
   setVisible,
-  setShowSidebar = null,
+  setShowSidebar,
   showAll = true,
 }) => {
   return (

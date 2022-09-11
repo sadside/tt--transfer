@@ -1,8 +1,8 @@
 import { useState } from "react";
-import AddIntercityTariff from "../addIntercityTariff/AddIntercityTariff";
+import CityPricesTable from "../addIntercityTariff/CityPricesTable";
 import AddTariffInputs from "../addTariffinpus/AddTariffInputs";
 import EditSidebarSubmitButtons from "../editSidebarSubmitButtons/EditSidebarSubmitButtons";
-import EditSidebarTableHeader from "../editSidebarTableHeader/EditSidebarTableHeader";
+import SidebarTableHeader from "../editSidebarTableHeader/SidebarTableHeader";
 import Tabs from "../tabs/Tabs";
 import "./addIntercityTariffSidebarContent.scss";
 
@@ -38,8 +38,8 @@ const AddIntercityTariffSidebarContent = ({ setTest }) => {
             {activeTab === 0 && <AddTariffInputs intercity={true} />}
             {activeTab === 1 && (
               <div>
-                <EditSidebarTableHeader />
-                <AddIntercityTariff setTest={setTest} />
+                <SidebarTableHeader />
+                <CityPricesTable setTest={setTest} />
               </div>
             )}
           </form>

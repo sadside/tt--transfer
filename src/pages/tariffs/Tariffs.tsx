@@ -1,61 +1,124 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { log } from "util";
 import ActionMenu from "../../components/actionMenu/ActionMenu";
 import AddIntercityTariffSidebarContent from "../../components/addIntercityTariffSidebarContent/AddIntercityTariffSidebarContent";
-import AddIntercityTransferSidebarContent from "../../components/addIntercityTransferSidebarContent/AddIntercityTransferSidebarContent";
+import AddCity from "../../components/addIntercityTransferSidebarContent/AddCity";
 import BlockHeader from "../../components/blockHeader/BlockHeader";
 import EditSidebar from "../../components/editSidebar/EditSidebar";
+import EditTariff from "../../components/editTariff/EditTariff";
+import Loader from "../../components/loader/Loader";
 import MainTable from "../../components/mainTable/MainTable";
+import MainTableTariffs from "../../components/mainTableTariffs/MainTableTariffs";
 import Pagination from "../../components/pagination/Pagination";
 import SmartFilter from "../../components/smartFilter/SmartFilter";
 import Tabs from "../../components/tabs/Tabs";
 import "./tariffs.scss";
 import TariffsEditSidebarContent from "../../components/tariffsEditSidebarContent/TariffsEditSidebarContent";
-import TariffsEditSidebarTransfersContent from "../../components/tariffsEditSidebarTransfersContent/TariffsEditSidebarTransfersContent";
+import HubInfo from "../../components/tariffsEditSidebarTransfersContent/HubInfo";
 import {
   tariffsFilterData,
   tariffsTableBody,
   tariffsTableHeaders,
   tariffsTabs,
 } from "../../db";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import {
+  clearTariff,
+  getCarClassesThunk,
+  getShortTariffs,
+  getTariffByIdThunk,
+  setShowAddCity,
+  setShowAddTariffSidebar,
+  setShowEditTariffSidebar,
+  setShowZoneSidebar,
+} from "../../store/tariffSlice";
 
 const Tariffs = () => {
+  const dispatch = useAppDispatch();
+
   const [showSmartFilter, setShowSmartFilter] = useState(false);
   const [activeTariffTab, setActiveTariffTab] = useState(0);
-  const [showEditSidebar, setShowEditSidebar] = useState(false);
-  const [showEditSidebarTransfers, setShowEditSidebarTransfers] =
-    useState(false);
   const [showActionMenu, setShowActionMenu] = useState(false);
-  const [test, setTest] = useState(false);
+  // const [test, setTest] = useState(false);
   const [showEditSidebarIntercity, setShowEditSidebarIntercity] =
     useState(false);
   const [onlyOneSelected, setOnlyOneSelected] = useState(false);
   //Pagination
+
+  const setShowAddCitySidebar = (value: boolean) => {
+    dispatch(
+      setShowAddCity({
+        value,
+      })
+    );
+  };
 
   const [currentPage, setCurrentPage] = useState(1);
   const [countriesPerPage, setCountriesPerPage] = useState(10);
   const lastCountryIndex = currentPage * countriesPerPage;
   const firstCountryIndex = lastCountryIndex - countriesPerPage;
 
+  const tariffs = useAppSelector((state) => state.tariff.tariffs);
+  const showZoneSidebar = useAppSelector(
+    (state) => state.tariff.showZoneSidebar
+  );
+
+  const showAddSidebar = useAppSelector(
+    (state) => state.tariff.showAddTariffSidebar
+  );
+
+  const showEditSidebar = useAppSelector(
+    (state) => state.tariff.showEditTariffSidebar
+  );
+
+  const showAddCity = useAppSelector((state) => state.tariff.showAddCity);
+
+  const status = useAppSelector((state) => state.tariff.status);
+
   const currentCountry = tariffsTableBody.slice(
     firstCountryIndex,
     lastCountryIndex
   );
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  useEffect(() => {
+    dispatch(getCarClassesThunk());
+    dispatch(getShortTariffs());
+    return () => {
+      dispatch(setShowZoneSidebar({ value: false }));
+      dispatch(setShowAddTariffSidebar(false));
+      dispatch(setShowAddCity({ value: false }));
+    };
+  }, []);
+
+  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
   const nextPage = () => setCurrentPage((prev) => prev + 1);
   const prevPage = () => setCurrentPage((prev) => prev - 1);
 
-  const handleShowActionMenu = (value) => {
+  const handleShowActionMenu = (value: any) => {
     setShowActionMenu(value);
   };
 
-  const handleTabClick = (index) => {
+  const handleTabClick = (index: number) => {
     setActiveTariffTab(index);
+  };
+
+  const setShowEditSidebarTransfers = (value: boolean, index: number) => {
+    dispatch(setShowZoneSidebar({ value, index }));
   };
 
   const closeSmartFilter = () => {
     setShowSmartFilter(false);
+  };
+
+  const setShowAddSidebar = (value: boolean) => {
+    dispatch(setShowAddTariffSidebar(value));
+    dispatch(clearTariff());
+  };
+
+  const setShowEditSidebar = (value: boolean) => {
+    dispatch(setShowEditTariffSidebar(value));
+    dispatch(clearTariff());
   };
 
   return (
@@ -66,12 +129,11 @@ const Tariffs = () => {
           showSmartFilter={showSmartFilter}
           FilterVisible={setShowSmartFilter}
           buttonText={"Добавить тариф"}
-          callback={() => setShowEditSidebar(true)}
+          callback={() => setShowAddSidebar(true)}
         />
         <AnimatePresence>
           {showSmartFilter &&
-            !showEditSidebar &&
-            !showEditSidebarTransfers &&
+            !showAddSidebar &&
             !showEditSidebarIntercity &&
             !test && (
               <motion.div
@@ -88,15 +150,30 @@ const Tariffs = () => {
               </motion.div>
             )}
         </AnimatePresence>
-        <MainTable
-          headers={tariffsTableHeaders}
-          body={currentCountry}
-          haveInputs={true}
-          handleShowActionMenu={handleShowActionMenu}
-          setShowEditSidebar={() => setShowEditSidebar(true)}
-          activeTab={0}
-          setOnlyOneSelected={setOnlyOneSelected}
-        />
+        {/*<MainTable*/}
+        {/*  headers={tariffsTableHeaders}*/}
+        {/*  body={currentCountry}*/}
+        {/*  haveInputs={true}*/}
+        {/*  handleShowActionMenu={handleShowActionMenu}*/}
+        {/*  setShowEditSidebar={() => setShowEditSidebar(true)}*/}
+        {/*  activeTab={0}*/}
+        {/*  setOnlyOneSelected={setOnlyOneSelected}*/}
+        {/*  handleShowActionMenuArchive={() => console.log("show")}*/}
+        {/*/>*/}
+        {status == "tariffs loading" ? (
+          <Loader />
+        ) : (
+          <div>
+            {/*{tariffs*/}
+            {/*  .map((tariff) => (*/}
+            {/*    <div onClick={() => dispatch(getTariffByIdThunk(tariff.id))}>*/}
+            {/*      {tariff.title}*/}
+            {/*    </div>*/}
+            {/*  ))*/}
+            {/*  .reverse()}*/}
+            <MainTableTariffs />
+          </div>
+        )}
       </div>
       <AnimatePresence>
         {showActionMenu && (
@@ -132,6 +209,34 @@ const Tariffs = () => {
         )}
       </AnimatePresence>
       <AnimatePresence>
+        {showAddSidebar && (
+          <motion.div
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: 1070, opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            style={{
+              overflow: "hidden",
+              display: "flex",
+              position: "absolute",
+              top: 0,
+              right: 0,
+              zIndex: 1000,
+            }}
+            transition={{ type: "Tween" }}
+          >
+            <EditSidebar
+              isVisible={showAddSidebar}
+              toggleSidebar={setShowAddSidebar}
+            >
+              <TariffsEditSidebarContent
+                showTransfersSidebar={setShowEditSidebarTransfers}
+                setTest={setShowAddCitySidebar}
+              />
+            </EditSidebar>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
         {showEditSidebar && (
           <motion.div
             initial={{ width: 0, opacity: 0 }}
@@ -150,19 +255,15 @@ const Tariffs = () => {
             <EditSidebar
               isVisible={showEditSidebar}
               toggleSidebar={setShowEditSidebar}
-              title={"Добавить/изменить тариф"}
             >
-              <TariffsEditSidebarContent
-                showTransfersSidebar={setShowEditSidebarTransfers}
-                setTest={setTest}
-              />
+              <EditTariff />
             </EditSidebar>
           </motion.div>
         )}
       </AnimatePresence>
 
       <AnimatePresence>
-        {showEditSidebarTransfers && (
+        {showZoneSidebar && (
           <motion.div
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 1070, opacity: 1 }}
@@ -178,16 +279,14 @@ const Tariffs = () => {
             transition={{ type: "Tween" }}
           >
             <EditSidebar
-              isVisible={showEditSidebarTransfers}
+              isVisible={showZoneSidebar}
               toggleSidebar={setShowEditSidebarTransfers}
-              title={"Добавить/изменить тариф"}
             >
-              <TariffsEditSidebarTransfersContent />
+              <HubInfo />
             </EditSidebar>
           </motion.div>
         )}
       </AnimatePresence>
-
       <AnimatePresence>
         {showEditSidebarIntercity && (
           <motion.div
@@ -207,16 +306,16 @@ const Tariffs = () => {
             <EditSidebar
               isVisible={showEditSidebarIntercity}
               toggleSidebar={setShowEditSidebarIntercity}
-              title={"Добавить/изменить тариф"}
             >
-              <AddIntercityTariffSidebarContent setTest={setTest} />
+              <AddIntercityTariffSidebarContent
+                setTest={setShowAddCitySidebar}
+              />
             </EditSidebar>
           </motion.div>
         )}
       </AnimatePresence>
-
       <AnimatePresence>
-        {test && (
+        {showAddCity && (
           <motion.div
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 1070, opacity: 1 }}
@@ -232,11 +331,10 @@ const Tariffs = () => {
             transition={{ type: "Tween" }}
           >
             <EditSidebar
-              isVisible={test}
-              toggleSidebar={setTest}
-              title={"Добавить/изменить тариф"}
+              isVisible={showAddCity}
+              toggleSidebar={setShowAddCitySidebar}
             >
-              <AddIntercityTransferSidebarContent />
+              <AddCity />
             </EditSidebar>
           </motion.div>
         )}

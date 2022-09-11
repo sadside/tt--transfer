@@ -188,11 +188,13 @@ export interface IFullZone {
   color: string;
   hub: number;
   coordinates: number[];
+  title: string;
 }
 
 export interface IAdditionalHubZonePrice {
   id: number;
   zone: IFullZone;
+  prices: IHubPrice[];
 }
 
 export interface IHubToPrice {
@@ -205,6 +207,15 @@ export interface IHubToPrice {
 export interface IIntracityTariff {
   id: number;
   hub_to_prices: IHubToPrice[];
+}
+
+export interface IIntercityCity {
+  id: number;
+  prices: IServicePrice[];
+  city: IHubCity;
+  distance: number;
+  hours_duration: number;
+  minutes_duration: number;
 }
 
 export interface ITariff {
@@ -228,7 +239,7 @@ export interface ITariff {
   intracity_tariff: IIntracityTariff;
   intercity_tariff: {
     id: number;
-    cities: [];
+    cities: IIntercityCity[];
     global_addresses: [];
   };
   lifetime: string;
@@ -243,4 +254,13 @@ export interface IInitialTariff {
   name: string;
   region: string;
   city: string;
+}
+
+export interface IShortTariff {
+  id: number;
+  title: string;
+  city: IHubCity;
+  currency: string;
+  is_commission: string;
+  lifetime: string;
 }

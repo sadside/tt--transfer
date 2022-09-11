@@ -1,5 +1,5 @@
 .tariffs-edit-sidebar-content-wrapper-transfers {
-	padding: 33px 23px 17px 23px;
+	padding: 0px 23px 17px 23px;
 }
 
 .inputs-wrap {
@@ -116,7 +116,7 @@
 }
 
 .scroll-table-transfer {
-	height: calc(100vh - 370px);
+	height: calc(100vh - 271px);
 	
 }
 
@@ -131,6 +131,7 @@
 	table-layout: fixed;
 	border: none;
 	border-collapse: collapse;
+	width: 100%;
 }
 
 .scroll-table-transfer thead {

@@ -1,5 +1,5 @@
 .scroll-table-tariff {
-	height: calc(100vh - 370px);
+	height: calc(100vh - 271px);
 }
 
 .scroll-table-body-tariff {
@@ -28,8 +28,6 @@
 	vertical-align: center;
 	font-size: 14px;
 	font-weight: 400 !important;
-	width: 190px;
-	height: 60px;
 }
 
 .scroll-table-tariff thead tr {
@@ -44,11 +42,9 @@
 	padding: 10px 15px;
 	font-size: 14px;
 	vertical-align: center;
-//	height: 70px;
+	height: 70px;
 	box-sizing: border-box;
 	border: 1px solid #CCCCCC;
-		width: 190px;
-	height: 60px;
 }
 
 .transferLink-item {

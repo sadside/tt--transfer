@@ -1,22 +1,38 @@
-import "./tariffsEditSidebarContent.scss";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Simulate } from "react-dom/test-utils";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { setShowAddCity } from "../../store/tariffSlice";
 import CityPricesTable from "../addIntercityTariff/CityPricesTable";
 import AddTariffInputs from "../addTariffinpus/AddTariffInputs";
 import AddTariffTable from "../addTariffTable/AddTariffTable";
 import ServicesTable from "../addTariffTableType/ServicesTable";
+//@ts-ignore
 import EditSidebarSubmitButtons from "../editSidebarSubmitButtons/EditSidebarSubmitButtons";
 import SidebarTableHeader from "../editSidebarTableHeader/SidebarTableHeader";
+import ErrorComponent from "../errorComponent/ErrorComponent";
 import Loader from "../loader/Loader";
-import Tabs from "../tabs/Tabs";
-import TransferAddInput from "../transferAddInputs/TransferAddInput";
+import styles from "./EditTariff.module.scss";
 
-const TariffsEditSidebarContent = ({ showTransfersSidebar, setTest }) => {
+interface EditTariffProps {}
+
+const EditTariff = ({}: EditTariffProps) => {
+  const dispatch = useAppDispatch();
+
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
+  const status = useAppSelector((state) => state.tariff.status);
   const tariff = useAppSelector((state) => state.tariff.activeTariff);
+  const error = useAppSelector((state) => state.tariff.error);
+
+  useEffect(() => {}, []);
+
+  if (status === "tariff loading") return <Loader />;
+
+  if (error) return <div className={styles.error}>{error}</div>;
+
+  const setShowAddCitySidebar = () => {
+    dispatch(setShowAddCity({ value: true }));
+  };
 
   return (
     <div className={"tariffs-edit-sidebar-content-wrapper"}>
@@ -74,8 +90,8 @@ const TariffsEditSidebarContent = ({ showTransfersSidebar, setTest }) => {
         {activeTabIndex === 1 && (
           <div className="tariffs-edit-sidebar-content-edit-part">
             <div>
-              <SidebarTableHeader title="Хабы" />
-              <AddTariffTable showTransfersSidebar={showTransfersSidebar} />
+              <SidebarTableHeader linkField="" title={"Хабы"} />
+              <AddTariffTable showTransfersSidebar={() => 1} />
             </div>
             <div className="submit-buttons-wrap">
               <EditSidebarSubmitButtons />
@@ -87,9 +103,10 @@ const TariffsEditSidebarContent = ({ showTransfersSidebar, setTest }) => {
             <div>
               <SidebarTableHeader
                 linkField="Город/глобальный адрес"
-                title="Цены за километр"
+                title={"Цены за километр"}
+                handleClick={setShowAddCitySidebar}
               />
-              <CityPricesTable setTest={setTest} />
+              <CityPricesTable />
             </div>
             <div className="submit-buttons-wrap">
               <EditSidebarSubmitButtons />
@@ -113,4 +130,4 @@ const TariffsEditSidebarContent = ({ showTransfersSidebar, setTest }) => {
   );
 };
 
-export default TariffsEditSidebarContent;
+export default EditTariff;

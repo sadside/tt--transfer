@@ -11,7 +11,11 @@ const EditSidebarSubmitButtons = ({
           text={firstTitle}
           style={{ backgroundColor: "#364150", width: 180 }}
         />
-        <Button text={secondTitle} style={{ width: 180, marginLeft: 15 }} />
+        <Button
+          text={secondTitle}
+          style={{ width: 180, marginLeft: 15 }}
+          typeSubmit={true}
+        />
       </div>
     </div>
   );

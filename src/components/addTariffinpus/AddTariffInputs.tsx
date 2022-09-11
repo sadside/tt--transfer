@@ -1,6 +1,6 @@
 import "./addTarifinputs.scss";
 import { AnimatePresence, motion } from "framer-motion";
-import { stat } from "fs";
+import downArrowSelect from "../../assets/downArrowSelect.svg";
 import React, { useState } from "react";
 import useOutside from "../../hooks/useOutside";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -12,6 +12,7 @@ import {
   setTariffName,
   createTariffThunk,
 } from "../../store/tariffSlice";
+import CustomSelect from "../customSelect/CustomSelect";
 import Loader from "../loader/Loader";
 import Select from "../select/Select";
 import Button from "../ui/button/Button";
@@ -20,6 +21,11 @@ import styles from "./AddTariffInputs.module.scss";
 export interface AddTariffInputsProps {}
 
 const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
+  const selectItems = ["Российский рубль", "Американский доллар"];
+  const { isShow, ref, setIsShow } = useOutside(false);
+  const [item, setItem] = useState("Российский рубль");
+  const [showSidebar, setShowSidebar] = useState(false);
+
   const dispatch = useAppDispatch();
 
   const regionSuggestions = useAppSelector(
@@ -33,7 +39,7 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
   const tariffRegion = useAppSelector((state) => state.tariff.tariffRegion);
   const tariffCity = useAppSelector((state) => state.tariff.tariffCity);
   const tariffName = useAppSelector((state) => state.tariff.tariffName);
-  const tariff = useAppSelector((state) => state.tariff.tariff);
+  const tariff = useAppSelector((state) => state.tariff.activeTariff);
   const status = useAppSelector((state) => state.tariff.status);
 
   // inputs state
@@ -57,6 +63,10 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
   const tariffNameInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTariffName(e.target.value);
     dispatch(setTariffName(e.target.value));
+  };
+
+  const toggleVisibleSidebar = () => {
+    setShowSidebar(true);
   };
 
   return (
@@ -164,6 +174,30 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
               )}
             </AnimatePresence>
           </label>
+          <label>
+            <div className="tariff-select-currency" ref={ref}>
+              <div>
+                <div>
+                  <span className="required">*</span>Валюта
+                </div>
+                <div
+                  className="tariff-data-select"
+                  onClick={() => setIsShow(!isShow)}
+                >
+                  <div>{item}</div>
+                  <img src={downArrowSelect} alt="" />
+                </div>
+              </div>
+              <CustomSelect
+                items={selectItems}
+                isVisible={isShow}
+                setItem={setItem}
+                setVisible={setIsShow}
+                setShowSidebar={toggleVisibleSidebar}
+                showAll={false}
+              />
+            </div>
+          </label>
           {!tariff && status === "idle" && (
             <input
               style={{ marginTop: 20, fontSize: 14 }}
@@ -174,6 +208,14 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
           )}
         </div>
         <div className="tariff-comment">
+          <label>
+            <span className="required">*</span>Срок действия тарифа
+            <input
+              type="text"
+              className="tariff-data-input tariff-data-input-correct"
+              value={"31.31.31"} // Вадим, твой выход
+            />
+          </label>
           <label>
             Комментарии
             <textarea name="" id="" placeholder="Введите текст"></textarea>

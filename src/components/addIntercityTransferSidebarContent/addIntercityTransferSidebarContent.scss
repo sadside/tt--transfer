@@ -1,0 +1,39 @@
+.tariffs-edit-sidebar-content-wrapper-form {
+  padding: 0 23px;
+}
+
+.tariffs-edit-sidebar-content-form {
+  margin-top: 25px;
+  margin-bottom: 25px;
+  display: flex;
+
+  width: 560px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  lable {
+    margin-top: 15px;
+  }
+
+  input {
+    width: 253px;
+  }
+}
+
+.tariffs-edit-sidebar-content-wrapper-transfers.overlap {
+  height: calc(100vh - 350px);
+  width: min-content;
+}
+
+.tariffs-edit-sidebar-content-transfers-content {
+  height: 100%;
+  overflow: hidden;
+}
+
+.scroll-table-transfer.overlap {
+  height: calc(100% - 100px);
+}
+
+.scroll-table-body-tariff.overlap {
+  height: calc(100% - 60px);
+}

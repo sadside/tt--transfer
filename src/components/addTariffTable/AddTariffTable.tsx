@@ -5,25 +5,45 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   editTariffPriceThunk,
   getCarClassesThunk,
+  setShowZoneSidebar,
 } from "../../store/tariffSlice";
+import EditSidebarSubmitButtons from "../editSidebarSubmitButtons/EditSidebarSubmitButtons";
 import Loader from "../loader/Loader";
 import TariffCell from "../tariffCell/TariffCell";
 
-const AddTariffTable = ({ showTransfersSidebar }) => {
-  const { register, handleSubmit, setValue } = useForm();
+interface AddTariffTableProps {
+  showTransfersSidebar: (bool: boolean) => void;
+}
+
+const AddTariffTable = ({}: AddTariffTableProps) => {
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
   const dispatch = useAppDispatch();
 
   const status = useAppSelector((state) => state.tariff.status);
   const carClasses = useAppSelector((state) => state.tariff.carClasses);
-  const tariff = useAppSelector((state) => state.tariff.tariff);
+  const tariff = useAppSelector((state) => state.tariff.activeTariff);
 
   useEffect(() => {
     if (carClasses.length === 0) dispatch(getCarClassesThunk());
   }, []);
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: any) => {
     dispatch(editTariffPriceThunk(data));
+  };
+
+  const handleTabClick = (index: number) => {
+    dispatch(
+      setShowZoneSidebar({
+        value: true,
+        index,
+      })
+    );
   };
 
   if (status === "loading")
@@ -41,49 +61,10 @@ const AddTariffTable = ({ showTransfersSidebar }) => {
             <table>
               <thead>
                 <tr>
-                  <th height="60" width="190">
-                    Типы услуг
-                  </th>
-                  {carClasses.map((carClass) => (
-                    <th height="60" width="190">
-                      {carClass.title}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-            </table>
-            <table>
-              <tbody>
-                {tariff?.services?.map((service) => (
-                  <tr>
-                    <td>{service.title}</td>
-                    {service.prices.map((price) => {
-                      return (
-                        <TariffCell
-                          register={register}
-                          id={price.id}
-                          driverPrice={price.driver_price}
-                          customerPrice={price.customer_price}
-                          setValue={setValue}
-                        />
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-
-            <table>
-              <thead>
-                <tr>
-                  <th height="60" width="190">
-                    Хабы
-                  </th>
+                  <th>Хабы</th>
 
                   {carClasses.map((carClass) => (
-                    <th height="60" width="190">
-                      {carClass.title}
-                    </th>
+                    <th>{carClass.title}</th>
                   ))}
                 </tr>
               </thead>
@@ -91,10 +72,10 @@ const AddTariffTable = ({ showTransfersSidebar }) => {
 
             <table>
               <tbody>
-                {tariff?.intracity_tariff?.hub_to_prices?.map((hub) => (
+                {tariff?.intracity_tariff?.hub_to_prices?.map((hub, index) => (
                   <tr>
                     <td
-                      onClick={() => showTransfersSidebar(true)}
+                      onClick={() => handleTabClick(index)}
                       className={"region transferLink"}
                     >
                       <div className={"transferLink-item"}>
@@ -109,6 +90,7 @@ const AddTariffTable = ({ showTransfersSidebar }) => {
                           driverPrice={price.driver_price}
                           customerPrice={price.customer_price}
                           setValue={setValue}
+                          errors={errors}
                         />
                       );
                     })}
