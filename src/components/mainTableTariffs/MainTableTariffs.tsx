@@ -15,8 +15,8 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
   const dispatch = useAppDispatch();
 
   const itemsHeader = [
-    "Город",
     "Название",
+    "Город",
     "Активный",
     "Время жизни",
     "Изменен",

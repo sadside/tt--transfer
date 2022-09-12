@@ -81,7 +81,7 @@ const EditTariff = ({}: EditTariffProps) => {
             </div>
             {tariff && (
               <div className="submit-buttons-wrap">
-                <EditSidebarSubmitButtons />
+                <EditSidebarSubmitButtons firstTitle={"Удалить тариф"} />
               </div>
             )}
           </div>

@@ -43,6 +43,7 @@ type TariffState = {
   intercityCitySuggestions: string[];
   activeCity: any;
   tariffsPerPage: 10 | 20 | 30 | 50 | 100;
+  activePage: number;
 };
 
 const initialState: TariffState = {
@@ -69,6 +70,7 @@ const initialState: TariffState = {
   intercityCitySuggestions: [],
   activeCity: null,
   tariffsPerPage: 10,
+  activePage: 1,
 };
 
 export const getRegionSuggestionsThunk = createAsyncThunk<
@@ -269,9 +271,10 @@ export const createTariffThunk = createAsyncThunk<
 export const getShortTariffs = createAsyncThunk<
   IShortTariffResponse,
   any,
-  { rejectValue: string }
->("tariff/getShortTariffs", async ({ page, limit }, { rejectWithValue }) => {
+  { rejectValue: string; state: { tariff: TariffState } }
+>("tariff/getShortTariffs", async ({ page }, { rejectWithValue, getState }) => {
   try {
+    const limit = getState().tariff.tariffsPerPage;
     const response = await TariffService.getShortTariffs(limit, page);
 
     return response.data;
@@ -295,6 +298,9 @@ export const tariffSlice = createSlice({
     },
     setIntercityCity(state, action) {
       state.intercityCity = action.payload;
+    },
+    setActivePage(state, action) {
+      state.activePage = action.payload;
     },
     clearTariff(state) {
       state.activeTariff = null;
@@ -391,7 +397,7 @@ export const tariffSlice = createSlice({
       .addCase(createTariffThunk.fulfilled, (state, action) => {
         state.status = "idle";
         state.activeTariff = action.payload;
-        state.tariffs?.results.push(action.payload);
+        // state.tariffs?.results.push(action.payload);
       })
       .addCase(editTariffPriceThunk.fulfilled, (state, action) => {
         state.status = "idle";
