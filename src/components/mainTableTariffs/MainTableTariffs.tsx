@@ -22,7 +22,7 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
     "Изменен",
     "Комиссионный",
   ];
-  const tariffs = useAppSelector((state) => state.tariff.tariffs);
+  const tariffs = useAppSelector((state) => state?.tariff?.tariffs?.results);
 
   return (
     <div className={s.scrollTable}>
@@ -39,25 +39,23 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
       <div className={s.scrollTableBody}>
         <table>
           <tbody>
-            {tariffs
-              ?.map((tariff) => (
-                <tr className={s.trBodyTable}>
-                  <td
-                    className={[s.item, s.firstItem].join(" ")}
-                    onClick={() => dispatch(getTariffByIdThunk(tariff.id))}
-                  >
-                    {tariff.title}
-                  </td>
-                  <td className={s.item}>{tariff.city.city}</td>
-                  <td className={s.item}>Да</td>
-                  <td className={s.item}>7 дней</td>
-                  <td className={s.item}>7 дней назад</td>
-                  <td className={s.item}>
-                    {tariff.is_commission ? "Да" : "Нет"}
-                  </td>
-                </tr>
-              ))
-              .reverse()}
+            {tariffs?.map((tariff) => (
+              <tr className={s.trBodyTable}>
+                <td
+                  className={[s.item, s.firstItem].join(" ")}
+                  onClick={() => dispatch(getTariffByIdThunk(tariff.id))}
+                >
+                  {tariff.title}
+                </td>
+                <td className={s.item}>{tariff.city.city}</td>
+                <td className={s.item}>Да</td>
+                <td className={s.item}>7 дней</td>
+                <td className={s.item}>7 дней назад</td>
+                <td className={s.item}>
+                  {tariff.is_commission ? "Да" : "Нет"}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>

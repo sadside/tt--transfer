@@ -1,7 +1,9 @@
 import "./transferEditSidebarTable.scss";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { editTariffPriceThunk } from "../../store/tariffSlice";
+import EditSidebarSubmitButtons from "../editSidebarSubmitButtons/EditSidebarSubmitButtons";
 import TariffCellHubs from "../tariffCellHubs/TariffCellHubs";
 
 const HubsZonesTable = () => {
@@ -21,6 +23,12 @@ const HubsZonesTable = () => {
     dispatch(editTariffPriceThunk(data));
   };
 
+  // useEffect(() => {
+  //   return () => {
+  //     dispatch(editTariffPriceThunk(getValues()));
+  //   };
+  // }, []);
+
   return (
     <form action="" onSubmit={handleSubmit(onSubmit)}>
       <div className="scroll-table-tariff ">
@@ -28,7 +36,7 @@ const HubsZonesTable = () => {
           <table>
             <thead>
               <tr>
-                <th>Типы услуг</th>
+                <th>Класс авто</th>
                 {activeHub?.additional_hubzone_prices.map((zone) => (
                   <th
                     className={`region transfer-link ${zone.zone.color}-zone`}
@@ -80,7 +88,9 @@ const HubsZonesTable = () => {
           </table>
         </div>
       </div>
-      <input type="submit" />
+      <div className="submit-buttons-wrap">
+        <EditSidebarSubmitButtons firstTitle="Удалить тариф" />
+      </div>
     </form>
   );
 };

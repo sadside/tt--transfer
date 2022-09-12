@@ -13,6 +13,7 @@ import {
   createTariffThunk,
 } from "../../store/tariffSlice";
 import CustomSelect from "../customSelect/CustomSelect";
+import ErrorComponent from "../errorComponent/ErrorComponent";
 import Loader from "../loader/Loader";
 import Select from "../select/Select";
 import Button from "../ui/button/Button";
@@ -35,6 +36,8 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
   const citySuggestions = useAppSelector(
     (state) => state.tariff.citySuggestions
   );
+
+  const error = useAppSelector((state) => state.tariff.error);
 
   const tariffRegion = useAppSelector((state) => state.tariff.tariffRegion);
   const tariffCity = useAppSelector((state) => state.tariff.tariffCity);
@@ -84,6 +87,9 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
       }}
     >
       <div className="tariffs-edit-sidebar-content-inputs">
+        {error === "Tariff already created" && (
+          <ErrorComponent text={"Тариф с таким именем уже создан"} />
+        )}
         <div className="tariff-data">
           <label>
             <span className="required">*</span>Название тарифа

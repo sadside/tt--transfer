@@ -32,6 +32,7 @@ import {
   setShowAddTariffSidebar,
   setShowEditTariffSidebar,
   setShowZoneSidebar,
+  setTariffsPerPage,
 } from "../../store/tariffSlice";
 
 const Tariffs = () => {
@@ -59,10 +60,11 @@ const Tariffs = () => {
   const lastCountryIndex = currentPage * countriesPerPage;
   const firstCountryIndex = lastCountryIndex - countriesPerPage;
 
-  const tariffs = useAppSelector((state) => state.tariff.tariffs);
+  const tariffs = useAppSelector((state) => state.tariff?.tariffs?.results);
   const showZoneSidebar = useAppSelector(
     (state) => state.tariff.showZoneSidebar
   );
+  const count = useAppSelector((state) => state.tariff.tariffs?.count);
 
   const showAddSidebar = useAppSelector(
     (state) => state.tariff.showAddTariffSidebar
@@ -75,6 +77,7 @@ const Tariffs = () => {
   const showAddCity = useAppSelector((state) => state.tariff.showAddCity);
 
   const status = useAppSelector((state) => state.tariff.status);
+  const tariffsPerPage = useAppSelector((state) => state.tariff.tariffsPerPage);
 
   const currentCountry = tariffsTableBody.slice(
     firstCountryIndex,
@@ -82,8 +85,22 @@ const Tariffs = () => {
   );
 
   useEffect(() => {
+    dispatch(
+      getShortTariffs({
+        page: currentPage,
+        limit: tariffsPerPage,
+      })
+    );
+  }, [tariffsPerPage, currentPage]);
+
+  useEffect(() => {
     dispatch(getCarClassesThunk());
-    dispatch(getShortTariffs());
+    // dispatch(
+    //   getShortTariffs({
+    //     page: currentPage,
+    //     limit: countriesPerPage,
+    //   })
+    // );
     return () => {
       dispatch(setShowZoneSidebar({ value: false }));
       dispatch(setShowAddTariffSidebar(false));
@@ -91,7 +108,16 @@ const Tariffs = () => {
     };
   }, []);
 
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    // dispatch(
+    //   getShortTariffs({
+    //     page: pageNumber,
+    //     limit: countriesPerPage,
+    //   })
+    // );
+  };
+
   const nextPage = () => setCurrentPage((prev) => prev + 1);
   const prevPage = () => setCurrentPage((prev) => prev - 1);
 
@@ -129,7 +155,7 @@ const Tariffs = () => {
           showSmartFilter={showSmartFilter}
           FilterVisible={setShowSmartFilter}
           buttonText={"Добавить тариф"}
-          callback={() => setShowAddSidebar(true)}
+          callback={() => setShowEditSidebar(true)}
         />
         <AnimatePresence>
           {showSmartFilter &&
@@ -196,46 +222,48 @@ const Tariffs = () => {
             style={{ position: "relative" }}
           >
             <Pagination
-              countriesPerPage={countriesPerPage}
-              totalCountries={tariffsTableBody.length}
+              countriesPerPage={tariffsPerPage}
+              totalCountries={count}
               paginate={paginate}
               nextPage={nextPage}
               prevPage={prevPage}
               currentPage={currentPage}
-              setCountriesPerPage={setCountriesPerPage}
+              setCountriesPerPage={(count: number) =>
+                dispatch(setTariffsPerPage(count))
+              }
               setCurrentPage={setCurrentPage}
             />
           </motion.div>
         )}
       </AnimatePresence>
-      <AnimatePresence>
-        {showAddSidebar && (
-          <motion.div
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 1070, opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            style={{
-              overflow: "hidden",
-              display: "flex",
-              position: "absolute",
-              top: 0,
-              right: 0,
-              zIndex: 1000,
-            }}
-            transition={{ type: "Tween" }}
-          >
-            <EditSidebar
-              isVisible={showAddSidebar}
-              toggleSidebar={setShowAddSidebar}
-            >
-              <TariffsEditSidebarContent
-                showTransfersSidebar={setShowEditSidebarTransfers}
-                setTest={setShowAddCitySidebar}
-              />
-            </EditSidebar>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/*<AnimatePresence>*/}
+      {/*  {showAddSidebar && (*/}
+      {/*    <motion.div*/}
+      {/*      initial={{ width: 0, opacity: 0 }}*/}
+      {/*      animate={{ width: 1070, opacity: 1 }}*/}
+      {/*      exit={{ width: 0, opacity: 0 }}*/}
+      {/*      style={{*/}
+      {/*        overflow: "hidden",*/}
+      {/*        display: "flex",*/}
+      {/*        position: "absolute",*/}
+      {/*        top: 0,*/}
+      {/*        right: 0,*/}
+      {/*        zIndex: 1000,*/}
+      {/*      }}*/}
+      {/*      transition={{ type: "Tween" }}*/}
+      {/*    >*/}
+      {/*      <EditSidebar*/}
+      {/*        isVisible={showEditSidebar}*/}
+      {/*        toggleSidebar={setShowEditSidebar}*/}
+      {/*      >*/}
+      {/*        <TariffsEditSidebarContent*/}
+      {/*          showTransfersSidebar={setShowEditSidebarTransfers}*/}
+      {/*          setTest={setShowAddCitySidebar}*/}
+      {/*        />*/}
+      {/*      </EditSidebar>*/}
+      {/*    </motion.div>*/}
+      {/*  )}*/}
+      {/*</AnimatePresence>*/}
       <AnimatePresence>
         {showEditSidebar && (
           <motion.div

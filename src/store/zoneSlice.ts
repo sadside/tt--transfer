@@ -92,11 +92,14 @@ export const addZoneThunk = createAsyncThunk<
   { rejectValue: string; state: { calculator: CalculatorState } }
 >(
   "zone/addZoneThunk",
-  async ({ color, coordinates }, { rejectWithValue, dispatch, getState }) => {
+  async (
+    { color, coordinates, title },
+    { rejectWithValue, dispatch, getState }
+  ) => {
     const hubId = getState().calculator.activeHub.id;
 
     try {
-      await ZoneService.addZone(hubId, color, coordinates);
+      await ZoneService.addZone(hubId, color, coordinates, title);
 
       if (hubId) dispatch(getZonesById(hubId));
     } catch (e) {

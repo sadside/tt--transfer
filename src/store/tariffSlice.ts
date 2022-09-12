@@ -4,6 +4,7 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
+import { reject } from "lodash";
 import { TariffService } from "../services/TariffService";
 import {
   CarClass,
@@ -14,6 +15,7 @@ import {
   IRegion,
   IService,
   IShortTariff,
+  IShortTariffResponse,
   ITariff,
 } from "../types/types";
 
@@ -32,7 +34,7 @@ type TariffState = {
   showZoneSidebar: boolean;
   error: string;
   activeHub: IHubToPrice | null | undefined;
-  tariffs: IShortTariff[];
+  tariffs: IShortTariffResponse | null;
   showAddCity: boolean;
   activeCityId: number | null;
   intercityRegion: string;
@@ -40,6 +42,7 @@ type TariffState = {
   intercityRegionSuggestions: string[];
   intercityCitySuggestions: string[];
   activeCity: any;
+  tariffsPerPage: 10 | 20 | 30 | 50 | 100;
 };
 
 const initialState: TariffState = {
@@ -57,7 +60,7 @@ const initialState: TariffState = {
   showZoneSidebar: false,
   error: "",
   activeHub: null,
-  tariffs: [],
+  tariffs: null,
   showAddCity: false,
   activeCityId: null,
   intercityRegion: "",
@@ -65,6 +68,7 @@ const initialState: TariffState = {
   intercityRegionSuggestions: [],
   intercityCitySuggestions: [],
   activeCity: null,
+  tariffsPerPage: 10,
 };
 
 export const getRegionSuggestionsThunk = createAsyncThunk<
@@ -123,7 +127,7 @@ export const getCitySuggestionsThunk = createAsyncThunk<
   }
 );
 
-export const createIntercityCity = createAsyncThunk<
+export const createIntercityCityThunk = createAsyncThunk<
   any,
   any,
   {
@@ -142,6 +146,8 @@ export const createIntercityCity = createAsyncThunk<
 
       return response.data;
     } catch (e: any) {
+      if (e.response.status === 400)
+        alert("Такой город уже имеется в данном тарифе");
       return rejectWithValue(e.message());
     }
   }
@@ -212,6 +218,23 @@ export const getTariffServicesThunk = createAsyncThunk<
   }
 });
 
+export const deleteTariffThunk = createAsyncThunk<
+  IShortTariff[] | void,
+  undefined,
+  { rejectValue: string; state: { tariff: TariffState } }
+>("tariff/deleteTariffThunk", async (_, { getState, rejectWithValue }) => {
+  const id = getState().tariff.activeTariff?.id;
+  try {
+    if (id) {
+      const response = await TariffService.deleteTariff(id);
+
+      return response.data;
+    }
+  } catch (e: any) {
+    return rejectWithValue(e.message());
+  }
+});
+
 export const getTariffByIdThunk = createAsyncThunk<
   ITariff,
   number,
@@ -238,17 +261,18 @@ export const createTariffThunk = createAsyncThunk<
 
     return response.data;
   } catch (e: any) {
+    if (e.response.status === 400) alert("Тариф с таким именем уже создан");
     return rejectWithValue(e.message());
   }
 });
 
 export const getShortTariffs = createAsyncThunk<
-  IShortTariff[],
-  undefined,
+  IShortTariffResponse,
+  any,
   { rejectValue: string }
->("tariff/getShortTariffs", async (_, { rejectWithValue }) => {
+>("tariff/getShortTariffs", async ({ page, limit }, { rejectWithValue }) => {
   try {
-    const response = await TariffService.getShortTariffs();
+    const response = await TariffService.getShortTariffs(limit, page);
 
     return response.data;
   } catch (e: any) {
@@ -280,6 +304,9 @@ export const tariffSlice = createSlice({
       state.citySuggestions = [];
       state.regionSuggestions = [];
     },
+    setTariffAlreadyCreated(state) {
+      state.error = "Tariff already created";
+    },
     setTariffName(state, action) {
       state.tariffName = action.payload;
     },
@@ -309,6 +336,12 @@ export const tariffSlice = createSlice({
         state.showAddCity = action.payload.value;
         state.activeCityId = null;
       }
+    },
+    setActiveCity(state, action) {
+      state.activeCity = action.payload;
+    },
+    setTariffsPerPage(state, action) {
+      state.tariffsPerPage = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -358,7 +391,7 @@ export const tariffSlice = createSlice({
       .addCase(createTariffThunk.fulfilled, (state, action) => {
         state.status = "idle";
         state.activeTariff = action.payload;
-        state.tariffs.push(action.payload);
+        state.tariffs?.results.push(action.payload);
       })
       .addCase(editTariffPriceThunk.fulfilled, (state, action) => {
         state.status = "idle";
@@ -377,12 +410,21 @@ export const tariffSlice = createSlice({
       .addCase(getIntercityCitySuggestions.fulfilled, (state, action) => {
         state.intercityCitySuggestions = action.payload;
       })
-      .addCase(createIntercityCity.pending, (state) => {
+      .addCase(createIntercityCityThunk.pending, (state) => {
         state.status = "creating city";
       })
-      .addCase(createIntercityCity.fulfilled, (state, action) => {
+      .addCase(createIntercityCityThunk.fulfilled, (state, action) => {
         state.status = "idle";
         state.activeTariff = action.payload;
+      })
+      .addCase(deleteTariffThunk.fulfilled, (state, action) => {
+        state.activeTariff = null;
+        state.showEditTariffSidebar = false;
+        state.showZoneSidebar = false;
+        if (action.payload) {
+          // @ts-ignore
+          state.tariffs.results = action.payload;
+        }
       })
       .addMatcher(isError, (state, action) => {
         state.status = "idle";
@@ -402,6 +444,9 @@ export const {
   setShowAddCity,
   setIntercityRegion,
   setIntercityCity,
+  setActiveCity,
+  setTariffAlreadyCreated,
+  setTariffsPerPage,
 } = tariffSlice.actions;
 
 export default tariffSlice.reducer;

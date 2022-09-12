@@ -6,6 +6,7 @@ import {
   editTariffPriceThunk,
   getCarClassesThunk,
 } from "../../store/tariffSlice";
+import EditSidebarSubmitButtons from "../editSidebarSubmitButtons/EditSidebarSubmitButtons";
 import Loader from "../loader/Loader";
 import TariffCell from "../tariffCell/TariffCell";
 
@@ -25,6 +26,10 @@ const ServicesTable = () => {
 
   useEffect(() => {
     if (carClasses.length === 0) dispatch(getCarClassesThunk());
+
+    // return () => {
+    //   dispatch(editTariffPriceThunk(getValues()));
+    // };
   }, []);
 
   const onSubmit = (data: any) => {
@@ -75,7 +80,9 @@ const ServicesTable = () => {
               </tbody>
             </table>
           </div>
-          <input type="submit" />
+          <div className="submit-buttons-wrap">
+            <EditSidebarSubmitButtons firstTitle="Удалить тариф" />
+          </div>
         </form>
       </div>
     </>

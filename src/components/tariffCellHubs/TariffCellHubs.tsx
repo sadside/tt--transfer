@@ -45,10 +45,8 @@ const TariffCellHubs = ({
             }`}
             {...register(driverInput, {
               required: "Это поле обязательно",
-              min: {
-                error: "Введите неотрицательное число",
-                value: 0,
-              },
+              min: 0,
+              pattern: /^\d+$/,
             })}
           />
           <div>Заказчик</div>
@@ -62,10 +60,8 @@ const TariffCellHubs = ({
             }`}
             {...register(customerInput, {
               required: "Это поле обязательно",
-              min: {
-                error: "Введите неотрицательное число",
-                value: 0,
-              },
+              min: 0,
+              pattern: /^\d+$/,
             })}
           />
           <div>Водитель</div>

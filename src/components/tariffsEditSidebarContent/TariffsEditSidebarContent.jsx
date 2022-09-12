@@ -77,9 +77,6 @@ const TariffsEditSidebarContent = ({ showTransfersSidebar, setTest }) => {
               <SidebarTableHeader title="Хабы" />
               <AddTariffTable showTransfersSidebar={showTransfersSidebar} />
             </div>
-            <div className="submit-buttons-wrap">
-              <EditSidebarSubmitButtons />
-            </div>
           </div>
         )}
         {activeTabIndex === 2 && (
@@ -91,9 +88,6 @@ const TariffsEditSidebarContent = ({ showTransfersSidebar, setTest }) => {
               />
               <CityPricesTable setTest={setTest} />
             </div>
-            <div className="submit-buttons-wrap">
-              <EditSidebarSubmitButtons />
-            </div>
           </div>
         )}
 
@@ -102,9 +96,6 @@ const TariffsEditSidebarContent = ({ showTransfersSidebar, setTest }) => {
             <div>
               <SidebarTableHeader linkField="" title="Цены по типам услуг" />
               <ServicesTable />
-            </div>
-            <div className="submit-buttons-wrap">
-              <EditSidebarSubmitButtons />
             </div>
           </div>
         )}

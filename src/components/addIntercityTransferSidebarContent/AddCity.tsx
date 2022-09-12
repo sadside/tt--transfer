@@ -3,7 +3,7 @@ import styles from "./AddCity.module.scss";
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
-  createIntercityCity,
+  createIntercityCityThunk,
   getIntercityCitySuggestions,
   getIntercityRegionSuggestions,
   getRegionSuggestionsThunk,
@@ -173,7 +173,7 @@ const AddCity = () => {
             <Button
               callback={() => {
                 dispatch(
-                  createIntercityCity({
+                  createIntercityCityThunk({
                     region: tariffRegion,
                     city: tariffCity,
                   })
@@ -211,9 +211,9 @@ const AddCity = () => {
         </div>
       )}
 
-      <div className="submit-buttons-wrap">
-        <EditSidebarSubmitButtons />
-      </div>
+      {/*<div className="submit-buttons-wrap">*/}
+      {/*  <EditSidebarSubmitButtons />*/}
+      {/*</div>*/}
     </div>
   );
 };

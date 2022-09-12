@@ -17,6 +17,7 @@ export interface IZone {
   color: string;
   region?: string | undefined;
   city?: string | undefined | ICity;
+  title: string;
 }
 
 export interface ICity {
@@ -254,6 +255,15 @@ export interface IInitialTariff {
   name: string;
   region: string;
   city: string;
+}
+
+export interface IShortTariffResponse {
+  links: {
+    next: null | number;
+    previous: null | number;
+  };
+  count: number;
+  results: IShortTariff[];
 }
 
 export interface IShortTariff {

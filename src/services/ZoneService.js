@@ -9,10 +9,11 @@ export class ZoneService {
     return $api.post("address/city/", data);
   }
 
-  static addZone(id, color, coordinates) {
+  static addZone(id, color, coordinates, title) {
     return $api.post(`address/hub-zones/${id}/`, {
       color,
       coordinates,
+      title,
     });
   }
 

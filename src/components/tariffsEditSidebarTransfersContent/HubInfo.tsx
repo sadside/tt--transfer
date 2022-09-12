@@ -16,9 +16,6 @@ const HubInfo = () => {
           <SidebarTableHeader title="Зона - цены" />
           <HubsZonesTable />
         </div>
-        <div className="submit-buttons-wrap">
-          <EditSidebarSubmitButtons />
-        </div>
       </div>
     </div>
   );

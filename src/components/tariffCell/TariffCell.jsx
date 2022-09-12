@@ -1,5 +1,6 @@
 import "./tariffCell.scss";
 import { useEffect } from "react";
+import loginFields from "../loginFields/LoginFields";
 
 const TariffCell = ({
   register,
@@ -39,6 +40,7 @@ const TariffCell = ({
                 error: "Введите неотрицательное число",
                 value: 0,
               },
+              pattern: /^\d+$/,
             })}
           />
           <div>Заказчик</div>
@@ -55,6 +57,7 @@ const TariffCell = ({
                 error: "Введите неотрицательное число",
                 value: 0,
               },
+              pattern: /^\d+$/,
             })}
           />
           <div>Водитель</div>

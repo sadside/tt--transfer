@@ -8,7 +8,7 @@ import {
 } from "@pbe/react-yandex-maps";
 import classNames from "classnames";
 import { AnimatePresence, motion } from "framer-motion";
-import React, { useEffect, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Resolver, SubmitHandler, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { log } from "util";
@@ -49,6 +49,7 @@ import ErrorComponent from "../errorComponent/ErrorComponent";
 import Loader from "../loader/Loader";
 import Modal from "../modal/Modal";
 import Select from "../select/Select";
+import zone from "../zone/Zone";
 import Zone from "../zone/Zone";
 import styles from "./Calculator.module.scss";
 import Button from "../ui/button/Button";
@@ -111,6 +112,7 @@ const Calculator = () => {
   const [coordinates, setCoordinates] = useState("");
   const [showSelectHubFrom, setShowSelectHubFrom] = useState(false);
   const [selectActiveItem, setSelectActiveItem] = useState("");
+  const [zoneTitle, setZoneTitle] = useState("");
 
   const [selectSecondActiveItem, setSecondSelectActiveItem] = useState("");
 
@@ -167,6 +169,7 @@ const Calculator = () => {
         addZoneThunk({
           coordinates: JSON.parse(coordinates),
           color: activeColor,
+          title: zoneTitle,
         })
       );
 
@@ -200,9 +203,7 @@ const Calculator = () => {
     <>
       <div className="calculator-wrap">
         <div className={styles.selectCity}>
-          <label>
-            Введите <strong>регион</strong>:
-          </label>
+          <label>Введите регион:</label>
           <div className={styles.citySelectWrap}>
             <input
               type="text"
@@ -250,9 +251,7 @@ const Calculator = () => {
         </div>
         {activeRegion && cities?.length !== 0 && (
           <div className={styles.selectCity}>
-            <label>
-              Введите <strong>город:</strong>
-            </label>
+            <label>Введите город:</label>
             <div className={styles.citySelectWrap}>
               <input
                 type="text"
@@ -478,7 +477,17 @@ const Calculator = () => {
                 <input
                   type="text"
                   className={styles.coords}
-                  placeholder="Введите текст"
+                  style={{ marginRight: 30, width: 200, borderRadius: 3 }}
+                  placeholder={"Введите название зоны"}
+                  value={zoneTitle}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                    setZoneTitle(e.target.value);
+                  }}
+                />
+                <input
+                  type="text"
+                  className={styles.coords}
+                  placeholder="Введите координаты зоны"
                   value={coordinates}
                   onChange={(e) => setCoordinates(e.target.value)}
                 />

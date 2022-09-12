@@ -93,9 +93,6 @@ const EditTariff = ({}: EditTariffProps) => {
               <SidebarTableHeader linkField="" title={"Хабы"} />
               <AddTariffTable showTransfersSidebar={() => 1} />
             </div>
-            <div className="submit-buttons-wrap">
-              <EditSidebarSubmitButtons />
-            </div>
           </div>
         )}
         {activeTabIndex === 2 && (
@@ -108,9 +105,6 @@ const EditTariff = ({}: EditTariffProps) => {
               />
               <CityPricesTable />
             </div>
-            <div className="submit-buttons-wrap">
-              <EditSidebarSubmitButtons />
-            </div>
           </div>
         )}
 
@@ -119,9 +113,6 @@ const EditTariff = ({}: EditTariffProps) => {
             <div>
               <SidebarTableHeader linkField="" title="Цены по типам услуг" />
               <ServicesTable />
-            </div>
-            <div className="submit-buttons-wrap">
-              <EditSidebarSubmitButtons />
             </div>
           </div>
         )}

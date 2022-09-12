@@ -31,6 +31,10 @@ const AddTariffTable = ({}: AddTariffTableProps) => {
 
   useEffect(() => {
     if (carClasses.length === 0) dispatch(getCarClassesThunk());
+
+    // return () => {
+    //   dispatch(editTariffPriceThunk(getValues()));
+    // };
   }, []);
 
   const onSubmit = (data: any) => {
@@ -99,7 +103,9 @@ const AddTariffTable = ({}: AddTariffTableProps) => {
               </tbody>
             </table>
           </div>
-          <input type="submit" />
+          <div className="submit-buttons-wrap">
+            <EditSidebarSubmitButtons firstTitle="Удалить тариф" />
+          </div>
         </form>
       </div>
     </>

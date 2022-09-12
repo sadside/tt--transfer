@@ -5,6 +5,7 @@ import {
   IInitialTariff,
   IService,
   IShortTariff,
+  IShortTariffResponse,
   ITariff,
 } from "../types/types";
 
@@ -53,8 +54,13 @@ export class TariffService {
     return $api.post("", tariff);
   }
 
-  static getShortTariffs() {
-    return $api.get<IShortTariff[]>("tariffs/tariff");
+  static getShortTariffs(limit = 1, page = 2) {
+    return $api.get<IShortTariffResponse>(`tariffs/tariff/`, {
+      params: {
+        page,
+        limit,
+      },
+    });
   }
 
   static createCity(id: any, region: string, city: string) {
@@ -62,5 +68,9 @@ export class TariffService {
       region,
       city,
     });
+  }
+
+  static deleteTariff(id: number) {
+    return $api.delete<IShortTariff[]>(`tariffs/tariff/${id}/`);
   }
 }
