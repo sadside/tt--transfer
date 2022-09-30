@@ -1,7 +1,7 @@
 import "./smartFilter.scss";
 import { useGate, useUnit } from "effector-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 import {
   $activeCity,
   $activeRegion,
@@ -46,7 +46,14 @@ const SmartFilterTariff = ({
     setIsShow: setIsShowType,
   } = useOutside(false);
 
-  const selectItemsType = ["Основной", "Комиссионный"];
+  const selectItemsType = ["Все", "Основной", "Комиссионный"];
+
+  useEffect(() => {
+    let params = new URLSearchParams();
+    console.log(params);
+    params.append("foo", "4");
+    console.log(params);
+  }, []);
 
   const regionInputValue = useUnit($regionInputValue);
   const cityInputValue = useUnit($cityInputValue);

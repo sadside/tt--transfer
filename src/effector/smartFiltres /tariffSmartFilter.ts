@@ -3,7 +3,7 @@ import { createEvent, createStore, sample } from "effector";
 const selectChanged = createEvent<string>();
 const commissionInputChanged = createEvent<string>();
 
-const $tariffType = createStore<string>("Основной");
+const $tariffType = createStore<string>("Все");
 const $tariffCommission = createStore<string>("");
 
 sample({

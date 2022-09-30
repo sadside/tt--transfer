@@ -58,6 +58,9 @@ export class TariffService {
     type = ""
   ) {
     switch (type) {
+      case "Все":
+        type = "";
+        break;
       case "Комиссионный":
         type = "commission";
         break;
