@@ -65,7 +65,7 @@ export const checkAuthFx = createEffect<undefined, IUser>(async () => {
     localStorage.setItem("token", response.data.access);
     return response.data.user;
   } catch (e: any) {
-    localStorage.removeItem("token");
+    // localStorage.removeItem("token");
     window.location.href = "/login";
   }
 });
