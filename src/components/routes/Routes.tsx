@@ -2,6 +2,7 @@ import { nanoid } from "@reduxjs/toolkit";
 import axios from "axios";
 import { FC, useState } from "react";
 import { carsClasses } from "../../db";
+import { API } from "../../http";
 import {
   addAdditionalRace,
   clearFromHub,
@@ -444,7 +445,7 @@ const Routes: FC = () => {
           <div>
             <div className={styles.iframeWrap}>
               <iframe
-                src={`http://localhost:8000/map/route/?region=${activeRegion}&city=${activeCity}${coordinatesFrom}${
+                src={`${API}/map/route/?region=${activeRegion}&city=${activeCity}${coordinatesFrom}${
                   additionalRaces.length !== 0 && iframeCoords
                 }${coordinatesTo}`}
                 width="100%"

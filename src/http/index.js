@@ -1,6 +1,8 @@
 import axios from "axios";
 
-export const API_URL = "http://localhost:8000/api/";
+// export const API_URL = "http://localhost:8000/api/";
+export const API_URL = "https://admin.tt-crm.ru/api/";
+export const API = "https://admin.tt-crm.ru";
 
 const $api = axios.create({
   withCredentials: true,

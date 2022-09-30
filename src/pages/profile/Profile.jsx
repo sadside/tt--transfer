@@ -18,6 +18,7 @@ import UploadProfileImages from "../../components/uploadProfileImages/UploadProf
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../../assets/profile-avatar.svg";
 import { $user } from "../../effector/user/authorization";
+import { API } from "../../http";
 import { logout } from "../../store/userSlice.ts";
 
 const Profile = () => {
@@ -31,7 +32,7 @@ const Profile = () => {
       <div className="profile-wrap">
         <div className="profile-control">
           <div className="profile-image-wrap">
-            <img src={`http://localhost:8000${avatarFilename}`} alt="" />
+            <img src={`${API}${avatarFilename}`} alt="" />
           </div>
           <div
             className={`profile-link-item ${activeLink === 0 && "active-1"}`}
