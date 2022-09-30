@@ -179,7 +179,7 @@ const AddCity = () => {
                   })
                 );
               }}
-              text={"Создать город"}
+              text={"Создать маршрут"}
               style={{ marginTop: 30 }}
             />
           </form>

@@ -46,12 +46,23 @@ const ServicesTable = () => {
   return (
     <>
       <div className="scroll-table-tariff">
-        <form action="" onSubmit={handleSubmit(onSubmit)}>
+        <form action="" onSubmit={handleSubmit(onSubmit)} className="flex-conteiner-table">
+          <div>
+            <div style={{ cursor: "pointer", height: 60, width: 190 }} className="fixed-cell-tr overlap">
+              Тип услуг
+            </div>
+            {tariff?.services?.map((service) => (
+              <div 
+                className="fixed-cell-tr"
+                style={{ height: 91, width: 190 }}>
+                {service.title}
+              </div>
+            ))}
+          </div>
           <div className="scroll-table-body-tariff">
             <table>
               <thead>
                 <tr>
-                  <th>Типы услуг</th>
                   {carClasses.map((carClass) => (
                     <th>{carClass.title}</th>
                   ))}
@@ -62,7 +73,8 @@ const ServicesTable = () => {
               <tbody>
                 {tariff?.services?.map((service) => (
                   <tr>
-                    <td>{service.title}</td>
+                    {/* <td className="fixed-cell">{service.title}</td>
+                    <td></td> */}
                     {service?.prices?.map((price) => {
                       return (
                         <TariffCell

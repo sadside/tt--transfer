@@ -60,13 +60,24 @@ const AddTariffTable = ({}: AddTariffTableProps) => {
   return (
     <>
       <div className="scroll-table-tariff">
-        <form action="" onSubmit={handleSubmit(onSubmit)}>
+        <form action="" onSubmit={handleSubmit(onSubmit)} className="flex-conteiner-table">
+          <div>
+            <div style={{ cursor: "pointer", height: 60, width: 190 }} className="fixed-cell-tr overlap">
+              Хабы
+            </div>
+              {tariff?.intracity_tariff?.hub_to_prices?.map((hub, index) => (
+                <div
+                  className="fixed-cell-tr"
+                  style={{ cursor: "pointer", height: 91, width: 190 }}
+                >
+                  {hub?.hub?.title}
+                </div>
+              ))}
+          </div>
           <div className="scroll-table-body-tariff">
             <table>
               <thead>
                 <tr>
-                  <th>Хабы</th>
-
                   {carClasses.map((carClass) => (
                     <th>{carClass.title}</th>
                   ))}
@@ -78,14 +89,15 @@ const AddTariffTable = ({}: AddTariffTableProps) => {
               <tbody>
                 {tariff?.intracity_tariff?.hub_to_prices?.map((hub, index) => (
                   <tr>
-                    <td
+                    {/* <td
                       onClick={() => handleTabClick(index)}
-                      className={"region transferLink"}
+                      className={"region transferLink fixed-cell"}
                     >
                       <div className={"transferLink-item"}>
                         {hub?.hub?.title}
                       </div>
                     </td>
+                    <td></td> */}
                     {hub.prices.map((price) => {
                       return (
                         <TariffCell

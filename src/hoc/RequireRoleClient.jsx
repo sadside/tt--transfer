@@ -1,12 +1,13 @@
+import { useStore, useUnit } from "effector-react";
 import { useSelector } from "react-redux";
 import { useLocation, Navigate } from "react-router-dom";
 import { Role } from "../context";
+import { $user } from "../effector/user/authorization";
 
 const RequireRoleClient = ({ children }) => {
-  const role = useSelector((state) => state.user.user.role);
-  console.log("role:", role);
+  const { role } = useUnit($user);
 
-  if (role !== "c") {
+  if (role !== "c" && role !== "") {
     return <Navigate to={"/"} />;
   } else {
     return children;

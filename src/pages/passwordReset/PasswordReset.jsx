@@ -1,3 +1,4 @@
+import { useStore } from "effector-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -9,6 +10,18 @@ import Input from "../../components/ui/input/Input";
 import { useNavigate } from "react-router-dom";
 import arrowRight from "../../assets/arrow-right.png";
 import "./passwordReset.scss";
+import {
+  $codeSent,
+  $invalidCode,
+  $invalidEmail,
+  $invalidPassword,
+  $passwordSent,
+  $showCodeField,
+  $showPasswordField,
+  resetPasswordFx,
+  sendCodeFx,
+  sendPasswordFx,
+} from "../../effector/user/resetPassword";
 import {
   resetPassword,
   sendCode,
@@ -22,21 +35,19 @@ import tick from "../../assets/tick.png";
 const PasswordReset = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const showCodeField = useSelector((state) => state.user.showCodeField);
-  const statusLoadingEmail = useSelector((state) => state.user.statusEmail);
-  const statusLoadingCode = useSelector((state) => state.user.statusCode);
-  const statusLoadingPassword = useSelector(
-    (state) => state.user.statusPassword
-  );
-  const showPasswordField = useSelector(
-    (state) => state.user.showPasswordField
-  );
+  const showCodeField = useStore($showCodeField);
+  const statusLoadingEmail = useStore(resetPasswordFx.pending);
+  const statusLoadingCode = useStore(sendCodeFx.pending);
+  const statusLoadingPassword = useStore(sendPasswordFx.pending);
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [password, setPassword] = useState("");
-  const emailError = useSelector((state) => state.user.emailError);
-  const codeError = useSelector((state) => state.user.codeError);
-  const passwordError = useSelector((state) => state.user.passwordError);
+  const invalidEmail = useStore($invalidEmail);
+  const emailSent = useStore($codeSent);
+  const codeError = useStore($invalidCode);
+  const codeSent = useStore($showPasswordField);
+  const passwordSent = useStore($passwordSent);
+  const passwordError = useStore($invalidPassword);
 
   return (
     <>
@@ -53,7 +64,7 @@ const PasswordReset = () => {
             onSubmit={(e) => {
               e.preventDefault();
               if (email.length !== 0) {
-                dispatch(resetPassword(email));
+                resetPasswordFx(email);
               } else {
                 alert("заполните поле");
               }
@@ -69,20 +80,20 @@ const PasswordReset = () => {
                   setEmail(e.target.value);
                 }}
                 disabled={
-                  (statusLoadingEmail === "resolved" && !emailError) ||
-                  (statusLoadingEmail === "loading" && !emailError)
+                  (emailSent && !invalidEmail) ||
+                  (statusLoadingEmail && !invalidEmail)
                 }
               />
               <div
                 onClick={() => {
                   if (email.length !== 0) {
-                    dispatch(resetPassword(email));
+                    resetPasswordFx(email);
                   } else {
                     alert("заполните поле");
                   }
                 }}
               >
-                {statusLoadingEmail === "loading" && !emailError && (
+                {statusLoadingEmail && (
                   <svg className="spinner" viewBox="0 0 50 50">
                     <circle
                       className="path"
@@ -95,24 +106,26 @@ const PasswordReset = () => {
                   </svg>
                 )}
 
-                {statusLoadingEmail === "resolved" && !emailError && (
+                {emailSent && !invalidEmail && (
                   <img src={tick} alt="" width={30} height={30} />
                 )}
-                {(!statusLoadingEmail || emailError) && (
+                {(!emailSent || invalidEmail) && !statusLoadingEmail && (
                   <img src={arrowRight} alt="" />
                 )}
               </div>
             </div>
           </form>
           <AnimatePresence>
-            {emailError && (
+            {invalidEmail && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ type: "Tween" }}
               >
-                <div className="reset-error">{emailError}</div>
+                <div className="reset-error">
+                  Пользователя с такой почтой не существует.
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -130,7 +143,7 @@ const PasswordReset = () => {
                   onSubmit={(e) => {
                     e.preventDefault();
                     if (code.length !== 0) {
-                      dispatch(sendCode({ email, code }));
+                      sendCodeFx({ email, code });
                     } else {
                       alert("заполните поле");
                     }
@@ -150,20 +163,20 @@ const PasswordReset = () => {
                         setCode(e.target.value);
                       }}
                       disabled={
-                        (statusLoadingCode === "resolved" && !codeError) ||
-                        (statusLoadingCode === "loading" && !codeError)
+                        (codeSent && !codeError) ||
+                        (statusLoadingCode && !codeError)
                       }
                     />
                     <div
                       onClick={() => {
                         if (code.length !== 0) {
-                          dispatch(sendCode({ email, code }));
+                          sendCodeFx({ email, code });
                         } else {
                           alert("заполните поле");
                         }
                       }}
                     >
-                      {statusLoadingCode === "loading" && (
+                      {statusLoadingCode && (
                         <svg className="spinner" viewBox="0 0 50 50">
                           <circle
                             className="path"
@@ -176,10 +189,10 @@ const PasswordReset = () => {
                         </svg>
                       )}
 
-                      {statusLoadingCode === "resolved" && !codeError && (
+                      {codeSent && !codeError && (
                         <img src={tick} alt="" width={30} height={30} />
                       )}
-                      {(!statusLoadingCode || codeError) && (
+                      {!statusLoadingCode && !codeSent && (
                         <img src={arrowRight} alt="" />
                       )}
                     </div>
@@ -196,12 +209,12 @@ const PasswordReset = () => {
                 exit={{ height: 0, opacity: 0 }}
                 transition={{ type: "Tween" }}
               >
-                <div className="reset-error">{codeError}</div>
+                <div className="reset-error">Неверный код</div>
               </motion.div>
             )}
           </AnimatePresence>
           <AnimatePresence>
-            {showPasswordField && (
+            {codeSent && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}
@@ -214,11 +227,10 @@ const PasswordReset = () => {
                   onSubmit={(e) => {
                     e.preventDefault();
                     if (password.length !== 0 && password.length >= 8) {
-                      dispatch(sendPassword({ email, code, password }));
+                      // dispatch(sendPassword({ email, code, password }));
+                      sendPasswordFx({ email, code, password });
                     } else {
-                      dispatch(
-                        setPasswordError("Пароль не соответствует валидации")
-                      );
+                      alert("Пароль должен быть длиннее 8 символов.");
                     }
                   }}
                 >
@@ -233,9 +245,8 @@ const PasswordReset = () => {
                         setPassword(e.target.value);
                       }}
                       disabled={
-                        (statusLoadingPassword === "resolved" &&
-                          !passwordError) ||
-                        (statusLoadingPassword === "loading" && !passwordError)
+                        (passwordSent && !passwordError) ||
+                        (statusLoadingPassword && !passwordError)
                       }
                     />
                     <div
@@ -251,7 +262,7 @@ const PasswordReset = () => {
                         }
                       }}
                     >
-                      {statusLoadingPassword === "loading" && !password && (
+                      {statusLoadingPassword && (
                         <svg className="spinner" viewBox="0 0 50 50">
                           <circle
                             className="path"
@@ -264,7 +275,7 @@ const PasswordReset = () => {
                         </svg>
                       )}
 
-                      {statusLoadingPassword === "resolved" && !password && (
+                      {passwordSent && !password && (
                         <img src={tick} alt="" width={30} height={30} />
                       )}
                       {(!statusLoadingPassword || passwordError) && (

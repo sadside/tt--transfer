@@ -30,7 +30,7 @@ export const createCity = createAsyncThunk<
   string,
   { rejectValue: string; state: { calculator: CalculatorState } }
 >("zone/getZone", async (activeCity, { rejectWithValue, getState }) => {
-  const activeRegion = getState().calculator.activeRegion?.name;
+  const activeRegion = getState().calculator.activeRegion;
 
   try {
     const res: AxiosResponse<any> = await ZoneService.createCity({

@@ -7,7 +7,7 @@ import EditOrder from "../../components/editOrder/EditOrder";
 import EditSidebar from "../../components/editSidebar/EditSidebar";
 import MainTable from "../../components/mainTable/MainTable";
 import Pagination from "../../components/pagination/Pagination";
-import SmartFilter from "../../components/smartFilter/SmartFilter";
+import SmartFilterTariff from "../../components/smartFilter/SmartFilterTariff";
 import Tabs from "../../components/tabs/Tabs";
 import {
   ordersFilterFields,
@@ -74,7 +74,7 @@ const Orders = () => {
                   }}
                   transition={{ type: "Tween" }}
                 >
-                  <SmartFilter
+                  <SmartFilterTariff
                     filterData={ordersFilterFields}
                     closeSmartFilter={closeSmartFilter}
                   />
@@ -115,7 +115,7 @@ const Orders = () => {
                   }}
                   transition={{ type: "Tween" }}
                 >
-                  <SmartFilter
+                  <SmartFilterTariff
                     filterData={ordersFilterFields}
                     closeSmartFilter={closeSmartFilter}
                   />

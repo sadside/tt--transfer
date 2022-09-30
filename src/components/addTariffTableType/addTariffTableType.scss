@@ -50,3 +50,14 @@
 .transferLink-item {
 	padding-right: 23px;
 }
+
+.fixed-cell {
+	position: fixed !important;
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 91px !important;
+
+	background-color: #FFFFFF;
+}

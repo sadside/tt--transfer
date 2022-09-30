@@ -1,16 +1,12 @@
-import { SubmitHandler, useForm } from "react-hook-form";
-import { useDispatch, useSelector } from "react-redux";
-import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { changeUserData } from "../../store/userSlice";
+import { useStore } from "effector-react";
+import { useForm } from "react-hook-form";
+import { $user } from "../../effector/user/authorization";
+import { userDataFormSubmitted } from "../../effector/user/editUserData";
 import ErrorComponent from "../errorComponent/ErrorComponent";
-import Button from "../ui/button/Button";
-import CustomEditProfileInput from "./CustomEditProfileInput";
 
 const ProfileAccount = () => {
   const { register, handleSubmit, setValue } = useForm();
-  const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.user.user);
-  const error = useAppSelector((state) => state.user.error);
+  const user = useStore($user);
   setValue("email", user.email);
   setValue("phone", user.phone);
   setValue("surname", user.surname);
@@ -21,7 +17,7 @@ const ProfileAccount = () => {
     <>
       <form
         action=""
-        onSubmit={handleSubmit((data: any) => dispatch(changeUserData(data)))}
+        onSubmit={handleSubmit((data: any) => userDataFormSubmitted(data))}
       >
         <div className={"edit-profile-input-item"}>
           <div style={{ color: "#777777" }}>Номер телефона</div>
@@ -59,7 +55,6 @@ const ProfileAccount = () => {
             {...register("patronymic")}
           />
         </div>
-        <ErrorComponent text={error} />
         <input
           type="submit"
           className={"enter-button"}

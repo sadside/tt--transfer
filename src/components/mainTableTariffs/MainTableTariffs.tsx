@@ -6,6 +6,7 @@ import {
   getTariffByIdThunk,
   setShowEditTariffSidebar,
 } from "../../store/tariffSlice";
+import Loader from "../loader/Loader";
 import s from "./mainTableTariffs.module.scss";
 import { FC, useEffect } from "react";
 
@@ -23,14 +24,17 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
     "Комиссионный",
   ];
   const tariffs = useAppSelector((state) => state?.tariff?.tariffs?.results);
+  const status = useAppSelector((state) => state.tariff.status);
 
   return (
     <div className={s.scrollTable}>
       <table className={s.scrollTableHead}>
         <thead>
           <tr>
-            {itemsHeader.map((item) => (
-              <th className={s.item}>{item}</th>
+            {itemsHeader.map((item, index) => (
+              <th className={s.item} key={index}>
+                {item}
+              </th>
             ))}
           </tr>
         </thead>
@@ -40,7 +44,7 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
         <table>
           <tbody>
             {tariffs?.map((tariff) => (
-              <tr className={s.trBodyTable}>
+              <tr className={s.trBodyTable} key={tariff.id}>
                 <td
                   className={[s.item, s.firstItem].join(" ")}
                   onClick={() => dispatch(getTariffByIdThunk(tariff.id))}

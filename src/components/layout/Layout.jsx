@@ -1,3 +1,4 @@
+import { useStore } from "effector-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -26,20 +27,35 @@ import { Role } from "../../context";
 import { useEffect, useState } from "react";
 
 import "./layout.scss";
+import {
+  $isAuth,
+  $user,
+  checkAuthFx,
+  logoutFx,
+  logout,
+} from "../../effector/user/authorization";
 import useOutside from "../../hooks/useOutside";
-import { logout, setNotification } from "../../store/userSlice.ts";
+import { setNotification } from "../../store/userSlice.ts";
 import Loader from "../loader/Loader";
 import Moderation from "../moderation/Moderation";
 import SidebarLink from "../sidebarLink/SidebarLink";
 
 const Layout = () => {
-  const role = useSelector((state) => state.user.user.role);
-  const user = useSelector((state) => state.user.user);
-  const loading = useSelector((state) => state.user.loading);
-  const confirmed = useSelector((state) => state.user.user?.confirmed);
+  // const user = useSelector((state) => state.user.user);
+  // const role = useSelector((state) => state.user.user.role);
+  const user = useStore($user);
+  const { role } = useStore($user);
+  // const loading = useSelector((state) => state.user.loading);
+  // const confirmed = useSelector((state) => state.user.user?.confirmed);
+  const { confirmed } = useStore($user);
+
+  console.log($user.getState());
+
+  const loading = useStore(checkAuthFx.pending);
+  const isAuth = useStore($isAuth);
 
   const dispatch = useDispatch();
-  console.log("us:", role);
+  console.log("us:", user.role);
 
   const { isShow, setIsShow, ref } = useOutside(false);
   const navigate = useNavigate();
@@ -61,10 +77,14 @@ const Layout = () => {
   };
 
   useEffect(() => {
-    if (localStorage.getItem("sidebar") === "open") {
-      setIsVisibleSidebar(true);
+    if (!localStorage.getItem("token")) {
+      navigate("/login");
     } else {
-      setIsVisibleSidebar(false);
+      if (localStorage.getItem("sidebar") === "open") {
+        setIsVisibleSidebar(true);
+      } else {
+        setIsVisibleSidebar(false);
+      }
     }
   }, []);
 
@@ -225,8 +245,7 @@ const Layout = () => {
                         </Link>
                         <div
                           onClick={() => {
-                            console.log("clicked");
-                            dispatch(logout());
+                            logout();
                             navigate("/login");
                           }}
                         >

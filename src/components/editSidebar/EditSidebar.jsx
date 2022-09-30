@@ -13,7 +13,7 @@ const EditSidebar = ({
         className={"close-edit-sidebar"}
         onClick={() => toggleSidebar(!isVisible)}
       >
-        <img src={closeEditSidebar} alt="" />
+        <img src={closeEditSidebar} alt="" width={50} height={50} />
       </div>
       <div
         className={`edit-sidebar-content-wrap ${

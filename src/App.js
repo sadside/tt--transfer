@@ -1,9 +1,16 @@
 import { YMaps } from "@pbe/react-yandex-maps";
+import { useGate, useStore } from "effector-react";
 import { useState } from "react";
 import { Provider, useDispatch, useSelector } from "react-redux";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import Moderation from "./components/moderation/Moderation";
 import { Role } from "./context";
+import {
+  $authFailed,
+  $isAuth,
+  appMounted,
+  checkAuthFx,
+} from "./effector/user/authorization";
 import RequireNotAuth from "./hoc/RequireNotAuth";
 import RequireRoleClient from "./hoc/RequireRoleClient";
 import RequireRoleManager from "./hoc/RequireRoleManager";
@@ -28,13 +35,19 @@ import { store } from "./store";
 import { checkAuth, setIsAuth } from "./store/userSlice.ts";
 
 function App() {
-  const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.user);
+  const isAuth = useStore($isAuth);
+
+  const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   if (!isAuth) {
+  //     navigate("/login");
+  //   }
+  // }, [isAuth]);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
-      dispatch(checkAuth());
-      dispatch(setIsAuth(true));
+      checkAuthFx();
     }
   }, []);
 

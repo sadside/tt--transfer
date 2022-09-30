@@ -1,11 +1,11 @@
-import $api, { API_URL } from '../http'
+import $api, { API_URL } from "../http";
 
 export default class NewsServices {
-	static async getNews(page) {
-		return $api.get('/')
-	}
+  static async getNews(page) {
+    return $api.get("cars/get-car-classes/");
+  }
 
-	static async postNews(page) {
-		return $api.post('/')
-	}
+  static async createNew({ title, description, role }) {
+    return $api.post("/");
+  }
 }

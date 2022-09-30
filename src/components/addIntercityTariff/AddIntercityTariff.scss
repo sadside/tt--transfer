@@ -1,5 +1,51 @@
 .scroll-table-tariff.overlap {
-  overflow: auto;
-  height: auto;
+	overflow-x: auto !important;
+  height: 100%;
+  // max-height: calc(100vh - 271px);
+}
+
+.flex-conteiner-table {
+	display: flex;
+	overflow-y: auto;
+	height: auto;
   max-height: calc(100vh - 271px);
+}
+
+.fixed-cell-tr {
+	position: relative;
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 91px !important;
+
+	border-right: 1px solid #CCCCCC;
+	border-left: 1px solid #CCCCCC;
+	background-color: #FFFFFF;
+
+	text-align: center;
+
+	&:last-child {
+		border-bottom: 1px solid #CCCCCC;
+	}
+
+	&::after {
+		content: '';
+		display: block;
+		position: absolute;
+		top: 1px;
+		left: 0;
+		height: 1px;
+		width: 100%;
+
+		background-color: #CCCCCC;
+	}
+
+	&.overlap {
+		height: 60px !important;
+
+		&::after {
+			display: none;
+		}
+	}
 }

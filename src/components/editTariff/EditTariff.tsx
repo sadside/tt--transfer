@@ -6,7 +6,7 @@ import CityPricesTable from "../addIntercityTariff/CityPricesTable";
 import AddTariffInputs from "../addTariffinpus/AddTariffInputs";
 import AddTariffTable from "../addTariffTable/AddTariffTable";
 import ServicesTable from "../addTariffTableType/ServicesTable";
-//@ts-ignore
+import "../tariffsEditSidebarContent/tariffsEditSidebarContent.scss";
 import EditSidebarSubmitButtons from "../editSidebarSubmitButtons/EditSidebarSubmitButtons";
 import SidebarTableHeader from "../editSidebarTableHeader/SidebarTableHeader";
 import ErrorComponent from "../errorComponent/ErrorComponent";

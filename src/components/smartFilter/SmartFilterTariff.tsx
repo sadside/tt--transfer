@@ -1,24 +1,25 @@
 import "./smartFilter.scss";
 import Button from "../ui/button/Button";
 
-const SmartFilter = ({ filterData, closeSmartFilter }) => {
+interface SmartFilterTariffProps {
+  filterData?: any[];
+  closeSmartFilter: () => void;
+}
+
+const SmartFilterTariff = ({
+  filterData,
+  closeSmartFilter,
+}: SmartFilterTariffProps) => {
   return (
     <div className="smart-filter-wrap-1">
       <div className={"smart-filter-wrap"}>
         <div></div>
-        {filterData.map((item, index) => (
-          <div className="filter-item" key={index}>
-            <div className="filter-title">{item.title}</div>
-            <div className="filter-value">
-              <input
-                type="text"
-                className={"filter-input"}
-                placeholder={item.placeholder}
-                style={{ width: item.width }}
-              />
-            </div>
+        <div className="filter-item">
+          <div className="filter-title">Регион</div>
+          <div className="filter-value">
+            <input type="text" className={"filter-input"} />
           </div>
-        ))}
+        </div>
       </div>
 
       <div className="filter-button-wrap">
@@ -36,4 +37,4 @@ const SmartFilter = ({ filterData, closeSmartFilter }) => {
   );
 };
 
-export default SmartFilter;
+export default SmartFilterTariff;

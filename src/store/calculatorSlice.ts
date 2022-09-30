@@ -7,6 +7,7 @@ import {
 import { AxiosResponse } from "axios";
 import calculator, { HubFormValues } from "../components/calculator/Calculator";
 import CalculatorService from "../services/CalculatorService";
+import { TariffService } from "../services/TariffService";
 import { ZoneService } from "../services/ZoneService";
 import {
   IAdditionalRace,
@@ -19,15 +20,16 @@ import {
   IHubs,
   IRegion,
 } from "../types/types";
+import { TariffState } from "./tariffSlice";
 
 export type CalculatorState = {
   loading: boolean;
   error: boolean;
   regions: IRegion[];
   filteredRegions: IRegion[] | [];
-  activeRegion: IRegion | null;
+  activeRegion: "";
   cities: ICity[] | null;
-  activeCity: ICity | null;
+  activeCity: "";
   filteredCities: ICity[] | [];
   hubs: IFullHub[];
   showModal: boolean;
@@ -40,16 +42,18 @@ export type CalculatorState = {
   addressFromType: string;
   addressToType: string;
   additionalRaces: IAdditionalRace[];
+  regionSuggestions: string[];
+  citySuggestions: string[];
 };
 
 const initialState: CalculatorState = {
   loading: true,
   error: false,
   regions: [],
-  activeRegion: null,
+  activeRegion: "",
   filteredRegions: [],
   cities: [],
-  activeCity: null,
+  activeCity: "",
   filteredCities: [],
   hubs: [],
   showModal: false,
@@ -132,6 +136,8 @@ const initialState: CalculatorState = {
   addressFromType: "",
   addressToType: "",
   additionalRaces: [],
+  regionSuggestions: [],
+  citySuggestions: [],
 };
 
 export const addBrokenAddress = createAsyncThunk<void, IBrokenAddress>(
@@ -141,6 +147,37 @@ export const addBrokenAddress = createAsyncThunk<void, IBrokenAddress>(
     } catch (e) {}
   }
 );
+
+export const getRegionSuggestionsThunk = createAsyncThunk<
+  string[],
+  string,
+  { rejectValue: string }
+>("tariff/getRegionSuggestion", async (string: string, { rejectWithValue }) => {
+  try {
+    const { data } = await TariffService.getRegionSuggestions(string);
+
+    return data;
+  } catch (e: any) {
+    rejectWithValue(e.message());
+  }
+});
+
+export const getCitySuggestionsThunk = createAsyncThunk<
+  string[],
+  string,
+  { rejectValue: string; state: { calculator: CalculatorState } }
+>("tariff/getCitySuggestion", async (string, { getState, rejectWithValue }) => {
+  const region = getState().calculator.activeRegion;
+  try {
+    if (region) {
+      const { data } = await TariffService.getCitySuggestions(region, string);
+
+      return data;
+    }
+  } catch (e: any) {
+    rejectWithValue(e.message());
+  }
+});
 
 export const getRegionsThunk = createAsyncThunk<
   IRegion[],
@@ -166,8 +203,8 @@ export const addHubThunk = createAsyncThunk<
     { title, description, coordinates },
     { getState, rejectWithValue, dispatch }
   ) => {
-    const region = getState().calculator.activeRegion?.name;
-    const city = getState().calculator.activeCity?.name;
+    const region = getState().calculator.activeRegion;
+    const city = getState().calculator.activeCity;
 
     const coords = coordinates.split(",");
 
@@ -227,7 +264,7 @@ const calculatorSlice = createSlice({
       } else {
         state.activeRegion = action.payload;
         state.cities = action.payload.areas;
-        state.activeCity = null;
+        state.activeCity = "";
       }
     },
     setActiveHub(state, action) {
@@ -250,6 +287,12 @@ const calculatorSlice = createSlice({
           return item.name.toLowerCase().includes(action.payload.toLowerCase());
         });
       }
+    },
+    setTariffRegion(state, action) {
+      state.activeRegion = action.payload;
+    },
+    setTariffCity(state, action) {
+      state.activeCity = action.payload;
     },
     setActiveAddressFrom(state, action: PayloadAction<IAddress>) {
       state.activeAddressFrom = action.payload;
@@ -371,6 +414,18 @@ const calculatorSlice = createSlice({
       .addCase(addHubThunk.pending, (state) => {
         state.loading = false;
       })
+      .addCase(
+        getRegionSuggestionsThunk.fulfilled,
+        (state, action: PayloadAction<string[]>) => {
+          state.regionSuggestions = action.payload;
+        }
+      )
+      .addCase(
+        getCitySuggestionsThunk.fulfilled,
+        (state, action: PayloadAction<string[]>) => {
+          state.citySuggestions = action.payload;
+        }
+      )
       .addCase(addHubThunk.fulfilled, (state, action) => {
         state.hubs.push(action.payload);
         state.showModal = false;
@@ -399,6 +454,8 @@ export const {
   setActiveAddressFrom,
   addAdditionalRace,
   removeAdditionalRace,
+  setTariffRegion,
+  setTariffCity,
 } = calculatorSlice.actions;
 
 export default calculatorSlice.reducer;

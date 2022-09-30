@@ -1,5 +1,13 @@
+import { useStore } from "effector-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  $invalidLoginForm,
+  $isAuth,
+  loginFormSubmit,
+  loginFx,
+} from "../../effector/user/authorization";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import Button from "../ui/button/Button";
 import Input from "../ui/input/Input";
@@ -16,16 +24,29 @@ const LoginFields = () => {
     formState: { errors },
   } = useForm();
 
-  const isAuth = useAppSelector((state) => state.user.isAuth);
+  // const isAuth = useAppSelector((state) => state.user.isAuth);
+  const isUserAuth = useStore($isAuth);
+  const invalidLoginFormData = useStore($invalidLoginForm);
   const status = useAppSelector((state) => state.user.status);
 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isUserAuth) navigate("/");
+  }, [isUserAuth]);
+
   const onSubmit = async (data) => {
-    await dispatch(
-      login({
-        email: data.email,
-        password: data.password,
-      })
-    );
+    // await dispatch(
+    //   login({
+    //     email: data.email,
+    //     password: data.password,
+    //   })
+    // );
+
+    loginFormSubmit({
+      email: data.email,
+      password: data.password,
+    });
   };
 
   return (
@@ -69,7 +90,18 @@ const LoginFields = () => {
             )}
           </div>
           <AnimatePresence>
-            {status === "invalid data" && (
+            {/*{status === "invalid data" && (*/}
+            {/*  <motion.div*/}
+            {/*    initial={{ height: 0, opacity: 0 }}*/}
+            {/*    animate={{ height: "auto", opacity: 1 }}*/}
+            {/*    exit={{ height: 0, opacity: 0 }}*/}
+            {/*    transition={{ type: "Tween" }}*/}
+            {/*    style={{ overflow: "hidden" }}*/}
+            {/*  >*/}
+            {/*    <div className="error-component">Неверный логин или пароль</div>*/}
+            {/*  </motion.div>*/}
+            {/*)}*/}
+            {invalidLoginFormData && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: "auto", opacity: 1 }}

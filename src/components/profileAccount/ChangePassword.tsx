@@ -1,6 +1,13 @@
 import "./profileAccount.scss";
+import { useGate, useStore } from "effector-react";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
+import {
+  $invalidPassword,
+  $passwordChanged,
+  changePasswordFormSubmitted,
+  passwordPageMounted,
+} from "../../effector/user/editUserData";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { changePassword } from "../../store/userSlice";
 import ErrorComponent from "../errorComponent/ErrorComponent";
@@ -15,15 +22,20 @@ const ChangePassword = () => {
   const [newPassword, setNewPassword] = useState<string>("");
   const [newPasswordRepeat, setNewPasswordRepeat] = useState<string>("");
   const [validateError, setValidateError] = useState<boolean>(false);
-  const dispatch = useAppDispatch();
 
-  const error = useAppSelector((state) => state.user.error);
+  const invalidPassword = useStore($invalidPassword);
+  const passwordChanged = useStore($passwordChanged);
+
+  useGate(passwordPageMounted);
 
   const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (oldPassword !== newPassword && newPassword.length >= 8) {
-      dispatch(changePassword({ oldPassword, newPassword }));
+      changePasswordFormSubmitted({ oldPassword, newPassword });
+      setOldPassword("");
+      setNewPassword("");
+      setNewPasswordRepeat("");
     } else {
       setValidateError(true);
     }
@@ -102,11 +114,15 @@ const ChangePassword = () => {
         </div>
         {validateError && (
           <div className="error-component" style={{ width: 440 }}>
-            Новый пароль должен состоять из 8 символов и не должен повторять
-            предыдущий.
+            Новый пароль должен состоять из 8 символов.
           </div>
         )}
-        <ErrorComponent text={error} />
+        {invalidPassword && (
+          <div className="error-component" style={{ width: 440 }}>
+            Старый пароль неверный.
+          </div>
+        )}
+        {passwordChanged && <div>Пароль изменен.</div>}
         <input
           type="submit"
           value="Сменить пароль"

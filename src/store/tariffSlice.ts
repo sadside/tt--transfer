@@ -19,7 +19,7 @@ import {
   ITariff,
 } from "../types/types";
 
-type TariffState = {
+export type TariffState = {
   tariffRegion: string;
   tariffCity: string;
   regionSuggestions: string[];
@@ -90,25 +90,6 @@ export const getRegionSuggestionsThunk = createAsyncThunk<
   }
 );
 
-export const editTariffPriceThunk = createAsyncThunk<
-  ITariff,
-  any,
-  { rejectValue: string; state: { tariff: TariffState } }
->(
-  "tariff/editTariffPriceThunk",
-  async (tariff, { rejectWithValue, getState }) => {
-    const id = getState().tariff.activeTariff?.id;
-
-    try {
-      const response = await TariffService.editTariffPrice(tariff, id);
-      console.log(response);
-      return response.data;
-    } catch (e: any) {
-      return rejectWithValue(e.message());
-    }
-  }
-);
-
 export const getCitySuggestionsThunk = createAsyncThunk<
   string[],
   string,
@@ -125,6 +106,25 @@ export const getCitySuggestionsThunk = createAsyncThunk<
       }
     } catch (e: any) {
       rejectWithValue(e.message());
+    }
+  }
+);
+
+export const editTariffPriceThunk = createAsyncThunk<
+  ITariff,
+  any,
+  { rejectValue: string; state: { tariff: TariffState } }
+>(
+  "tariff/editTariffPriceThunk",
+  async (tariff, { rejectWithValue, getState }) => {
+    const id = getState().tariff.activeTariff?.id;
+
+    try {
+      const response = await TariffService.editTariffPrice(tariff, id);
+      console.log(response);
+      return response.data;
+    } catch (e: any) {
+      return rejectWithValue(e.message());
     }
   }
 );
@@ -230,6 +230,9 @@ export const deleteTariffThunk = createAsyncThunk<
     if (id) {
       const response = await TariffService.deleteTariff(id);
 
+      // @ts-ignore
+      // dispatch(getShortTariffs());
+
       return response.data;
     }
   } catch (e: any) {
@@ -270,11 +273,12 @@ export const createTariffThunk = createAsyncThunk<
 
 export const getShortTariffs = createAsyncThunk<
   IShortTariffResponse,
-  any,
+  undefined,
   { rejectValue: string; state: { tariff: TariffState } }
->("tariff/getShortTariffs", async ({ page }, { rejectWithValue, getState }) => {
+>("tariff/getShortTariffs", async (_, { rejectWithValue, getState }) => {
   try {
     const limit = getState().tariff.tariffsPerPage;
+    const page = getState().tariff.activePage;
     const response = await TariffService.getShortTariffs(limit, page);
 
     return response.data;
@@ -397,7 +401,6 @@ export const tariffSlice = createSlice({
       .addCase(createTariffThunk.fulfilled, (state, action) => {
         state.status = "idle";
         state.activeTariff = action.payload;
-        // state.tariffs?.results.push(action.payload);
       })
       .addCase(editTariffPriceThunk.fulfilled, (state, action) => {
         state.status = "idle";
@@ -453,6 +456,7 @@ export const {
   setActiveCity,
   setTariffAlreadyCreated,
   setTariffsPerPage,
+  setActivePage,
 } = tariffSlice.actions;
 
 export default tariffSlice.reducer;

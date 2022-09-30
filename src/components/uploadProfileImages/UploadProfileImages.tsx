@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import passport from "../../assets/pasport.png";
 import drive from "../../assets/drive.png";
 import axios from "axios";
+import { avatarUploaded } from "../../effector/user/editUserData";
 import $api, { API_URL } from "../../http";
 import UserServices from "../../services/UserServices";
 import { setAvatar } from "../../store/userSlice";
@@ -31,7 +32,8 @@ const UploadProfileImages = () => {
     const formData = new FormData();
     formData.append("avatar", e.target.files[0]);
 
-    dispatch(setAvatar(formData));
+    // dispatch(setAvatar(formData));
+    avatarUploaded(formData);
   };
 
   const handleChangeDocuments = (e: any) => {
@@ -47,6 +49,7 @@ const UploadProfileImages = () => {
 
     setDocuments1(formData);
     console.log(documents1);
+
     // dispatch(addDocument(documents1));
   };
 

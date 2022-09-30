@@ -14,11 +14,7 @@ export class TariffService {
     return $api.get<CarClass[]>("cars/get-car-classes/");
   }
   static createTariff(tariff: IInitialTariff) {
-    return $api.post<ITariff>("tariffs/tariff/", {
-      title: tariff.name,
-      region: tariff.region,
-      city: tariff.city,
-    });
+    return $api.post<ITariff>("tariffs/tariff/", tariff);
   }
 
   static getRegionSuggestions(string: string) {

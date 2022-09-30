@@ -1,3 +1,4 @@
+import { useStore } from "effector-react";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Layout from "../../components/layout/Layout";
@@ -16,14 +17,15 @@ import ProfileAccount from "../../components/profileAccount/ProfileAccount";
 import UploadProfileImages from "../../components/uploadProfileImages/UploadProfileImages";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../../assets/profile-avatar.svg";
+import { $user } from "../../effector/user/authorization";
 import { logout } from "../../store/userSlice.ts";
 
 const Profile = () => {
   const [activeLink, setActiveLink] = useState(0);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const avatarFilename = useSelector((state) => state.user.user.avatar);
-
+  // const avatarFilename = useSelector((state) => state.user.user.avatar);
+  const { avatar: avatarFilename } = useStore($user);
   return (
     <>
       <div className="profile-wrap">

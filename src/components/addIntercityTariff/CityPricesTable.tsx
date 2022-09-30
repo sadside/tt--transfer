@@ -52,12 +52,25 @@ const CityPricesTable = () => {
 
   return (
     <>
-      <form action="" onSubmit={handleSubmit(onSubmit)}>
+      <form action="" onSubmit={handleSubmit(onSubmit)}  className="flex-conteiner-table">
+        <div>
+          <div style={{ cursor: "pointer", height: 60, width: 190 }} className="fixed-cell-tr overlap">
+            Тип услуг
+          </div>
+            {cities?.map((city) => (
+              <div
+                className="fixed-cell-tr"
+                style={{ cursor: "pointer", height: 91, width: 190 }}
+                onClick={() => dispatch(setActiveCity(city))}
+              >
+                {city.city.city}
+              </div>
+            ))}
+        </div>
         <div className={"scroll-table-tariff overlap"}>
           <table>
             <thead>
               <tr>
-                <th>Типы услуг</th>
                 {carClasses.map((car: CarClass) => (
                   <th>{car.title}</th>
                 ))}
@@ -65,16 +78,19 @@ const CityPricesTable = () => {
             </thead>
           </table>
           <div>
+            
             <table>
-              <tbody>
+              <tbody className="fixed-conteiner">
                 {cities?.map((city) => (
-                  <tr>
-                    <td
-                      style={{ cursor: "pointer" }}
-                      onClick={() => dispatch(setActiveCity(city))}
-                    >
-                      {city.city.city}
-                    </td>
+                  <tr >
+                  {/* //   <td
+                  //     className="fixed-cell-tr"
+                  //     style={{ cursor: "pointer" }}
+                  //     onClick={() => dispatch(setActiveCity(city))}
+                  //   >
+                  //     {city.city.city}
+                  //   </td>
+                  //   <td></td> */}
                     {city.prices.map((price) => (
                       <TariffCell
                         register={register}

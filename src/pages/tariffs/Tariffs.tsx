@@ -11,7 +11,7 @@ import Loader from "../../components/loader/Loader";
 import MainTable from "../../components/mainTable/MainTable";
 import MainTableTariffs from "../../components/mainTableTariffs/MainTableTariffs";
 import Pagination from "../../components/pagination/Pagination";
-import SmartFilter from "../../components/smartFilter/SmartFilter";
+import SmartFilterTariff from "../../components/smartFilter/SmartFilterTariff";
 import Tabs from "../../components/tabs/Tabs";
 import "./tariffs.scss";
 import TariffsEditSidebarContent from "../../components/tariffsEditSidebarContent/TariffsEditSidebarContent";
@@ -28,6 +28,7 @@ import {
   getCarClassesThunk,
   getShortTariffs,
   getTariffByIdThunk,
+  setActivePage,
   setShowAddCity,
   setShowAddTariffSidebar,
   setShowEditTariffSidebar,
@@ -55,7 +56,12 @@ const Tariffs = () => {
     );
   };
 
-  const [currentPage, setCurrentPage] = useState(1);
+  // const [currentPage, setCurrentPage] = useState(1);
+  const setCurrentPage = (value: number) => {
+    dispatch(setActivePage(value));
+  };
+
+  const currentPage = useAppSelector((state) => state.tariff.activePage);
   const [countriesPerPage, setCountriesPerPage] = useState(10);
   const lastCountryIndex = currentPage * countriesPerPage;
   const firstCountryIndex = lastCountryIndex - countriesPerPage;
@@ -85,12 +91,7 @@ const Tariffs = () => {
   );
 
   useEffect(() => {
-    dispatch(
-      getShortTariffs({
-        page: currentPage,
-        limit: tariffsPerPage,
-      })
-    );
+    dispatch(getShortTariffs());
   }, [tariffsPerPage, currentPage]);
 
   useEffect(() => {
@@ -118,8 +119,8 @@ const Tariffs = () => {
     // );
   };
 
-  const nextPage = () => setCurrentPage((prev) => prev + 1);
-  const prevPage = () => setCurrentPage((prev) => prev - 1);
+  const nextPage = () => setCurrentPage(currentPage + 1);
+  const prevPage = () => setCurrentPage(currentPage - 1);
 
   const handleShowActionMenu = (value: any) => {
     setShowActionMenu(value);
@@ -158,23 +159,20 @@ const Tariffs = () => {
           callback={() => setShowEditSidebar(true)}
         />
         <AnimatePresence>
-          {showSmartFilter &&
-            !showAddSidebar &&
-            !showEditSidebarIntercity &&
-            !test && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                style={{ overflow: "hidden" }}
-                transition={{ type: "Tween" }}
-              >
-                <SmartFilter
-                  filterData={tariffsFilterData}
-                  closeSmartFilter={closeSmartFilter}
-                />
-              </motion.div>
-            )}
+          {showSmartFilter && !showAddSidebar && !showEditSidebarIntercity && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              style={{ overflow: "hidden" }}
+              transition={{ type: "Tween" }}
+            >
+              <SmartFilterTariff
+                filterData={tariffsFilterData}
+                closeSmartFilter={closeSmartFilter}
+              />
+            </motion.div>
+          )}
         </AnimatePresence>
         {/*<MainTable*/}
         {/*  headers={tariffsTableHeaders}*/}
@@ -186,7 +184,9 @@ const Tariffs = () => {
         {/*  setOnlyOneSelected={setOnlyOneSelected}*/}
         {/*  handleShowActionMenuArchive={() => console.log("show")}*/}
         {/*/>*/}
-        {status == "tariffs loading" ? (
+        {status == "tariffs loading" ||
+        tariffs?.length === 0 ||
+        !Boolean(tariffs) ? (
           <Loader />
         ) : (
           <div>

@@ -12,6 +12,7 @@ import {
   IChangePassword,
   IChangeUserData,
   ICodeCheck,
+  IFullUser,
   ILoginData,
   IRegistratinData,
   ISendPassword,
@@ -19,20 +20,7 @@ import {
 } from "../types/types";
 
 type UserState = {
-  user: {
-    role?: string;
-    name?: string;
-    surname?: string;
-    patronymic?: string;
-    email?: string;
-    phone?: string;
-    password?: string;
-    news?: [];
-    accessToken?: string;
-    refreshToken?: string;
-    avatar?: string;
-    documents?: string[];
-  };
+  user: IFullUser;
   loading: boolean;
   isAuth: boolean;
   passwordMatch: null | string;
@@ -114,15 +102,15 @@ export const registration = createAsyncThunk<
     { rejectWithValue }
   ) {
     try {
-      const response = await AuthService.registration(
-        email,
-        password,
-        name,
-        surname,
-        phone,
-        patronymic,
-        role
-      );
+      // const response = await AuthService.registration(
+      //   email,
+      //   password,
+      //   name,
+      //   surname,
+      //   phone,
+      //   patronymic,
+      //   role
+      // );
 
       const token = await AuthService.getToken({
         email,

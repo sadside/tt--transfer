@@ -10,7 +10,7 @@ import EditDriver from "../../components/editDriver/EditDriver";
 import EditSidebar from "../../components/editSidebar/EditSidebar";
 import MainTable from "../../components/mainTable/MainTable";
 import Pagination from "../../components/pagination/Pagination";
-import SmartFilter from "../../components/smartFilter/SmartFilter";
+import SmartFilterTariff from "../../components/smartFilter/SmartFilterTariff";
 import Tabs from "../../components/tabs/Tabs";
 import {
   driversSmartFilterFields,
@@ -96,7 +96,7 @@ const Drivers = () => {
                   }}
                   transition={{ type: "Tween" }}
                 >
-                  <SmartFilter
+                  <SmartFilterTariff
                     filterData={driversSmartFilterFields}
                     closeSmartFilter={closeSmartFilter}
                   />
@@ -138,7 +138,7 @@ const Drivers = () => {
                   }}
                   transition={{ type: "Tween" }}
                 >
-                  <SmartFilter
+                  <SmartFilterTariff
                     filterData={driversSmartFilterFields}
                     closeSmartFilter={closeSmartFilter}
                   />

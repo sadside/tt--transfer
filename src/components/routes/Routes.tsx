@@ -444,9 +444,7 @@ const Routes: FC = () => {
           <div>
             <div className={styles.iframeWrap}>
               <iframe
-                src={`http://localhost:8000/map/route/?region=${
-                  activeRegion?.name
-                }&city=${activeCity?.name}${coordinatesFrom}${
+                src={`http://localhost:8000/map/route/?region=${activeRegion}&city=${activeCity}${coordinatesFrom}${
                   additionalRaces.length !== 0 && iframeCoords
                 }${coordinatesTo}`}
                 width="100%"

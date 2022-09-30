@@ -27,14 +27,18 @@ import {
   clearToHub,
   filterCity,
   filterRegion,
+  getCitySuggestionsThunk,
   getHubsThunk,
   getRegionsThunk,
+  getRegionSuggestionsThunk,
   setActiveCity,
   setActiveFromHub,
   setActiveHub,
   setActiveRegion,
   setActiveToHub,
   setShowModal,
+  setTariffCity,
+  setTariffRegion,
 } from "../../store/calculatorSlice";
 //@ts-ignore
 import downArrow from "../../assets/select-zone-color.svg";
@@ -83,6 +87,14 @@ const Calculator = () => {
   const zones = useAppSelector((state) => state.zone.zones);
   const regions = useAppSelector((state) => state.calculator.regions);
   let hubs = useAppSelector((state) => state.calculator.hubs);
+
+  const regionSuggestions = useAppSelector(
+    (state) => state.calculator.regionSuggestions
+  );
+
+  const citySuggestions = useAppSelector(
+    (state) => state.calculator.citySuggestions
+  );
 
   const dispatch = useAppDispatch();
 
@@ -196,6 +208,18 @@ const Calculator = () => {
     return <Loader />;
   }
 
+  const regionInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setRegionInputValue(e.target.value);
+    dispatch(setTariffRegion(null));
+    dispatch(getRegionSuggestionsThunk(e.target.value));
+  };
+
+  const cityInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCityInputValue(e.target.value);
+    dispatch(setTariffCity(null));
+    dispatch(getCitySuggestionsThunk(e.target.value));
+  };
+
   // @ts-ignore
   // @ts-ignore
   // @ts-ignore
@@ -207,38 +231,38 @@ const Calculator = () => {
           <div className={styles.citySelectWrap}>
             <input
               type="text"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                setRegionInputValue(e.target.value);
-                dispatch(filterRegion(e.target.value));
-                dispatch(setActiveRegion(null));
-                setIsShow(true);
-              }}
-              value={activeRegion?.name || regionInputValue}
+              // onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              //   setRegionInputValue(e.target.value);
+              //   dispatch(filterRegion(e.target.value));
+              //   dispatch(setActiveRegion(null));
+              //   setIsShow(true);
+              // }}
+              onChange={regionInputHandler}
+              value={activeRegion || regionInputValue}
             />
 
             <AnimatePresence>
-              {filteredRegions?.length !== 0 && !activeRegion && isShow && (
+              {regionSuggestions.length > 0 && !activeRegion && (
                 <motion.div
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
                   transition={{ type: "Tween" }}
-                  style={{ overflow: "hidden", zIndex: 1000 }}
-                  ref={ref}
+                  style={{ zIndex: 100000000, position: "relative" }}
                 >
                   <div className={styles.citySelect}>
                     <ul>
-                      {filteredRegions.map((city, index: number) => {
+                      {regionSuggestions.map((region, index: number) => {
                         return (
                           <li
-                            key={city.id}
+                            key={index}
                             onClick={() => {
-                              dispatch(setActiveRegion(city));
-                              setRegionInputValue(city.name);
+                              dispatch(setTariffRegion(region));
+                              setRegionInputValue(region);
                               setCityInputValue("");
                             }}
                           >
-                            {city.name}
+                            {region}
                           </li>
                         );
                       })}
@@ -249,50 +273,49 @@ const Calculator = () => {
             </AnimatePresence>
           </div>
         </div>
-        {activeRegion && cities?.length !== 0 && (
+        {activeRegion && (
           <div className={styles.selectCity}>
             <label>Введите город:</label>
             <div className={styles.citySelectWrap}>
               <input
                 type="text"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setCityInputValue(e.target.value);
-                  dispatch(filterCity(e.target.value));
-                  dispatch(setActiveCity(null));
-                  setIsSecond(true);
-                }}
-                value={activeCity?.name || cityInputValue}
+                // onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                //   setCityInputValue(e.target.value);
+                //   dispatch(filterCity(e.target.value));
+                //   dispatch(setActiveCity(null));
+                //   setIsSecond(true);
+                // }}
+                onChange={cityInputHandler}
+                value={activeCity || cityInputValue}
               />
 
               <AnimatePresence>
-                {filteredCities?.length !== 0 && !activeCity && isSecondShow && (
+                {citySuggestions?.length > 0 && !activeCity && (
                   <motion.div
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ type: "Tween" }}
-                    style={{ overflow: "hidden", zIndex: 1000 }}
-                    ref={secondRef}
+                    style={{ zIndex: 100, position: "relative" }}
                   >
                     <div className={styles.citySelect}>
                       <ul>
-                        {filteredCities.map((city, index) => {
+                        {citySuggestions.map((city, index: number) => {
                           return (
                             <li
-                              key={city.id}
-                              //@ts-ignore
-                              onClick={(): void => {
-                                dispatch(setActiveCity(city));
-                                setCityInputValue(city.name);
+                              key={index}
+                              onClick={() => {
+                                dispatch(setTariffCity(city));
+                                setCityInputValue(city);
                                 dispatch(
                                   getHubsThunk({
-                                    region: activeRegion.name,
-                                    city: city.name,
+                                    region: activeRegion,
+                                    city: city,
                                   })
                                 );
                               }}
                             >
-                              {city.name}
+                              {city}
                             </li>
                           );
                         })}
@@ -406,7 +429,7 @@ const Calculator = () => {
             </div>
           </form>
         </Modal>
-        {activeCity?.id && activeRegion?.id && (
+        {activeCity && activeRegion && (
           <div className={styles.hubActions}>
             <div className={styles.selectHubWrap}>
               <Select
@@ -454,8 +477,7 @@ const Calculator = () => {
               <div className={styles.howToUse}>
                 <div>
                   Для зонирования хаба{" "}
-                  <strong>{activeHub?.title || activeRegion?.name}</strong>{" "}
-                  откройте{" "}
+                  <strong>{activeHub?.title || activeRegion}</strong> откройте{" "}
                   <a
                     href="https://yandex.ru/map-constructor/location-tool/?from=club"
                     target={"_blank"}

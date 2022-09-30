@@ -5,10 +5,25 @@ export interface IUser {
   name: string;
   email: string;
   surname: string;
-  patroimyc: string;
+  patronymic: string;
   phone: string;
   role: string;
   confirmed: boolean;
+}
+
+export interface IFullUser {
+  role?: string;
+  name?: string;
+  surname?: string;
+  patronymic?: string;
+  email?: string;
+  phone?: string;
+  password?: string;
+  news?: [];
+  accessToken?: string;
+  refreshToken?: string;
+  avatar?: string;
+  documents?: string[];
 }
 
 export interface IZone {
@@ -236,6 +251,7 @@ export interface ITariff {
   currency: string;
   comments: string;
   is_commission: string;
+  is_available: boolean;
   services: IService[];
   intracity_tariff: IIntracityTariff;
   intercity_tariff: {
@@ -252,9 +268,12 @@ export type CarClass = {
 };
 
 export interface IInitialTariff {
-  name: string;
   region: string;
   city: string;
+  type: string;
+  commission?: string | null;
+  company?: string | null;
+  comments: string;
 }
 
 export interface IShortTariffResponse {
