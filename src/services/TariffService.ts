@@ -50,11 +50,29 @@ export class TariffService {
     return $api.post("", tariff);
   }
 
-  static getShortTariffs(limit = 1, page = 2) {
+  static getShortTariffs(
+    limit = 1,
+    page = 1,
+    region = "",
+    city = "",
+    type = ""
+  ) {
+    switch (type) {
+      case "Комиссионный":
+        type = "commission";
+        break;
+      case "Основной":
+        type = "basic";
+        break;
+    }
+
     return $api.get<IShortTariffResponse>(`tariffs/tariff/`, {
       params: {
         page,
         limit,
+        region,
+        city,
+        type,
       },
     });
   }

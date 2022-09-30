@@ -2,6 +2,15 @@ import "./customSelect.scss";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 
+interface CustomSelectProps {
+  isVisible: boolean;
+  items: string[];
+  setItem: (item: string) => void;
+  setVisible: (bool: boolean) => void;
+  setShowSidebar?: any;
+  showAll?: boolean;
+}
+
 const CustomSelect = ({
   isVisible,
   items,
@@ -9,7 +18,7 @@ const CustomSelect = ({
   setVisible,
   setShowSidebar,
   showAll = true,
-}) => {
+}: CustomSelectProps) => {
   return (
     <>
       <AnimatePresence>

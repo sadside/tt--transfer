@@ -91,7 +91,7 @@ const Tariffs = () => {
   );
 
   useEffect(() => {
-    dispatch(getShortTariffs());
+    dispatch(getShortTariffs({ region: "", type: "", city: "" }));
   }, [tariffsPerPage, currentPage]);
 
   useEffect(() => {
@@ -184,20 +184,15 @@ const Tariffs = () => {
         {/*  setOnlyOneSelected={setOnlyOneSelected}*/}
         {/*  handleShowActionMenuArchive={() => console.log("show")}*/}
         {/*/>*/}
-        {status == "tariffs loading" ||
-        tariffs?.length === 0 ||
-        !Boolean(tariffs) ? (
+        {status == "tariffs loading" ? (
           <Loader />
         ) : (
           <div>
-            {/*{tariffs*/}
-            {/*  .map((tariff) => (*/}
-            {/*    <div onClick={() => dispatch(getTariffByIdThunk(tariff.id))}>*/}
-            {/*      {tariff.title}*/}
-            {/*    </div>*/}
-            {/*  ))*/}
-            {/*  .reverse()}*/}
-            <MainTableTariffs />
+            {tariffs?.length !== 0 ? (
+              <MainTableTariffs />
+            ) : (
+              <div>По данному запросу тарифы отсутствуют.</div>
+            )}
           </div>
         )}
       </div>

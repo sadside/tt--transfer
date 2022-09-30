@@ -140,11 +140,13 @@ export const createIntercityCityThunk = createAsyncThunk<
   }
 >(
   "tariff/createIntercityCity",
-  async ({ region, city }, { getState, rejectWithValue }) => {
+  async ({ region, city }, { getState, rejectWithValue, dispatch }) => {
     const id = getState().tariff.activeTariff?.id;
 
     try {
       const response = await TariffService.createCity(id, region, city);
+
+      dispatch(setShowAddCity({ value: false }));
 
       return response.data;
     } catch (e: any) {
@@ -273,19 +275,30 @@ export const createTariffThunk = createAsyncThunk<
 
 export const getShortTariffs = createAsyncThunk<
   IShortTariffResponse,
-  undefined,
+  any,
   { rejectValue: string; state: { tariff: TariffState } }
->("tariff/getShortTariffs", async (_, { rejectWithValue, getState }) => {
-  try {
-    const limit = getState().tariff.tariffsPerPage;
-    const page = getState().tariff.activePage;
-    const response = await TariffService.getShortTariffs(limit, page);
+>(
+  "tariff/getShortTariffs",
+  async ({ region, city, type }, { rejectWithValue, getState }) => {
+    try {
+      const limit = getState().tariff.tariffsPerPage;
+      const page = getState().tariff.activePage;
+      const response = await TariffService.getShortTariffs(
+        limit,
+        page,
+        region,
+        city,
+        type
+      );
 
-    return response.data;
-  } catch (e: any) {
-    return rejectWithValue(e.message());
+      return response.data;
+    } catch (e: any) {
+      return rejectWithValue(e.message());
+    }
   }
-});
+);
+
+// export const;
 
 export const tariffSlice = createSlice({
   name: "tariff",

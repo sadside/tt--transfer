@@ -292,4 +292,5 @@ export interface IShortTariff {
   currency: string;
   is_commission: string;
   lifetime: string;
+  commission: number | null;
 }

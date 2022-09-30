@@ -55,9 +55,7 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
                 <td className={s.item}>Да</td>
                 <td className={s.item}>7 дней</td>
                 <td className={s.item}>7 дней назад</td>
-                <td className={s.item}>
-                  {tariff.is_commission ? "Да" : "Нет"}
-                </td>
+                <td className={s.item}>{tariff.commission ? "Да" : "Нет"}</td>
               </tr>
             ))}
           </tbody>

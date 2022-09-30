@@ -18,6 +18,9 @@
 	display: flex;
 	justify-content: flex-start;
 	flex-wrap: wrap;
+	label {
+		margin-right: 40px;
+	}
 }
 
 .smart-filter {

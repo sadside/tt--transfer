@@ -1,5 +1,8 @@
 import { createEffect, createEvent, createStore, sample } from "effector";
+import { createGate } from "effector-react";
 import { TariffService } from "../../services/TariffService";
+
+const addressGate = createGate();
 
 const regionInputChanged = createEvent<string>();
 const cityInputChanged = createEvent<string>();
@@ -36,26 +39,26 @@ const getCitiesSuggestionsFx = createEffect<
   }
 });
 
-const $activeRegion = createStore("");
-const $activeCity = createStore("");
+const $activeRegion = createStore("").reset(addressGate.close);
+const $activeCity = createStore("").reset(addressGate.close);
 
-const $regionInputValue = createStore("").on(
-  regionInputChanged,
-  (_, region) => region
-);
+const $regionInputValue = createStore("")
+  .on(regionInputChanged, (_, region) => region)
+  .reset(addressGate.close);
 
-const $cityInputValue = createStore("").on(
-  cityInputChanged,
-  (_, region) => region
-);
+const $cityInputValue = createStore("")
+  .on(cityInputChanged, (_, region) => region)
+  .reset(addressGate.close);
 
 const $regionSuggestions = createStore<string[]>([])
   .on(getRegionsSuggestionsFx.doneData, (_, region) => region)
-  .reset(clearSuggestions);
+  .reset(clearSuggestions)
+  .reset(addressGate.close);
 
 const $citySuggestions = createStore<string[]>([])
   .on(getCitiesSuggestionsFx.doneData, (_, region) => region)
-  .reset(clearSuggestions);
+  .reset(clearSuggestions)
+  .reset(addressGate.close);
 
 sample({
   clock: cityInputChanged,
@@ -80,6 +83,25 @@ sample({
   target: getRegionsSuggestionsFx,
 });
 
+sample({ clock: regionInputChanged, fn: () => "", target: $activeRegion });
+
+sample({
+  clock: regionSuggestionClicked,
+  target: $regionInputValue,
+});
+
+sample({
+  clock: regionSuggestionClicked,
+  target: cityInputChanged.prepend(() => ""),
+});
+
+sample({ clock: cityInputChanged, fn: () => "", target: $activeCity });
+
+sample({
+  clock: citySuggestionClicked,
+  target: $cityInputValue,
+});
+
 export {
   $cityInputValue,
   $activeCity,
@@ -88,4 +110,8 @@ export {
   $citySuggestions,
   $regionSuggestions,
   $regionInputValue,
+  addressGate,
+  regionSuggestionClicked,
+  $activeRegion,
+  citySuggestionClicked,
 };

@@ -1,4 +1,5 @@
 import "./addTariffTable.scss";
+import { divide } from "lodash";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -57,22 +58,36 @@ const AddTariffTable = ({}: AddTariffTableProps) => {
       </div>
     );
 
+  if (tariff?.intracity_tariff?.hub_to_prices?.length === 0)
+    return (
+      <div style={{ textAlign: "center", fontSize: 18, marginTop: 20 }}>
+        Хабы отсутствуют
+      </div>
+    );
+
   return (
     <>
       <div className="scroll-table-tariff">
-        <form action="" onSubmit={handleSubmit(onSubmit)} className="flex-conteiner-table">
+        <form
+          action=""
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex-conteiner-table"
+        >
           <div>
-            <div style={{ cursor: "pointer", height: 60, width: 190 }} className="fixed-cell-tr overlap">
+            <div
+              style={{ cursor: "pointer", height: 60, width: 190 }}
+              className="fixed-cell-tr overlap"
+            >
               Хабы
             </div>
-              {tariff?.intracity_tariff?.hub_to_prices?.map((hub, index) => (
-                <div
-                  className="fixed-cell-tr"
-                  style={{ cursor: "pointer", height: 91, width: 190 }}
-                >
-                  {hub?.hub?.title}
-                </div>
-              ))}
+            {tariff?.intracity_tariff?.hub_to_prices?.map((hub, index) => (
+              <div
+                className="fixed-cell-tr"
+                style={{ cursor: "pointer", height: 91, width: 190 }}
+              >
+                {hub?.hub?.title}
+              </div>
+            ))}
           </div>
           <div className="scroll-table-body-tariff">
             <table>

@@ -1,5 +1,33 @@
 import "./smartFilter.scss";
+import { useGate, useUnit } from "effector-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChangeEvent } from "react";
+import {
+  $activeCity,
+  $activeRegion,
+  $cityInputValue,
+  $citySuggestions,
+  $regionInputValue,
+  $regionSuggestions,
+  addressGate,
+  cityInputChanged,
+  citySuggestionClicked,
+  regionInputChanged,
+  regionSuggestionClicked,
+} from "../../effector/address/address";
+import {
+  $tariffCommission,
+  $tariffType,
+  commissionInputChanged,
+  selectChanged,
+} from "../../effector/smartFiltres /tariffSmartFilter";
+import useOutside from "../../hooks/useOutside";
+import { useAppDispatch } from "../../store/hooks";
+import { getShortTariffs } from "../../store/tariffSlice";
+import CustomSelect from "../customSelect/CustomSelect";
 import Button from "../ui/button/Button";
+import styles from "./SmartFilterTariff.module.scss";
+import downArrowSelect from "../../assets/downArrow.svg";
 
 interface SmartFilterTariffProps {
   filterData?: any[];
@@ -10,15 +38,198 @@ const SmartFilterTariff = ({
   filterData,
   closeSmartFilter,
 }: SmartFilterTariffProps) => {
+  useGate(addressGate);
+
+  const {
+    isShow: isShowType,
+    ref: refType,
+    setIsShow: setIsShowType,
+  } = useOutside(false);
+
+  const selectItemsType = ["Основной", "Комиссионный"];
+
+  const regionInputValue = useUnit($regionInputValue);
+  const cityInputValue = useUnit($cityInputValue);
+
+  const regionSuggestions = useUnit($regionSuggestions);
+  const citySuggestions = useUnit($citySuggestions);
+
+  const activeRegion = useUnit($activeRegion);
+  const activeCity = useUnit($activeCity);
+
+  //select type
+  const tariffType = useUnit($tariffType);
+  const tariffCommission = useUnit($tariffCommission);
+
+  const regionInputHandler = (e: ChangeEvent<HTMLInputElement>): void => {
+    regionInputChanged(e.target.value);
+  };
+
+  const cityInputHandler = (e: ChangeEvent<HTMLInputElement>): void => {
+    cityInputChanged(e.target.value);
+  };
+
+  const selectTypeHandler = (type: string): void => {
+    selectChanged(type);
+  };
+
+  const dispatch = useAppDispatch();
+
+  const filterTariffs = () => {
+    dispatch(
+      getShortTariffs({
+        region: activeRegion,
+        type: tariffType,
+        city: activeCity,
+      })
+    );
+    closeSmartFilter();
+  };
+
   return (
     <div className="smart-filter-wrap-1">
       <div className={"smart-filter-wrap"}>
         <div></div>
-        <div className="filter-item">
-          <div className="filter-title">Регион</div>
-          <div className="filter-value">
-            <input type="text" className={"filter-input"} />
-          </div>
+        {/*<div className="filter-item">*/}
+        {/*  <div className="filter-title">Регион</div>*/}
+        {/*  <div className="filter-value">*/}
+        {/*    <input type="text" className={"filter-input"} />*/}
+        {/*  </div>*/}
+        {/*</div>*/}
+        <label>
+          <span className="required">*</span>Регион
+          <input
+            type="text"
+            className={styles.tariffDataInput}
+            placeholder="Введите регион"
+            value={regionInputValue}
+            onChange={regionInputHandler}
+          />
+          <AnimatePresence>
+            {regionSuggestions.length > 0 && !activeRegion && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ type: "Tween" }}
+                style={{ zIndex: 100000000, position: "relative", width: 300 }}
+              >
+                <div className={styles.citySelect}>
+                  <ul>
+                    {regionSuggestions.map((region, index: number) => {
+                      return (
+                        <li
+                          key={index}
+                          onClick={() => {
+                            regionSuggestionClicked(region);
+                          }}
+                        >
+                          {region}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </label>
+
+        <label>
+          <span className="required">*</span>Город
+          <input
+            type="text"
+            className={styles.tariffDataInput}
+            placeholder={
+              activeRegion ? "Введите город" : "Сначала введите регион"
+            }
+            onChange={cityInputHandler}
+            value={cityInputValue}
+            disabled={!activeRegion}
+          />
+          <AnimatePresence>
+            {citySuggestions?.length > 0 && !activeCity && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: "auto", opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ type: "Tween" }}
+                style={{ zIndex: 100, position: "relative", width: 300 }}
+              >
+                <div className={styles.citySelect}>
+                  <ul>
+                    {citySuggestions.map((city, index: number) => {
+                      return (
+                        <li
+                          key={index}
+                          onClick={() => {
+                            citySuggestionClicked(city);
+                          }}
+                        >
+                          {city}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </label>
+        <div style={{ width: 300 }}>
+          <label>
+            <div
+              className="tariff-select-currency"
+              ref={refType}
+              style={{ marginTop: 20 }}
+            >
+              <div>
+                <div>
+                  <span className="required">*</span>Тип
+                </div>
+                <div
+                  className="tariff-data-select"
+                  onClick={() => setIsShowType(!isShowType)}
+                >
+                  <div>{tariffType}</div>
+                  <img src={downArrowSelect} alt="" />
+                </div>
+              </div>
+              <CustomSelect
+                items={selectItemsType}
+                isVisible={isShowType}
+                setItem={selectTypeHandler}
+                setVisible={setIsShowType}
+                showAll={false}
+              />
+            </div>
+          </label>
+          {tariffType === "Для компаний" && (
+            <label>
+              <span className="required">*</span>Компания
+              <input
+                type="text"
+                className="tariff-data-input"
+                placeholder="Введите компанию"
+              />
+            </label>
+          )}
+        </div>
+        <div style={{ marginTop: 20, marginLeft: 40 }}>
+          {tariffType === "Комиссионный" && (
+            <label>
+              <span className="required">*</span>Процент
+              <input
+                type="text"
+                className="tariff-data-input"
+                placeholder="Введите процент"
+                value={tariffCommission}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  commissionInputChanged(e.target.value);
+                }}
+              />
+            </label>
+          )}
         </div>
       </div>
 
@@ -26,6 +237,7 @@ const SmartFilterTariff = ({
         <Button
           text="Найти"
           style={{ width: 160, marginBottom: 20, marginRight: 20 }}
+          callback={filterTariffs}
         />
         <Button
           text="Закрыть"
