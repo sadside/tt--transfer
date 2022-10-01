@@ -63,7 +63,9 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
                 <td className={s.item}>
                   {moment(tariff.last_update).fromNow()}
                 </td>
-                <td className={s.item}>{tariff.commission ? "Да" : "Нет"}</td>
+                <td className={s.item}>
+                  {tariff.type === "commission" ? "Да" : "Нет"}
+                </td>
               </tr>
             ))}
           </tbody>

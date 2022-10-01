@@ -297,4 +297,5 @@ export interface IShortTariff {
   commission: number | null;
   is_available?: boolean;
   last_update?: string;
+  type?: string;
 }
