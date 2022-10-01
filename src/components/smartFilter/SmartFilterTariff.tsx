@@ -2,6 +2,7 @@ import "./smartFilter.scss";
 import { useGate, useUnit } from "effector-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChangeEvent, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   $activeCity,
   $activeRegion,
@@ -9,12 +10,13 @@ import {
   $citySuggestions,
   $regionInputValue,
   $regionSuggestions,
-  addressGate,
+  // addressGate,
   cityInputChanged,
   citySuggestionClicked,
   regionInputChanged,
   regionSuggestionClicked,
-} from "../../effector/address/address";
+  smartFilter,
+} from "../../effector/address/smartFilterAddress";
 import {
   $tariffCommission,
   $tariffType,
@@ -38,7 +40,9 @@ const SmartFilterTariff = ({
   filterData,
   closeSmartFilter,
 }: SmartFilterTariffProps) => {
-  useGate(addressGate);
+  useGate(smartFilter);
+
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const {
     isShow: isShowType,
@@ -47,13 +51,6 @@ const SmartFilterTariff = ({
   } = useOutside(false);
 
   const selectItemsType = ["Все", "Основной", "Комиссионный"];
-
-  useEffect(() => {
-    let params = new URLSearchParams();
-    console.log(params);
-    params.append("foo", "4");
-    console.log(params);
-  }, []);
 
   const regionInputValue = useUnit($regionInputValue);
   const cityInputValue = useUnit($cityInputValue);
@@ -90,6 +87,11 @@ const SmartFilterTariff = ({
         city: activeCity,
       })
     );
+    setSearchParams({
+      region: activeRegion,
+      type: tariffType,
+      city: activeCity,
+    });
     closeSmartFilter();
   };
 

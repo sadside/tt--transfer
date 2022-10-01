@@ -84,6 +84,9 @@ const AddTariffTable = ({}: AddTariffTableProps) => {
               <div
                 className="fixed-cell-tr"
                 style={{ cursor: "pointer", height: 91, width: 190 }}
+                onClick={() =>
+                  dispatch(setShowZoneSidebar({ value: true, index: index }))
+                }
               >
                 {hub?.hub?.title}
               </div>

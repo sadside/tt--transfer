@@ -2,7 +2,12 @@ import { createEffect, createEvent, createStore, sample } from "effector";
 import { createGate } from "effector-react";
 import { TariffService } from "../../services/TariffService";
 
-const addressGate = createGate();
+const smartFilter = createGate();
+
+const urlParams = new URLSearchParams(window.location.search);
+
+const region = urlParams.get("region");
+const city = urlParams.get("city");
 
 const regionInputChanged = createEvent<string>();
 const cityInputChanged = createEvent<string>();
@@ -39,26 +44,26 @@ const getCitiesSuggestionsFx = createEffect<
   }
 });
 
-const $activeRegion = createStore("").reset(addressGate.close);
-const $activeCity = createStore("").reset(addressGate.close);
+const $activeRegion = createStore(region || "");
+const $activeCity = createStore(city || "");
 
-const $regionInputValue = createStore("")
-  .on(regionInputChanged, (_, region) => region)
-  .reset(addressGate.close);
+const $regionInputValue = createStore(region || "").on(
+  regionInputChanged,
+  (_, region) => region
+);
 
-const $cityInputValue = createStore("")
-  .on(cityInputChanged, (_, region) => region)
-  .reset(addressGate.close);
+const $cityInputValue = createStore(city || "").on(
+  cityInputChanged,
+  (_, region) => region
+);
 
 const $regionSuggestions = createStore<string[]>([])
   .on(getRegionsSuggestionsFx.doneData, (_, region) => region)
-  .reset(clearSuggestions)
-  .reset(addressGate.close);
+  .reset(clearSuggestions);
 
 const $citySuggestions = createStore<string[]>([])
   .on(getCitiesSuggestionsFx.doneData, (_, region) => region)
-  .reset(clearSuggestions)
-  .reset(addressGate.close);
+  .reset(clearSuggestions);
 
 sample({
   clock: cityInputChanged,
@@ -110,8 +115,8 @@ export {
   $citySuggestions,
   $regionSuggestions,
   $regionInputValue,
-  addressGate,
   regionSuggestionClicked,
   $activeRegion,
   citySuggestionClicked,
+  smartFilter,
 };

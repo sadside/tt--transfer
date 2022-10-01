@@ -51,6 +51,8 @@ function App() {
     }
   }, []);
 
+  // if (!isAuth) navigate("/login");
+
   return (
     <>
       <Routes>

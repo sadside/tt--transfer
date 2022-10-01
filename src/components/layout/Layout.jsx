@@ -1,4 +1,4 @@
-import { useStore } from "effector-react";
+import { useStore, useUnit } from "effector-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Outlet, useNavigate } from "react-router-dom";
@@ -35,6 +35,7 @@ import {
   logout,
 } from "../../effector/user/authorization";
 import useOutside from "../../hooks/useOutside";
+import { API } from "../../http";
 import { setNotification } from "../../store/userSlice.ts";
 import Loader from "../loader/Loader";
 import Moderation from "../moderation/Moderation";
@@ -48,8 +49,11 @@ const Layout = () => {
   // const loading = useSelector((state) => state.user.loading);
   // const confirmed = useSelector((state) => state.user.user?.confirmed);
   const { confirmed } = useStore($user);
+  const { avatar: avatarFilename } = useStore($user);
 
   console.log($user.getState());
+
+  const logoutLoading = useUnit(logoutFx.pending);
 
   const loading = useStore(checkAuthFx.pending);
   const isAuth = useStore($isAuth);
@@ -158,7 +162,7 @@ const Layout = () => {
   ];
   console.log("role: ", role);
 
-  if (loading) {
+  if (loading || logoutLoading) {
     return (
       <div style={{ height: "100vh" }}>
         <Loader />;
@@ -226,7 +230,7 @@ const Layout = () => {
                     style={{ height: 45 }}
                     className={"profile-image-layout-wrap"}
                   >
-                    <img src={userImage} alt="" width={45} />
+                    {/*<img src={`${API}${avatarFilename}`} alt="" />*/}
                   </div>
                 </div>
                 {isShow ? (
@@ -243,14 +247,7 @@ const Layout = () => {
                         <Link to="/profile" style={{ textDecoration: "none" }}>
                           <div>Мой профиль</div>
                         </Link>
-                        <div
-                          onClick={() => {
-                            logout();
-                            navigate("/login");
-                          }}
-                        >
-                          Выход
-                        </div>
+                        <div onClick={logout}>Выход</div>
                       </div>
                     </div>
                   </div>

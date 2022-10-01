@@ -1,4 +1,5 @@
 import "./blockHeader.scss";
+import { useSearchParams } from "react-router-dom";
 import Button from "../ui/button/Button";
 import searchIcon from "../../assets/find.svg";
 import filterIcon from "../../assets/smart-filter.svg";
@@ -11,6 +12,8 @@ const BlockHeader = ({
   callback,
   isArchive = false,
 }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   return (
     <div className="header-block-wrap">
       <div className={"left-wrap"}>
@@ -33,6 +36,17 @@ const BlockHeader = ({
           <div className="smart-filter-columns">
             <img src={filterIcon} alt="" />
             <div>Умный фильтр</div>
+          </div>
+        </div>
+        <div
+          className="smart-filter"
+          onClick={() => {
+            setSearchParams({});
+          }}
+        >
+          <div className="smart-filter-columns">
+            <img src={filterIcon} alt="" />
+            <div>Сбросить фильтр</div>
           </div>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { log } from "util";
 import ActionMenu from "../../components/actionMenu/ActionMenu";
 import AddIntercityTariffSidebarContent from "../../components/addIntercityTariffSidebarContent/AddIntercityTariffSidebarContent";
@@ -90,8 +91,16 @@ const Tariffs = () => {
     lastCountryIndex
   );
 
+  const [searchParams, setSearchParams] = useSearchParams();
+
   useEffect(() => {
-    dispatch(getShortTariffs({ region: "", type: "", city: "" }));
+    dispatch(
+      getShortTariffs({
+        region: searchParams.get("region"),
+        type: searchParams.get("type"),
+        city: searchParams.get("city"),
+      })
+    );
   }, [tariffsPerPage, currentPage]);
 
   useEffect(() => {
