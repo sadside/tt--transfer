@@ -268,7 +268,7 @@ const SmartFilterTariff = ({
           <label>
             <div
               className="tariff-select-currency"
-              ref={refType}
+              ref={refActive}
               style={{ marginTop: 20 }}
             >
               <div>

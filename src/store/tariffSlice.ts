@@ -5,6 +5,7 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { reject } from "lodash";
+import $api from "../http";
 import { TariffService } from "../services/TariffService";
 import {
   CarClass,
@@ -122,6 +123,9 @@ export const editTariffPriceThunk = createAsyncThunk<
     try {
       const response = await TariffService.editTariffPrice(tariff, id);
       console.log(response);
+
+      await $api.get(`tariffs/set-last-update/${id}/`);
+
       return response.data;
     } catch (e: any) {
       return rejectWithValue(e.message());
@@ -133,19 +137,26 @@ export const editTariff = createAsyncThunk<
   ITariff,
   any,
   { rejectValue: string; state: { tariff: TariffState } }
->("tariff/editTariff", async (tariff, { rejectWithValue, getState }) => {
-  const id = getState().tariff.activeTariff?.id;
+>(
+  "tariff/editTariff",
+  async (tariff, { rejectWithValue, getState, dispatch }) => {
+    const id = getState().tariff.activeTariff?.id;
 
-  if (id) {
-    try {
-      const response = await TariffService.postTariff(tariff, id);
+    if (id) {
+      try {
+        const response = await TariffService.postTariff(tariff, id);
 
-      return response.data;
-    } catch (e: any) {
-      return rejectWithValue("error");
+        await $api.get(`tariffs/set-last-update/${id}/`);
+
+        dispatch(getShortTariffs());
+
+        return response.data;
+      } catch (e: any) {
+        return rejectWithValue("error");
+      }
     }
   }
-});
+);
 
 export const createIntercityCityThunk = createAsyncThunk<
   any,
@@ -244,21 +255,21 @@ export const deleteTariffThunk = createAsyncThunk<
   IShortTariff[] | void,
   undefined,
   { rejectValue: string; state: { tariff: TariffState } }
->("tariff/deleteTariffThunk", async (_, { getState, rejectWithValue }) => {
-  const id = getState().tariff.activeTariff?.id;
-  try {
-    if (id) {
-      const response = await TariffService.deleteTariff(id);
+>(
+  "tariff/deleteTariffThunk",
+  async (_, { getState, rejectWithValue, dispatch }) => {
+    const id = getState().tariff.activeTariff?.id;
+    try {
+      if (id) {
+        await TariffService.deleteTariff(id);
 
-      // @ts-ignore
-      // dispatch(getShortTariffs());
-
-      return response.data;
+        dispatch(getShortTariffs());
+      }
+    } catch (e: any) {
+      return rejectWithValue(e.message());
     }
-  } catch (e: any) {
-    return rejectWithValue(e.message());
   }
-});
+);
 
 export const getTariffByIdThunk = createAsyncThunk<
   ITariff,
@@ -468,10 +479,10 @@ export const tariffSlice = createSlice({
         state.activeTariff = null;
         state.showEditTariffSidebar = false;
         state.showZoneSidebar = false;
-        if (action.payload) {
-          // @ts-ignore
-          state.tariffs.results = action.payload;
-        }
+        // if (action.payload) {
+        //   // @ts-ignore
+        //   state.tariffs.results = action.payload;
+        // }
       })
       .addCase(editTariff.fulfilled, (state, action) => {
         state.activeTariff = action.payload;

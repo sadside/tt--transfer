@@ -296,4 +296,5 @@ export interface IShortTariff {
   lifetime: string;
   commission: number | null;
   is_available?: boolean;
+  last_update?: string;
 }

@@ -49,6 +49,12 @@ const CityPricesTable = () => {
   const setShowModal = () => {
     dispatch(setActiveCity(null));
   };
+  if (cities && cities?.length === 0)
+    return (
+      <div style={{ textAlign: "center", fontSize: 18, marginTop: 20 }}>
+        Межгородские направления отсутствуют
+      </div>
+    );
 
   return (
     <>

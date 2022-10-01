@@ -1,6 +1,7 @@
 import { stat } from "fs";
 import moment from "moment";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import "moment/locale/ru";
 import {
   clearTariff,
   getShortTariffs,
@@ -26,6 +27,8 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
   ];
   const tariffs = useAppSelector((state) => state?.tariff?.tariffs?.results);
   const status = useAppSelector((state) => state.tariff.status);
+
+  moment.locale("ru");
 
   return (
     <div className={s.scrollTable}>
@@ -54,8 +57,12 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
                 </td>
                 <td className={s.item}>{tariff.city.city}</td>
                 <td className={s.item}>{tariff.is_available ? "Да" : "Нет"}</td>
-                <td className={s.item}>{moment().to(tariff.lifetime)}</td>
-                <td className={s.item}>7 дней назад</td>
+                <td className={s.item}>
+                  Срок истекает {moment().to(tariff.lifetime)}
+                </td>
+                <td className={s.item}>
+                  {moment(tariff.last_update).fromNow()}
+                </td>
                 <td className={s.item}>{tariff.commission ? "Да" : "Нет"}</td>
               </tr>
             ))}
