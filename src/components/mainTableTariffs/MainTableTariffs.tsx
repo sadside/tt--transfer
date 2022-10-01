@@ -1,4 +1,5 @@
 import { stat } from "fs";
+import moment from "moment";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   clearTariff,
@@ -52,8 +53,8 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
                   {tariff.title}
                 </td>
                 <td className={s.item}>{tariff.city.city}</td>
-                <td className={s.item}>Да</td>
-                <td className={s.item}>7 дней</td>
+                <td className={s.item}>{tariff.is_available ? "Да" : "Нет"}</td>
+                <td className={s.item}>{moment().to(tariff.lifetime)}</td>
                 <td className={s.item}>7 дней назад</td>
                 <td className={s.item}>{tariff.commission ? "Да" : "Нет"}</td>
               </tr>

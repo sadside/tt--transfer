@@ -129,6 +129,24 @@ export const editTariffPriceThunk = createAsyncThunk<
   }
 );
 
+export const editTariff = createAsyncThunk<
+  ITariff,
+  any,
+  { rejectValue: string; state: { tariff: TariffState } }
+>("tariff/editTariff", async (tariff, { rejectWithValue, getState }) => {
+  const id = getState().tariff.activeTariff?.id;
+
+  if (id) {
+    try {
+      const response = await TariffService.postTariff(tariff, id);
+
+      return response.data;
+    } catch (e: any) {
+      return rejectWithValue("error");
+    }
+  }
+});
+
 export const createIntercityCityThunk = createAsyncThunk<
   any,
   any,
@@ -266,6 +284,8 @@ export const createTariffThunk = createAsyncThunk<
     dispatch(getCarClassesThunk());
     const response = await TariffService.createTariff(tariff);
 
+    // @ts-ignore
+    dispatch(getShortTariffs({ region: "", city: "", type: "" }));
     return response.data;
   } catch (e: any) {
     if (e.response.status === 400) alert("Тариф с таким именем уже создан");
@@ -275,28 +295,33 @@ export const createTariffThunk = createAsyncThunk<
 
 export const getShortTariffs = createAsyncThunk<
   IShortTariffResponse,
-  any,
+  undefined,
   { rejectValue: string; state: { tariff: TariffState } }
->(
-  "tariff/getShortTariffs",
-  async ({ region, city, type }, { rejectWithValue, getState }) => {
-    try {
-      const limit = getState().tariff.tariffsPerPage;
-      const page = getState().tariff.activePage;
-      const response = await TariffService.getShortTariffs(
-        limit,
-        page,
-        region,
-        city,
-        type
-      );
+>("tariff/getShortTariffs", async (_, { rejectWithValue, getState }) => {
+  const urlParams = new URLSearchParams(window.location.search);
 
-      return response.data;
-    } catch (e: any) {
-      return rejectWithValue(e.message());
-    }
+  try {
+    const limit = getState().tariff.tariffsPerPage;
+    const page = getState().tariff.activePage;
+    const region = urlParams.get("region") || "";
+    const city = urlParams.get("city") || "";
+    const type = urlParams.get("type") || "";
+    const isActive = urlParams.get("isActive") || "";
+
+    const response = await TariffService.getShortTariffs(
+      limit,
+      page,
+      region,
+      city,
+      type,
+      isActive
+    );
+
+    return response.data;
+  } catch (e: any) {
+    return rejectWithValue(e.message());
   }
-);
+});
 
 // export const;
 
@@ -447,6 +472,9 @@ export const tariffSlice = createSlice({
           // @ts-ignore
           state.tariffs.results = action.payload;
         }
+      })
+      .addCase(editTariff.fulfilled, (state, action) => {
+        state.activeTariff = action.payload;
       })
       .addMatcher(isError, (state, action) => {
         state.status = "idle";

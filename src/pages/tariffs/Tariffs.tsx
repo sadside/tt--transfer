@@ -94,13 +94,7 @@ const Tariffs = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
-    dispatch(
-      getShortTariffs({
-        region: searchParams.get("region"),
-        type: searchParams.get("type"),
-        city: searchParams.get("city"),
-      })
-    );
+    dispatch(getShortTariffs());
   }, [tariffsPerPage, currentPage]);
 
   useEffect(() => {
@@ -166,6 +160,11 @@ const Tariffs = () => {
           FilterVisible={setShowSmartFilter}
           buttonText={"Добавить тариф"}
           callback={() => setShowEditSidebar(true)}
+          resetFilter={() => {
+            setSearchParams({});
+
+            dispatch(getShortTariffs());
+          }}
         />
         <AnimatePresence>
           {showSmartFilter && !showAddSidebar && !showEditSidebarIntercity && (

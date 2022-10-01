@@ -2,6 +2,7 @@ import "./addTarifinputs.scss";
 import { AnimatePresence, motion } from "framer-motion";
 import downArrowSelect from "../../assets/downArrowSelect.svg";
 import React, { ChangeEvent, useRef, useState } from "react";
+import { logoutFx } from "../../effector/user/authorization";
 import useOutside from "../../hooks/useOutside";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
@@ -11,8 +12,10 @@ import {
   setTariffRegion,
   setTariffName,
   createTariffThunk,
+  editTariff,
 } from "../../store/tariffSlice";
 import CustomSelect from "../customSelect/CustomSelect";
+import EditSidebarSubmitButtons from "../editSidebarSubmitButtons/EditSidebarSubmitButtons";
 import ErrorComponent from "../errorComponent/ErrorComponent";
 import Loader from "../loader/Loader";
 import Select from "../select/Select";
@@ -24,11 +27,17 @@ export interface AddTariffInputsProps {}
 const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
   const selectItems = ["Российский рубль", "Американский доллар"];
   const selectItemsType = ["Основной", "Комиссионный"];
+  const selectActiveTariff = ["Активный", "Неактивный"];
   const { isShow, ref, setIsShow } = useOutside(false);
   const {
     isShow: isShowType,
     ref: refType,
     setIsShow: setIsShowType,
+  } = useOutside(false);
+  const {
+    isShow: isShowActive,
+    ref: refActive,
+    setIsShow: setIsShowActive,
   } = useOutside(false);
   const [item, setItem] = useState("Российский рубль");
   const [itemType, setItemType] = useState("Основной");
@@ -51,6 +60,17 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
   const tariffName = useAppSelector((state) => state.tariff.tariffName);
   const tariff = useAppSelector((state) => state.tariff.activeTariff);
   const status = useAppSelector((state) => state.tariff.status);
+  const tariffComments = useAppSelector(
+    (state) => state?.tariff?.activeTariff?.comments
+  );
+  const tariffDate = useAppSelector(
+    (state) => state.tariff.activeTariff?.lifetime
+  );
+
+  console.log(tariffDate);
+
+  const [comments, setComments] = useState(tariffComments || "");
+  const [date, setDate] = useState(tariffDate?.split("T")[0] || "");
 
   // inputs state
 
@@ -81,6 +101,10 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
     setShowSidebar(true);
   };
 
+  const [itemActive, setItemActive] = useState(
+    isActive ? "Активный" : "Неактивный"
+  );
+
   let tariffType = "";
 
   switch (itemType) {
@@ -95,21 +119,39 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
       break;
   }
 
+  console.log(date);
+
   return (
     <form
       action=""
       onSubmit={(e: any) => {
         e.preventDefault();
-        dispatch(
-          createTariffThunk({
-            region: tariffRegion,
-            city: tariffCity,
-            type: tariffType,
-            commission: tariffCommission || null,
-            company: null,
-            comments: "",
-          })
-        );
+        if (tariff) {
+          dispatch(
+            editTariff({
+              comments,
+              lifetime: date.split("T")[0],
+              is_available: itemActive === "Активный",
+            })
+          );
+        } else {
+          if (date && tariffRegion && tariffCity) {
+            dispatch(
+              createTariffThunk({
+                region: tariffRegion,
+                city: tariffCity,
+                type: tariffType,
+                commission: tariffCommission || null,
+                company: null,
+                comments,
+                lifetime: date.split("T")[0],
+                is_available: itemActive === "Активный",
+              })
+            );
+          } else {
+            alert("Заполните все поля");
+          }
+        }
       }}
     >
       {tariff && (
@@ -260,29 +302,64 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
             </div>
           )}
           <label>
-            <div className="tariff-select-currency" ref={ref}>
+            <span className="required">*</span>Валюта
+            <input
+              type="text"
+              className="tariff-data-input"
+              placeholder="Введите название"
+              value={"Российский рубль"}
+              disabled={true}
+            />
+          </label>
+          <label>
+            <div className="tariff-select-currency" ref={refType}>
               <div>
                 <div>
-                  <span className="required">*</span>Валюта
+                  <span className="required">*</span>Активный
                 </div>
                 <div
                   className="tariff-data-select"
-                  onClick={() => setIsShow(!isShow)}
+                  onClick={() => setIsShowActive(!isShowActive)}
                 >
-                  <div>{item}</div>
+                  <div>{itemActive}</div>
                   <img src={downArrowSelect} alt="" />
                 </div>
               </div>
               <CustomSelect
-                items={selectItems}
-                isVisible={isShow}
-                setItem={setItem}
-                setVisible={setIsShow}
+                items={selectActiveTariff}
+                isVisible={isShowActive}
+                setItem={setItemActive}
+                setVisible={setIsShowActive}
                 setShowSidebar={toggleVisibleSidebar}
                 showAll={false}
               />
             </div>
           </label>
+
+          {/*<label>*/}
+          {/*  <div className="tariff-select-currency" ref={ref}>*/}
+          {/*    <div>*/}
+          {/*      <div>*/}
+          {/*        <span className="required">*</span>Валюта*/}
+          {/*      </div>*/}
+          {/*      <div*/}
+          {/*        className="tariff-data-select"*/}
+          {/*        onClick={() => setIsShow(!isShow)}*/}
+          {/*      >*/}
+          {/*        <div>{item}</div>*/}
+          {/*        <img src={downArrowSelect} alt="" />*/}
+          {/*      </div>*/}
+          {/*    </div>*/}
+          {/*    <CustomSelect*/}
+          {/*      items={selectItems}*/}
+          {/*      isVisible={isShow}*/}
+          {/*      setItem={setItem}*/}
+          {/*      setVisible={setIsShow}*/}
+          {/*      setShowSidebar={toggleVisibleSidebar}*/}
+          {/*      showAll={false}*/}
+          {/*    />*/}
+          {/*  </div>*/}
+          {/*</label>*/}
           {/*<label style={{ fontSize: 16 }}>*/}
           {/*  <input*/}
           {/*    type="checkbox"*/}
@@ -305,18 +382,31 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
           <label>
             <span className="required">*</span>Срок действия тарифа
             <input
-              type="text"
+              type="date"
               className="tariff-data-input tariff-data-input-correct"
-              value={"31.31.31"} // Вадим, твой выход
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
             />
           </label>
           <label className="textarea-margin">
             Комментарии
-            <textarea name="" id="" placeholder="Введите текст"></textarea>
+            <textarea
+              name=""
+              id=""
+              placeholder="Введите текст"
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
+            ></textarea>
           </label>
         </div>
       </div>
       {status === "tariff creating" && <Loader />}
+
+      {tariff && (
+        <div className="submit-buttons-wrap">
+          <EditSidebarSubmitButtons firstTitle={"Удалить тариф"} />
+        </div>
+      )}
     </form>
   );
 };

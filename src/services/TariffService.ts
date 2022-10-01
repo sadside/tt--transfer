@@ -46,8 +46,8 @@ export class TariffService {
     return $api.get<ITariff>(`tariffs/tariff/${id}/`);
   }
 
-  static postTariff(tariff: any) {
-    return $api.post("", tariff);
+  static postTariff(tariff: any, id: number) {
+    return $api.put(`tariffs/tariff/${id}/`, tariff);
   }
 
   static getShortTariffs(
@@ -55,7 +55,8 @@ export class TariffService {
     page = 1,
     region = "",
     city = "",
-    type = ""
+    type = "",
+    isActive = ""
   ) {
     switch (type) {
       case "Все":
@@ -69,6 +70,8 @@ export class TariffService {
         break;
     }
 
+    if (isActive === "Все") isActive = "";
+
     return $api.get<IShortTariffResponse>(`tariffs/tariff/`, {
       params: {
         page,
@@ -76,6 +79,7 @@ export class TariffService {
         region,
         city,
         type,
+        is_available: isActive,
       },
     });
   }

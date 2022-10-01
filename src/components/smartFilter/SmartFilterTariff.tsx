@@ -18,8 +18,10 @@ import {
   smartFilter,
 } from "../../effector/address/smartFilterAddress";
 import {
+  $tariffActive,
   $tariffCommission,
   $tariffType,
+  activeSelectChanged,
   commissionInputChanged,
   selectChanged,
 } from "../../effector/smartFiltres /tariffSmartFilter";
@@ -50,7 +52,14 @@ const SmartFilterTariff = ({
     setIsShow: setIsShowType,
   } = useOutside(false);
 
+  const {
+    isShow: isShowActive,
+    ref: refActive,
+    setIsShow: setIsShowActive,
+  } = useOutside(false);
+
   const selectItemsType = ["Все", "Основной", "Комиссионный"];
+  const selectItemsActive = ["Все", "Активный", "Неактивный"];
 
   const regionInputValue = useUnit($regionInputValue);
   const cityInputValue = useUnit($cityInputValue);
@@ -63,6 +72,7 @@ const SmartFilterTariff = ({
 
   //select type
   const tariffType = useUnit($tariffType);
+  const tariffActive = useUnit($tariffActive);
   const tariffCommission = useUnit($tariffCommission);
 
   const regionInputHandler = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -77,21 +87,34 @@ const SmartFilterTariff = ({
     selectChanged(type);
   };
 
+  const selectActiveHandler = (type: string): void => {
+    activeSelectChanged(type);
+  };
+
   const dispatch = useAppDispatch();
 
+  let tariffActiveType = "";
+
+  switch (tariffActive) {
+    case "Все":
+      tariffActiveType = "";
+      break;
+    case "Активный":
+      tariffActiveType = "true";
+      break;
+    case "Неактивный":
+      tariffActiveType = "false";
+      break;
+  }
+
   const filterTariffs = () => {
-    dispatch(
-      getShortTariffs({
-        region: activeRegion,
-        type: tariffType,
-        city: activeCity,
-      })
-    );
     setSearchParams({
       region: activeRegion,
       type: tariffType,
       city: activeCity,
+      isActive: tariffActiveType,
     });
+    dispatch(getShortTariffs());
     closeSmartFilter();
   };
 
@@ -224,21 +247,51 @@ const SmartFilterTariff = ({
             </label>
           )}
         </div>
-        <div style={{ marginTop: 20, marginLeft: 40 }}>
-          {tariffType === "Комиссионный" && (
-            <label>
-              <span className="required">*</span>Процент
-              <input
-                type="text"
-                className="tariff-data-input"
-                placeholder="Введите процент"
-                value={tariffCommission}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  commissionInputChanged(e.target.value);
-                }}
+        {/*<div style={{ marginTop: 20, marginLeft: 40 }}>*/}
+        {/*  {tariffType === "Комиссионный" && (*/}
+        {/*    <label>*/}
+        {/*      <span className="required">*</span>Процент*/}
+        {/*      <input*/}
+        {/*        type="text"*/}
+        {/*        className="tariff-data-input"*/}
+        {/*        placeholder="Введите процент"*/}
+        {/*        value={tariffCommission}*/}
+        {/*        onChange={(e: ChangeEvent<HTMLInputElement>) => {*/}
+        {/*          commissionInputChanged(e.target.value);*/}
+        {/*        }}*/}
+        {/*      />*/}
+        {/*    </label>*/}
+        {/*  )}*/}
+        {/*</div>*/}
+
+        <div style={{ width: 300, marginLeft: 40 }}>
+          <label>
+            <div
+              className="tariff-select-currency"
+              ref={refType}
+              style={{ marginTop: 20 }}
+            >
+              <div>
+                <div>
+                  <span className="required">*</span>Активный
+                </div>
+                <div
+                  className="tariff-data-select"
+                  onClick={() => setIsShowActive(!isShowActive)}
+                >
+                  <div>{tariffActive}</div>
+                  <img src={downArrowSelect} alt="" />
+                </div>
+              </div>
+              <CustomSelect
+                items={selectItemsActive}
+                isVisible={isShowActive}
+                setItem={selectActiveHandler}
+                setVisible={setIsShowActive}
+                showAll={false}
               />
-            </label>
-          )}
+            </div>
+          </label>
         </div>
       </div>
 

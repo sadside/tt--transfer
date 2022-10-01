@@ -24,8 +24,6 @@ const EditTariff = ({}: EditTariffProps) => {
   const tariff = useAppSelector((state) => state.tariff.activeTariff);
   const error = useAppSelector((state) => state.tariff.error);
 
-  useEffect(() => {}, []);
-
   if (status === "tariff loading") return <Loader />;
 
   if (error) return <div className={styles.error}>{error}</div>;
@@ -79,11 +77,6 @@ const EditTariff = ({}: EditTariffProps) => {
             <div>
               <AddTariffInputs />
             </div>
-            {tariff && (
-              <div className="submit-buttons-wrap">
-                <EditSidebarSubmitButtons firstTitle={"Удалить тариф"} />
-              </div>
-            )}
           </div>
         )}
 

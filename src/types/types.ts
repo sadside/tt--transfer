@@ -274,6 +274,8 @@ export interface IInitialTariff {
   commission?: string | null;
   company?: string | null;
   comments: string;
+  lifetime?: string;
+  is_available?: boolean;
 }
 
 export interface IShortTariffResponse {
@@ -293,4 +295,5 @@ export interface IShortTariff {
   is_commission: string;
   lifetime: string;
   commission: number | null;
+  is_available?: boolean;
 }

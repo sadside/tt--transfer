@@ -40,6 +40,19 @@
 	cursor: pointer;
 }
 
+.smart-filter-reset {
+	background-color: #CF1616;
+	width: 180px;
+	height: 40px;
+	margin-left: 17px;
+	border-radius: 3px;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
 .smart-filter-columns {
 	display: flex;
 	align-items: center;
@@ -54,6 +67,7 @@
 	display: flex;
 	align-items: center;
 	margin-right: 25px;
+	cursor: pointer;
 }
 
 .left-wrap {
