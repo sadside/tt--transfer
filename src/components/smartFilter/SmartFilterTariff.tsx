@@ -216,7 +216,7 @@ const SmartFilterTariff = ({
               style={{ marginTop: 20 }}
             >
               <div>
-                <div>
+                <div style={{ color: "#000" }}>
                   <span className="required">*</span>Тип
                 </div>
                 <div
