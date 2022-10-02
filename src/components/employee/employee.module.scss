@@ -1,0 +1,12 @@
+.employee {
+  height: 50px;
+  display: flex;
+  align-items: center;
+
+  .point {
+    width: 25%;
+    
+    text-align: center;
+    font-size: 14px;
+  }
+}

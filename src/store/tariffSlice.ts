@@ -296,7 +296,7 @@ export const createTariffThunk = createAsyncThunk<
     const response = await TariffService.createTariff(tariff);
 
     // @ts-ignore
-    dispatch(getShortTariffs({ region: "", city: "", type: "" }));
+    dispatch(getShortTariffs());
     return response.data;
   } catch (e: any) {
     if (e.response.status === 400) alert("Тариф с таким именем уже создан");

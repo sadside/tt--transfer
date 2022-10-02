@@ -12,6 +12,7 @@ import activeChangePassword from "../../assets/active-change-password.svg";
 import activeAddPhoto from "../../assets/active-add-photo.svg";
 import settings from "../../assets/set.svg";
 import "./profile.scss";
+import ListEmployees from "../../components/listEmployees/ListEmployees";
 import ChangePassword from "../../components/profileAccount/ChangePassword";
 import ProfileAccount from "../../components/profileAccount/ProfileAccount";
 import UploadProfileImages from "../../components/uploadProfileImages/UploadProfileImages";
@@ -20,6 +21,8 @@ import defaultAvatar from "../../assets/profile-avatar.svg";
 import { $user } from "../../effector/user/authorization";
 import { API } from "../../http";
 import { logout } from "../../store/userSlice.ts";
+import activeUserGroup from "../../assets/icons8-user-account-100 (1).png";
+import userGroup from "../../assets/icons8-user-account-100.png";
 
 const Profile = () => {
   const [activeLink, setActiveLink] = useState(0);
@@ -60,14 +63,23 @@ const Profile = () => {
             onClick={() => setActiveLink(2)}
           >
             <div className="icon">
-              <img src={activeLink === 2 ? activeAddPhoto : addPhoto} alt="" />
+              <img
+                src={activeLink === 2 ? activeUserGroup : userGroup}
+                alt=""
+              />
+            </div>
+            <div className={`profile-link-item-text`}>Сотрудники</div>
+          </div>
+          <div
+            className={`profile-link-item ${activeLink === 3 && "active-1"}`}
+            onClick={() => setActiveLink(3)}
+          >
+            <div className="icon">
+              <img src={activeLink === 3 ? activeAddPhoto : addPhoto} alt="" />
             </div>
             <div className={`profile-link-item-text`}>Фотографии</div>
           </div>
-          <div
-            className={`profile-link-item `}
-            onClick={() => dispatch(logout())}
-          >
+          <div className={`profile-link-item `} onClick={() => logout()}>
             <div className="icon">
               <img src={logoutIcon} alt="" />
             </div>
@@ -77,7 +89,8 @@ const Profile = () => {
         <div className="profile-data">
           {activeLink === 0 && <ProfileAccount />}
           {activeLink === 1 && <ChangePassword />}
-          {activeLink === 2 && <UploadProfileImages />}
+          {activeLink === 2 && <ListEmployees />}
+          {activeLink === 3 && <UploadProfileImages />}
         </div>
       </div>
     </>

@@ -1,5 +1,6 @@
 import "./addTarifinputs.scss";
 import { AnimatePresence, motion } from "framer-motion";
+import moment from "moment";
 import downArrowSelect from "../../assets/downArrowSelect.svg";
 import React, { ChangeEvent, useRef, useState } from "react";
 import { logoutFx } from "../../effector/user/authorization";
@@ -67,10 +68,12 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
     (state) => state.tariff.activeTariff?.lifetime
   );
 
-  console.log(tariffDate);
+  // console.log(tariffDate);
 
   const [comments, setComments] = useState(tariffComments || "");
-  const [date, setDate] = useState(tariffDate?.split("T")[0] || "");
+  const [date, setDate] = useState(
+    tariffDate?.split("T")[0] || moment().add(1, "years").format("YYYY-MM-DD")
+  );
 
   // inputs state
 

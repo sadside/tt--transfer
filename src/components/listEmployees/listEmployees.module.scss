@@ -1,0 +1,45 @@
+.wrapper {
+  position: relative;
+  max-height: calc(100vh - 153px);
+  height: 100%;
+}
+
+.points {
+  height: 50px;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+
+  .point {
+    width: 20%;
+
+    text-align: center;
+    color: #737373;
+    font-size: 14px;
+  }
+}
+
+.conteinerEmployees {
+  max-height: calc(100% - 140px);
+  overflow: auto;
+
+  border-top: 1px solid rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+.button {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 200px;
+  height: 40px;
+
+  border: none;
+  outline: none;
+  background: #8DC73F;
+  border-radius: 3px;
+  cursor: pointer;
+
+  font-size: 14px;
+  color: #FFFFFF;
+}

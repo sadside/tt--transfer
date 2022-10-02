@@ -23,7 +23,7 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
     "Активный",
     "Время жизни",
     "Изменен",
-    "Комиссионный",
+    "Тип",
   ];
   const tariffs = useAppSelector((state) => state?.tariff?.tariffs?.results);
   const status = useAppSelector((state) => state.tariff.status);
@@ -57,14 +57,21 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
                 </td>
                 <td className={s.item}>{tariff.city.city}</td>
                 <td className={s.item}>{tariff.is_available ? "Да" : "Нет"}</td>
-                <td className={s.item}>
-                  Срок истекает {moment().to(tariff.lifetime)}
+                <td
+                  className={s.item}
+                  style={
+                    moment().isAfter(tariff.lifetime) ? { color: "red" } : {}
+                  }
+                >
+                  {moment().isAfter(tariff.lifetime)
+                    ? "Срок истек"
+                    : `Срок истекает ${moment().to(tariff.lifetime)}`}
                 </td>
                 <td className={s.item}>
                   {moment(tariff.last_update).fromNow()}
                 </td>
                 <td className={s.item}>
-                  {tariff.type === "commission" ? "Да" : "Нет"}
+                  {tariff.type === "commission" ? "Комиссионный" : "Основной"}
                 </td>
               </tr>
             ))}
