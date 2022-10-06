@@ -248,6 +248,8 @@ export interface ITariff {
       longitude: number;
     };
   };
+  type: string;
+  commission: string;
   currency: string;
   comments: string;
   is_commission: string;
@@ -256,7 +258,7 @@ export interface ITariff {
   intracity_tariff: IIntracityTariff;
   intercity_tariff: {
     id: number;
-    cities: IIntercityCity[];
+    cities: IIntercityCity[] | null;
     global_addresses: [];
   };
   lifetime: string;

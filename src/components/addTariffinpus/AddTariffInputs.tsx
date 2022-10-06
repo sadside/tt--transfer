@@ -43,7 +43,6 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
   const [item, setItem] = useState("Российский рубль");
   const [itemType, setItemType] = useState("Основной");
   const [showSidebar, setShowSidebar] = useState(false);
-  const [tariffCommission, setTariffCommission] = useState("");
   const dispatch = useAppDispatch();
 
   const regionSuggestions = useAppSelector(
@@ -68,6 +67,10 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
     (state) => state.tariff.activeTariff?.lifetime
   );
 
+  const [tariffCommission, setTariffCommission] = useState(
+    tariff?.commission || "0"
+  );
+
   // console.log(tariffDate);
 
   const [comments, setComments] = useState(tariffComments || "");
@@ -82,7 +85,6 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
   const [isActive, setIsActive] = useState(tariff?.is_available);
 
   // const [tariffName, setTariffName] = useState<string>("");
-
   const regionInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRegion(e.target.value);
     dispatch(setTariffRegion(null));
@@ -122,35 +124,61 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
       break;
   }
 
-  console.log(date);
-
   return (
     <form
       action=""
       onSubmit={(e: any) => {
         e.preventDefault();
+        console.log(!!tariff);
         if (tariff) {
-          dispatch(
-            editTariff({
-              comments,
-              lifetime: date.split("T")[0],
-              is_available: itemActive === "Активный",
-            })
-          );
-        } else {
-          if (date && tariffRegion && tariffCity) {
+          if (tariff.type === "commission" && Number(tariffCommission) >= 0) {
             dispatch(
-              createTariffThunk({
-                region: tariffRegion,
-                city: tariffCity,
-                type: tariffType,
-                commission: tariffCommission || null,
-                company: null,
+              editTariff({
+                commission: tariffCommission,
                 comments,
                 lifetime: date.split("T")[0],
                 is_available: itemActive === "Активный",
               })
             );
+          } else if (tariff.type === "basic") {
+            console.log(222);
+            dispatch(
+              editTariff({
+                comments,
+                lifetime: date.split("T")[0],
+                is_available: itemActive === "Активный",
+              })
+            );
+          }
+        } else if (!tariff) {
+          console.log("11");
+          if (date && tariffRegion && tariffCity) {
+            if (tariffType === "commission" && Number(tariffCommission) >= 0) {
+              dispatch(
+                createTariffThunk({
+                  region: tariffRegion,
+                  city: tariffCity,
+                  type: tariffType,
+                  commission: tariffCommission,
+                  company: null,
+                  comments,
+                  lifetime: date.split("T")[0],
+                  is_available: itemActive === "Активный",
+                })
+              );
+            } else if (tariffType === "basic") {
+              dispatch(
+                createTariffThunk({
+                  region: tariffRegion,
+                  city: tariffCity,
+                  type: tariffType,
+                  company: null,
+                  comments,
+                  lifetime: date.split("T")[0],
+                  is_available: itemActive === "Активный",
+                })
+              );
+            }
           } else {
             alert("Заполните все поля");
           }
@@ -391,6 +419,21 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
               onChange={(e) => setDate(e.target.value)}
             />
           </label>
+          {tariff?.type === "commission" && (
+            <label>
+              <span className="required">*</span>Процент
+              <input
+                type="text"
+                className="tariff-data-input tariff-data-input-correct"
+                placeholder="Введите процент"
+                value={tariffCommission}
+                onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                  setTariffCommission(e.target.value);
+                }}
+              />
+            </label>
+          )}
+
           <label className="textarea-margin">
             Комментарии
             <textarea
@@ -398,6 +441,7 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
               id=""
               placeholder="Введите текст"
               value={comments}
+              style={{ height: 123 }}
               onChange={(e) => setComments(e.target.value)}
             ></textarea>
           </label>

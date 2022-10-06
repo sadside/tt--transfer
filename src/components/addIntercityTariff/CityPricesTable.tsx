@@ -12,6 +12,7 @@ import { CarClass } from "../../types/types";
 import EditSidebarSubmitButtons from "../editSidebarSubmitButtons/EditSidebarSubmitButtons";
 import Modal from "../modal/Modal";
 import TariffCell from "../tariffCell/TariffCell";
+import Button from "../ui/button/Button";
 
 const CityPricesTable = () => {
   const dispatch = useAppDispatch();
@@ -126,12 +127,29 @@ const CityPricesTable = () => {
       {activeCity && (
         <Modal active={Boolean(activeCity)} setActive={setShowModal}>
           <div>
-            Трансфер: {activeTariff?.city.city} - {activeCity.city.city}
+            <div>
+              Трансфер: {activeTariff?.city.city} - {activeCity.city.city}
+            </div>
+            <div>Расстояние: {activeCity.distance} км</div>
+            <div>
+              Длительность: {activeCity.hours_duration} ч.{" "}
+              {activeCity.minutes_duration} мин
+            </div>
           </div>
-          <div>Расстояние: {activeCity.distance} км</div>
           <div>
-            Длительность: {activeCity.hours_duration} ч.{" "}
-            {activeCity.minutes_duration} мин
+            <Button
+              text={"Удалить межгородское направление"}
+              style={{
+                marginTop: 20,
+                fontSize: 14,
+                paddingLeft: 30,
+                paddingRight: 30,
+                backgroundColor: "#DB5454",
+              }}
+              callback={() => {
+                dispatch(setActiveCity(null));
+              }}
+            />
           </div>
         </Modal>
       )}
