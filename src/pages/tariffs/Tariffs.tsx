@@ -268,7 +268,7 @@ const Tariffs = () => {
       {/*  )}*/}
       {/*</AnimatePresence>*/}
       <AnimatePresence>
-        {showEditSidebar && (
+        {showEditSidebar && !showSmartFilter && (
           <motion.div
             initial={{ width: 0, opacity: 0 }}
             animate={{ width: 1070, opacity: 1 }}

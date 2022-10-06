@@ -5,6 +5,7 @@ import { isBooleanObject } from "util/types";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   editTariffPriceThunk,
+  removeIntercityCity,
   setActiveCity,
   setShowAddCity,
 } from "../../store/tariffSlice";
@@ -147,7 +148,8 @@ const CityPricesTable = () => {
                 backgroundColor: "#DB5454",
               }}
               callback={() => {
-                dispatch(setActiveCity(null));
+                dispatch(removeIntercityCity());
+                // dispatch(setActiveCity(null));
               }}
             />
           </div>

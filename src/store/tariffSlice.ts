@@ -46,6 +46,8 @@ export type TariffState = {
   activeCity: any;
   tariffsPerPage: 10 | 20 | 30 | 50 | 100;
   activePage: number;
+  checkedState: boolean[];
+  isSelectAll: boolean;
 };
 
 const initialState: TariffState = {
@@ -73,6 +75,8 @@ const initialState: TariffState = {
   activeCity: null,
   tariffsPerPage: 10,
   activePage: 1,
+  checkedState: [],
+  isSelectAll: false,
 };
 
 export const getRegionSuggestionsThunk = createAsyncThunk<
@@ -180,7 +184,7 @@ export const createIntercityCityThunk = createAsyncThunk<
 
       return response.data;
     } catch (e: any) {
-      if (e.response.status === 400) alert(e.response.data.detail);
+      alert(e.response.data.detail);
       return rejectWithValue(e.message());
     }
   }
@@ -299,13 +303,13 @@ export const createTariffThunk = createAsyncThunk<
     dispatch(getShortTariffs());
     return response.data;
   } catch (e: any) {
-    if (e.response.status === 400) alert("Тариф с таким именем уже создан");
+    alert(e.response.data.detail);
     return rejectWithValue(e.message());
   }
 });
 
 export const removeIntercityCity = createAsyncThunk<
-  IIntercityCity[] | undefined,
+  any | undefined,
   undefined,
   { rejectValue: string; state: { tariff: TariffState } }
 >("tariff/removeIntercityCity", async (_, { rejectWithValue, getState }) => {
@@ -335,11 +339,13 @@ export const getShortTariffs = createAsyncThunk<
 
   try {
     const limit = getState().tariff.tariffsPerPage;
-    const page = getState().tariff.activePage;
+    let page = getState().tariff.activePage;
     const region = urlParams.get("region") || "";
     const city = urlParams.get("city") || "";
     const type = urlParams.get("type") || "";
     const isActive = urlParams.get("isActive") || "";
+
+    if (region || city || type || isActive) page = 1;
 
     const response = await TariffService.getShortTariffs(
       limit,
@@ -365,6 +371,9 @@ export const tariffSlice = createSlice({
     setTariffRegion(state, action) {
       state.tariffRegion = action.payload;
     },
+    setIsSelectAll(state, action) {
+      state.isSelectAll = action.payload;
+    },
     setTariffCity(state, action) {
       state.tariffCity = action.payload;
     },
@@ -384,6 +393,29 @@ export const tariffSlice = createSlice({
       state.tariffRegion = "";
       state.citySuggestions = [];
       state.regionSuggestions = [];
+    },
+    updateCheckedState(state, action: PayloadAction<number>) {
+      if (state.checkedState)
+        state.checkedState = state.checkedState.map((item, index) =>
+          index === action.payload ? !item : item
+        );
+
+      let countTrueItems = 0;
+
+      // state.checkedState.includes(true)
+      //   ? handleShowActionMenu(true)
+      //   : handleShowActionMenu(false);
+
+      state.checkedState.forEach((item) => {
+        if (item) countTrueItems += 1;
+      });
+
+      if (state.checkedState.includes(false)) state.isSelectAll = false;
+
+      // countTrueItems === 1
+      //   ? setOnlyOneSelected(true)
+      //   : setOnlyOneSelected(false);
+      // checkedState.includes(false) && setIsSelectAll(false);
     },
     setTariffAlreadyCreated(state) {
       state.error = "Tariff already created";
@@ -417,6 +449,11 @@ export const tariffSlice = createSlice({
         state.showAddCity = action.payload.value;
         state.activeCityId = null;
       }
+    },
+    setCheckedState(state, action) {
+      state.checkedState = new Array(state.checkedState.length).fill(
+        action.payload
+      );
     },
     setActiveCity(state, action) {
       state.activeCity = action.payload;
@@ -482,7 +519,11 @@ export const tariffSlice = createSlice({
       })
       .addCase(getShortTariffs.fulfilled, (state, action) => {
         state.status = "idle";
+        // state.isSelectAll = false;
         state.tariffs = action.payload;
+        state.checkedState = new Array(action.payload.results.length).fill(
+          state.isSelectAll
+        );
       })
       .addCase(getIntercityRegionSuggestions.fulfilled, (state, action) => {
         state.intercityRegionSuggestions = action.payload;
@@ -511,7 +552,7 @@ export const tariffSlice = createSlice({
       })
       .addCase(removeIntercityCity.fulfilled, (state, action) => {
         if (action.payload && state.activeTariff)
-          state.activeTariff.intercity_tariff.cities = action.payload;
+          state.activeTariff.intercity_tariff = action.payload;
 
         state.activeCity = null;
       })
@@ -537,6 +578,9 @@ export const {
   setTariffAlreadyCreated,
   setTariffsPerPage,
   setActivePage,
+  updateCheckedState,
+  setCheckedState,
+  setIsSelectAll,
 } = tariffSlice.actions;
 
 export default tariffSlice.reducer;

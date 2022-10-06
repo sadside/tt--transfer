@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import Loader from "../loader/Loader";
 import styles from "./AddCity.module.scss";
 import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
@@ -183,6 +184,9 @@ const AddCity = () => {
               style={{ marginTop: 30 }}
             />
           </form>
+          <div style={{ marginTop: 120 }}>
+            <Loader />
+          </div>
         </div>
       )}
 

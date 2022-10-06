@@ -1,6 +1,7 @@
 import "./blockHeader.scss";
 import { useSearchParams } from "react-router-dom";
 import { API, API_URL } from "../../http";
+import { useAppSelector } from "../../store/hooks";
 import Button from "../ui/button/Button";
 import searchIcon from "../../assets/find.svg";
 import filterIcon from "../../assets/smart-filter.svg";
@@ -24,20 +25,36 @@ const BlockHeader = ({
   resetFilter,
 }: BlockHeaderProps) => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const selectedCheckBoxes = useAppSelector(
+    (state) => state.tariff.checkedState
+  );
+  const tariffs = useAppSelector((state) => state.tariff?.tariffs?.results);
 
   const haveSearchParams =
     searchParams.get("region") ||
     searchParams.get("type") ||
     searchParams.get("city");
 
+  const params = selectedCheckBoxes
+    .map((checkBoxState, index) => {
+      if (checkBoxState) return `tariffs=${tariffs && tariffs[index].id}`;
+    })
+    .filter((item) => item !== undefined);
+
+  console.log(!!params.length);
+
   const downloadDocument = async (e: any) => {
     e.stopPropagation();
-
-    const response = await fetch(`${API_URL}tariffs/export-tariffs/`, {
-      headers: {
-        Authorization: `accessToken ${localStorage.getItem("token")}`,
-      },
-    });
+    const response = await fetch(
+      `${API_URL}tariffs/export-tariffs/${params.length ? "?" : ""}${
+        params.length ? params.join("&") : ""
+      }`,
+      {
+        headers: {
+          Authorization: `accessToken ${localStorage.getItem("token")}`,
+        },
+      }
+    );
 
     if (response.status === 200) {
       const blob = await response.blob();

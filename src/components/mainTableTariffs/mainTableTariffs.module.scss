@@ -12,13 +12,12 @@ table {
   table-layout: fixed;
   
   thead {
-    height: 60px;
   
     th {
+          height: 60px;
       font-weight: 400;
       font-size: 14px;
       line-height: 16px;
-  
       background: #E8E8E8;
   
       &:first-child {
@@ -40,10 +39,9 @@ table {
   height: calc(100vh - 330px);
 
   tbody {
-  
     .trBodyTable {
       height: 67px;
-  
+
       td {
         border-bottom: 1px solid #E8E8E8;
       }
@@ -51,11 +49,15 @@ table {
   }
 }
 
-.item {
-  padding-left: 26px;
-
-  text-align: start;
+.checkbox {
+  width: 40px !important;
+  box-sizing: border-box;
+  input {
+    margin: 0;
+    padding: 0;
+  }
 }
+
 
 .firstItem {
   color: #337AB7;
