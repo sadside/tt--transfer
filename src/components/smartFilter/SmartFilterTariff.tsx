@@ -114,7 +114,7 @@ const SmartFilterTariff = ({
       city: activeCity,
       isActive: tariffActiveType,
     });
-    dispatch(getShortTariffs());
+    dispatch(getShortTariffs(true));
     closeSmartFilter();
   };
 

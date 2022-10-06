@@ -40,6 +40,8 @@ const AddCity = () => {
     (state) => state.tariff.intercityCitySuggestions
   );
 
+  const status = useAppSelector((state) => state.tariff.status);
+
   const regionInputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setRegion(e.target.value);
     dispatch(setIntercityRegion(null));
@@ -184,9 +186,11 @@ const AddCity = () => {
               style={{ marginTop: 30 }}
             />
           </form>
-          <div style={{ marginTop: 120 }}>
-            <Loader />
-          </div>
+          {status === "creating city" && (
+            <div style={{ marginTop: 120 }}>
+              <Loader />
+            </div>
+          )}
         </div>
       )}
 

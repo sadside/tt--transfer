@@ -332,35 +332,40 @@ export const removeIntercityCity = createAsyncThunk<
 
 export const getShortTariffs = createAsyncThunk<
   IShortTariffResponse,
-  undefined,
+  boolean | undefined,
   { rejectValue: string; state: { tariff: TariffState } }
->("tariff/getShortTariffs", async (_, { rejectWithValue, getState }) => {
-  const urlParams = new URLSearchParams(window.location.search);
+>(
+  "tariff/getShortTariffs",
+  async (isFilter, { rejectWithValue, getState, dispatch }) => {
+    const urlParams = new URLSearchParams(window.location.search);
 
-  try {
-    const limit = getState().tariff.tariffsPerPage;
-    let page = getState().tariff.activePage;
-    const region = urlParams.get("region") || "";
-    const city = urlParams.get("city") || "";
-    const type = urlParams.get("type") || "";
-    const isActive = urlParams.get("isActive") || "";
+    if (isFilter) dispatch(setActivePage(1));
 
-    if (region || city || type || isActive) page = 1;
+    try {
+      const limit = getState().tariff.tariffsPerPage;
+      let page = getState().tariff.activePage;
+      const region = urlParams.get("region") || "";
+      const city = urlParams.get("city") || "";
+      const type = urlParams.get("type") || "";
+      const isActive = urlParams.get("isActive") || "";
 
-    const response = await TariffService.getShortTariffs(
-      limit,
-      page,
-      region,
-      city,
-      type,
-      isActive
-    );
+      // if (region || city || type || isActive) page = 1;
 
-    return response.data;
-  } catch (e: any) {
-    return rejectWithValue(e.message());
+      const response = await TariffService.getShortTariffs(
+        limit,
+        page,
+        region,
+        city,
+        type,
+        isActive
+      );
+
+      return response.data;
+    } catch (e: any) {
+      return rejectWithValue(e.message());
+    }
   }
-});
+);
 
 // export const;
 
