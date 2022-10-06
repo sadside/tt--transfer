@@ -3,6 +3,7 @@ import $api from "../http";
 import {
   CarClass,
   IInitialTariff,
+  IIntercityCity,
   IService,
   IShortTariff,
   IShortTariffResponse,
@@ -48,6 +49,12 @@ export class TariffService {
 
   static postTariff(tariff: any, id: number) {
     return $api.put(`tariffs/tariff/${id}/`, tariff);
+  }
+
+  static deleteIntercityRoad(tariffId: number, cityId: number) {
+    return $api.delete<IIntercityCity[]>(
+      `tariffs/tariff/${tariffId}/intercity/city/${cityId}/`
+    );
   }
 
   static getShortTariffs(

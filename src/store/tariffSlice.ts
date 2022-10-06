@@ -13,6 +13,7 @@ import {
   IHub,
   IHubToPrice,
   IInitialTariff,
+  IIntercityCity,
   IRegion,
   IService,
   IShortTariff,
@@ -179,8 +180,7 @@ export const createIntercityCityThunk = createAsyncThunk<
 
       return response.data;
     } catch (e: any) {
-      if (e.response.status === 400)
-        alert("Такой город уже имеется в данном тарифе");
+      if (e.response.status === 400) alert(e.response.data.detail);
       return rejectWithValue(e.message());
     }
   }
@@ -300,6 +300,28 @@ export const createTariffThunk = createAsyncThunk<
     return response.data;
   } catch (e: any) {
     if (e.response.status === 400) alert("Тариф с таким именем уже создан");
+    return rejectWithValue(e.message());
+  }
+});
+
+export const removeIntercityCity = createAsyncThunk<
+  IIntercityCity[] | undefined,
+  undefined,
+  { rejectValue: string; state: { tariff: TariffState } }
+>("tariff/removeIntercityCity", async (_, { rejectWithValue, getState }) => {
+  try {
+    const tariffId = getState().tariff.activeTariff?.id;
+    const intercityId = getState().tariff.activeCity.id;
+
+    if (tariffId) {
+      const response = await TariffService.deleteIntercityRoad(
+        tariffId,
+        intercityId
+      );
+
+      return response.data;
+    }
+  } catch (e: any) {
     return rejectWithValue(e.message());
   }
 });
@@ -486,6 +508,12 @@ export const tariffSlice = createSlice({
       })
       .addCase(editTariff.fulfilled, (state, action) => {
         state.activeTariff = action.payload;
+      })
+      .addCase(removeIntercityCity.fulfilled, (state, action) => {
+        if (action.payload && state.activeTariff)
+          state.activeTariff.intercity_tariff.cities = action.payload;
+
+        state.activeCity = null;
       })
       .addMatcher(isError, (state, action) => {
         state.status = "idle";

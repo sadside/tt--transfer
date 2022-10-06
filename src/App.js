@@ -26,32 +26,17 @@ import PasswordSent from "./pages/passwordSent/PasswordSent";
 import Profile from "./pages/profile/Profile";
 import Register from "./pages/register/Register";
 import Request from "./pages/requests/Request";
-import Layout from "./components/layout/Layout";
 import Success from "./pages/success/Success";
 import Tariffs from "./pages/tariffs/Tariffs";
 import RequireAuth from "./hoc/RequireAuth";
 import { useEffect } from "react";
-import { store } from "./store";
-import { checkAuth, setIsAuth } from "./store/userSlice.ts";
 
 function App() {
-  const isAuth = useStore($isAuth);
-
-  const navigate = useNavigate();
-
-  // useEffect(() => {
-  //   if (!isAuth) {
-  //     navigate("/login");
-  //   }
-  // }, [isAuth]);
-
   useEffect(() => {
     if (localStorage.getItem("token")) {
       checkAuthFx();
     }
   }, []);
-
-  // if (!isAuth) navigate("/login");
 
   return (
     <>

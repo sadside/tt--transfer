@@ -21,7 +21,7 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
     "Название",
     "Город",
     "Активный",
-    "Время жизни",
+    "Действует до",
     "Изменен",
     "Тип",
   ];
@@ -57,15 +57,11 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
                 </td>
                 <td className={s.item}>{tariff.city.city}</td>
                 <td className={s.item}>{tariff.is_available ? "Да" : "Нет"}</td>
-                <td
-                  className={s.item}
-                  style={
-                    moment().isAfter(tariff.lifetime) ? { color: "red" } : {}
-                  }
-                >
-                  {moment().isAfter(tariff.lifetime)
-                    ? "Срок истек"
-                    : `Срок истекает ${moment().to(tariff.lifetime)}`}
+                <td className={s.item}>
+                  {/*{moment().isAfter(tariff.lifetime)*/}
+                  {/*  ? "Срок истек"*/}
+                  {/*  : `Срок истекает ${moment().to(tariff.lifetime)}`}*/}
+                  {tariff.lifetime.split("T")[0]}
                 </td>
                 <td className={s.item}>
                   {moment(tariff.last_update).fromNow()}

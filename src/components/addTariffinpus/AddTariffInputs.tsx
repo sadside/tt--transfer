@@ -129,9 +129,12 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
       action=""
       onSubmit={(e: any) => {
         e.preventDefault();
-        console.log(!!tariff);
         if (tariff) {
-          if (tariff.type === "commission" && Number(tariffCommission) >= 0) {
+          if (
+            tariff.type === "commission" &&
+            Number(tariffCommission) >= 0 &&
+            tariffCommission
+          ) {
             dispatch(
               editTariff({
                 commission: tariffCommission,
@@ -149,11 +152,19 @@ const AddTariffInputs: React.FC<AddTariffInputsProps> = () => {
                 is_available: itemActive === "Активный",
               })
             );
+          } else {
+            alert("Заполните все поля!");
           }
-        } else if (!tariff) {
+        }
+
+        if (!tariff) {
           console.log("11");
           if (date && tariffRegion && tariffCity) {
-            if (tariffType === "commission" && Number(tariffCommission) >= 0) {
+            if (
+              tariffType === "commission" &&
+              Number(tariffCommission) >= 0 &&
+              tariffCommission
+            ) {
               dispatch(
                 createTariffThunk({
                   region: tariffRegion,
