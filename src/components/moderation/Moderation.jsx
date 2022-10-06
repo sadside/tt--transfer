@@ -1,7 +1,8 @@
 import "./moderation.scss";
+import { useUnit } from "effector-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { logout } from "../../effector/user/authorization";
+import { $user, logout } from "../../effector/user/authorization";
 import Button from "../ui/button/Button";
 import clock from "../../assets/carSelected.svg";
 
@@ -9,6 +10,8 @@ const Moderation = () => {
   const name = useSelector((state) => state.user.user.name);
   const patronymic = useSelector((state) => state.user.user.patronymic);
   const dispatch = useDispatch();
+
+  const user = useUnit($user);
 
   return (
     <>
@@ -25,8 +28,8 @@ const Moderation = () => {
               <img src={clock} alt="" width={64} />
             </div>
             <h1>
-              {`${name} ${patronymic}`}, Ваш аккаунт проходит модерацию, спасибо
-              за ожидание. С уважением, команда TT-Трансфер!
+              {`${user.name} ${user.patronymic}`}, Ваш аккаунт проходит
+              модерацию, спасибо за ожидание. С уважением, команда TT-Трансфер!
             </h1>
             <p>
               Администраторы в ближайшее время рассмотрят вашу заявку на

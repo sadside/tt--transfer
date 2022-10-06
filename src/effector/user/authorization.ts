@@ -72,7 +72,7 @@ export const checkAuthFx = createEffect<undefined, IUser>(async () => {
 
 export const logoutFx = createEffect(async () => {
   await UserServices.logout();
-
+  window.location.href = "/login";
   localStorage.removeItem("token");
 });
 
