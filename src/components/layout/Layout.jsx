@@ -42,36 +42,19 @@ import Moderation from "../moderation/Moderation";
 import SidebarLink from "../sidebarLink/SidebarLink";
 
 const Layout = () => {
-  // const user = useSelector((state) => state.user.user);
-  // const role = useSelector((state) => state.user.user.role);
   const user = useStore($user);
   const { role } = useStore($user);
-  // const loading = useSelector((state) => state.user.loading);
-  // const confirmed = useSelector((state) => state.user.user?.confirmed);
   const { confirmed } = useStore($user);
   const { avatar: avatarFilename } = useStore($user);
-
-  console.log($user.getState());
-
-  const logoutLoading = useUnit(logoutFx.pending);
-
-  const loading = useStore(checkAuthFx.pending);
-  const isAuth = useStore($isAuth);
-
-  const dispatch = useDispatch();
-  console.log("us:", user.role);
 
   const { isShow, setIsShow, ref } = useOutside(false);
   const navigate = useNavigate();
 
   const [isVisibleSidebar, setIsVisibleSidebar] = useState(false);
-  const [isVisibleUserInfo, setIsVisibleUserInfo] = useState(false);
-  const [notif, setNotif] = useState(true);
 
   const handleVisibility = () => {
     setIsVisibleSidebar(!isVisibleSidebar);
   };
-  console.log(role);
 
   const openSidebar = () => {
     localStorage.setItem("sidebar", "open");
@@ -160,156 +143,148 @@ const Layout = () => {
       path: "/clients",
     },
   ];
-  console.log("role: ", role);
 
-  if (loading || logoutLoading) {
-    return (
-      <div style={{ height: "100vh" }}>
-        <Loader />;
-      </div>
-    );
+  if (!confirmed && role === "m") {
+    return <Moderation />;
   } else {
-    if (!confirmed && role === "m" && !loading) {
-      return <Moderation />;
-    } else {
-      return (
-        <div>
-          <div className={"wrap-0f-top-menu"}>
-            <div className="menu-blocks">
-              <div className="menu-block">
-                <img src={smallLogo} alt="" className={"small-logo"} />
-                <AnimatePresence>
-                  {isVisibleSidebar && (
-                    <motion.div
-                      initial={{ width: 0 }}
-                      animate={{ width: 195 }}
-                      exit={{ width: 0 }}
-                      style={{ overflow: "hidden" }}
-                      transition={{ type: "Tween" }}
-                    >
-                      <div className={"full-logo"}>Трансфер</div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-                <button
-                  className={
-                    isVisibleSidebar
-                      ? " c-hamburger c-hamburger--htx is-active"
-                      : "c-hamburger c-hamburger--htx"
-                  }
-                  onClick={async () => {
-                    await handleVisibility();
-                    if (isVisibleSidebar) {
-                      closeSidebar();
-                    } else if (!isVisibleSidebar) {
-                      openSidebar();
-                    }
-                  }}
-                >
-                  <span>toggle menu</span>
-                </button>
-                <div className="global-search">
-                  <input
-                    type="text"
-                    className="global-search-input"
-                    placeholder={"Глобальный поиск"}
-                  />
-                  <img src={searchIcon} alt="" className="search-icon" />
-                </div>
-              </div>
-              <div className="menu-block">
-                {/* <img src={notification} alt="" /> */}
-                <div className={"username"}>
-                  {user.name} {user.surname} - <strong>{user.role}</strong>
-                </div>
-                <div
-                  className={"profile-image"}
-                  onClick={() => setIsShow(!isShow)}
-                >
-                  <div
-                    style={{ height: 45 }}
-                    className={"profile-image-layout-wrap"}
-                  >
-                    {/*<img src={`${API}${avatarFilename}`} alt="" />*/}
-                  </div>
-                </div>
-                {isShow ? (
-                  <div className="user-info" ref={ref}>
-                    <div className="user-info-image">
-                      <img src={userImage} alt="" />
-                    </div>
-                    <div className="user-info-text">
-                      <div className="user-name">
-                        {user.name} - <strong>{user.role}</strong>
-                      </div>
-                      <div className="user-email">{user.email}</div>
-                      <div className="userinfo-buttons">
-                        <Link to="/profile" style={{ textDecoration: "none" }}>
-                          <div>Мой профиль</div>
-                        </Link>
-                        <div onClick={logout}>Выход</div>
-                      </div>
-                    </div>
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          </div>
-          <div className={"main-wrap"}>
-            <div className="wrap-of-sidebar">
-              <div>
-                {role === "m" &&
-                  links.map((link, index) => {
-                    return (
-                      <SidebarLink
-                        isVisibleSidebar={link.isVisibleSidebar}
-                        title={link.title}
-                        activeIcon={link.activeIcon}
-                        notActiveIcon={link.notActiveIcon}
-                        index={index}
-                        key={index}
-                        path={link.path}
-                      />
-                    );
-                  })}
-
-                {role === "c" &&
-                  clientLinks.map((link, index) => {
-                    return (
-                      <SidebarLink
-                        isVisibleSidebar={link.isVisibleSidebar}
-                        title={link.title}
-                        activeIcon={link.activeIcon}
-                        notActiveIcon={link.notActiveIcon}
-                        index={index}
-                        key={index}
-                        path={link.path}
-                      />
-                    );
-                  })}
-              </div>
+    return (
+      <div>
+        <div className={"wrap-0f-top-menu"}>
+          <div className="menu-blocks">
+            <div className="menu-block">
+              <img src={smallLogo} alt="" className={"small-logo"} />
               <AnimatePresence>
                 {isVisibleSidebar && (
                   <motion.div
-                    initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: "auto", opacity: 1 }}
-                    exit={{ width: 0, opacity: 0 }}
+                    initial={{ width: 0 }}
+                    animate={{ width: 195 }}
+                    exit={{ width: 0 }}
                     style={{ overflow: "hidden" }}
                     transition={{ type: "Tween" }}
                   >
-                    <div className="watermark">@ CRM система TT-Transfer</div>
+                    <div className={"full-logo"}>Трансфер</div>
                   </motion.div>
                 )}
               </AnimatePresence>
+              <button
+                className={
+                  isVisibleSidebar
+                    ? " c-hamburger c-hamburger--htx is-active"
+                    : "c-hamburger c-hamburger--htx"
+                }
+                onClick={async () => {
+                  await handleVisibility();
+                  if (isVisibleSidebar) {
+                    closeSidebar();
+                  } else if (!isVisibleSidebar) {
+                    openSidebar();
+                  }
+                }}
+              >
+                <span>toggle menu</span>
+              </button>
+              <div className="global-search">
+                <input
+                  type="text"
+                  className="global-search-input"
+                  placeholder={"Глобальный поиск"}
+                />
+                <img src={searchIcon} alt="" className="search-icon" />
+              </div>
             </div>
-            <div className="main-content">
-              <Outlet />
+            <div className="menu-block">
+              {/* <img src={notification} alt="" /> */}
+              <div className={"username"}>
+                {user.name} {user.surname} - <strong>{user.role}</strong>
+              </div>
+              <div
+                className={"profile-image"}
+                onClick={() => setIsShow(!isShow)}
+              >
+                <div
+                  style={{ height: 45 }}
+                  className={"profile-image-layout-wrap"}
+                >
+                  {/*<img src={`${API}${avatarFilename}`} alt="" />*/}
+                </div>
+              </div>
+              {isShow ? (
+                <div className="user-info" ref={ref}>
+                  <div className="user-info-image">
+                    <img src={userImage} alt="" />
+                  </div>
+                  <div className="user-info-text">
+                    <div className="user-name">
+                      {user.name} - <strong>{user.role}</strong>
+                    </div>
+                    <div className="user-email">{user.email}</div>
+                    <div className="userinfo-buttons">
+                      <Link to="/profile" style={{ textDecoration: "none" }}>
+                        <div>Мой профиль</div>
+                      </Link>
+                      <div onClick={logout}>Выход</div>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
-      );
-    }
+        <div className={"main-wrap"}>
+          <div className="wrap-of-sidebar">
+            <div>
+              {role === "m" &&
+                links.map((link, index) => {
+                  return (
+                    <SidebarLink
+                      isVisibleSidebar={link.isVisibleSidebar}
+                      title={link.title}
+                      activeIcon={link.activeIcon}
+                      notActiveIcon={link.notActiveIcon}
+                      index={index}
+                      key={index}
+                      path={link.path}
+                    />
+                  );
+                })}
+
+              {role === "c" &&
+                clientLinks.map((link, index) => {
+                  return (
+                    <SidebarLink
+                      isVisibleSidebar={link.isVisibleSidebar}
+                      title={link.title}
+                      activeIcon={link.activeIcon}
+                      notActiveIcon={link.notActiveIcon}
+                      index={index}
+                      key={index}
+                      path={link.path}
+                    />
+                  );
+                })}
+            </div>
+            <AnimatePresence>
+              {isVisibleSidebar && (
+                <motion.div
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: "auto", opacity: 1 }}
+                  exit={{ width: 0, opacity: 0 }}
+                  style={{ overflow: "hidden" }}
+                  transition={{ type: "Tween" }}
+                >
+                  <div className="watermark">@ CRM система TT-Transfer</div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          <div className="main-content">
+            <Outlet />
+          </div>
+        </div>
+      </div>
+    );
   }
 };
+// };
 
 export default Layout;

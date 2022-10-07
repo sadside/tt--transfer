@@ -72,7 +72,7 @@ export const checkAuthFx = createEffect<undefined, IUser>(async () => {
 
 export const logoutFx = createEffect(async () => {
   await UserServices.logout();
-  window.location.href = "/login";
+
   localStorage.removeItem("token");
 });
 
@@ -106,11 +106,16 @@ export const $user = createStore<IFullUser>({
   documents: [],
 })
   .on(registrationFx.doneData, (_, user) => user)
-  .on(getTokenFx.doneData, (_, user) => user)
+  // .on(getTokenFx.doneData, (_, user) => user)
   .on(checkAuthFx.doneData, (_, user) => user)
   .on(checkAuthFx.failData, () => ({}))
   .on(loginFx.doneData, (_, user: any) => user?.user)
   .reset(logout);
+
+export const $loadingUserData = createStore(false).on(
+  checkAuthFx.doneData,
+  () => false
+);
 
 sample({
   clock: registrationFx.doneData,
@@ -122,10 +127,15 @@ sample({
   target: getTokenFx,
 });
 
+forward({
+  from: getTokenFx.doneData,
+  to: checkAuthFx,
+});
+
 export const $isAuth = createStore(false)
-  .on(getTokenFx.doneData, () => true)
   .on(checkAuthFx.failData, () => false)
   .on(loginFx.doneData, () => true)
+  .on(checkAuthFx.doneData, () => true)
   .reset(logout);
 
 export const $accountAlreadyCreated = createStore(false)
