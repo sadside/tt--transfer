@@ -112,7 +112,9 @@ export const $user = createStore<IFullUser>({
   .on(loginFx.doneData, (_, user: any) => user?.user)
   .reset(logout);
 
-export const $loadingUserData = createStore(!!localStorage.getItem("token")).on(
+const isAuth = !!localStorage.getItem("token");
+
+export const $loadingUserData = createStore(isAuth).on(
   checkAuthFx.doneData,
   () => false
 );

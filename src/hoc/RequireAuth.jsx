@@ -8,7 +8,7 @@ const RequireAuth = () => {
   const location = useLocation();
   const isAuth = useUnit($isAuth);
 
-  const loading = useUnit($loadingUserData); //false
+  const loading = useUnit($loadingUserData);
 
   if (loading) {
     return (
