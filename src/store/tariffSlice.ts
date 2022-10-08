@@ -354,30 +354,45 @@ export const removeIntercityCity = createAsyncThunk<
   }
 });
 
-export const createRouteWithGlobalAddress = createAsyncThunk<any, string>(
-  "tariff/createRouteWithGlobalAddress",
-  async (data) => {
-    try {
-      const response = await TariffService.createRouteWithGlobalAddress(data);
+export const createRouteWithGlobalAddress = createAsyncThunk<
+  any,
+  string,
+  {
+    state: {
+      tariff: TariffState;
+    };
+  }
+>("tariff/createRouteWithGlobalAddress", async (data, { getState }) => {
+  const id = getState().tariff.activeTariff?.id;
+
+  try {
+    if (id) {
+      const response = await TariffService.createRouteWithGlobalAddress(
+        data,
+        id
+      );
 
       return response.data;
-    } catch (e: any) {
-      alert(e.response.data);
     }
+  } catch (e: any) {
+    // alert(e.response.data);
+    console.log(e.response);
   }
-);
+});
 
 export const createGlobalAddressThunk = createAsyncThunk<
-  IGlobalAddress[],
+  void,
   IInitialGlobalAddress
 >("tariff/createGlobalAddress", async (globalAddress) => {
-  try {
-    const response = await TariffService.addGlobalAddress(globalAddress);
+  // try {
+  //   await TariffService.addGlobalAddress(globalAddress);
+  // } catch (e: any) {
+  //   alert(e.response.data);
+  // }
 
-    return response.data;
-  } catch (e: any) {
-    alert(e.response.data);
-  }
+  const response = await TariffService.addGlobalAddress(globalAddress);
+
+  alert(response.data.detail);
 });
 
 export const createRouteWithHubThunk = createAsyncThunk<any, string>(
@@ -563,6 +578,9 @@ export const tariffSlice = createSlice({
           state.citySuggestions = action.payload;
         }
       )
+      // .addCase(createGlobalAddressThunk.fulfilled, () => {
+      //   alert("Глобальный адрес создан");
+      // })
       .addCase(createRouteWithHubThunk.pending, (state) => {
         state.status = "creating city";
       })
@@ -649,7 +667,7 @@ export const tariffSlice = createSlice({
       .addCase(createRouteWithGlobalAddress.fulfilled, (state, action) => {
         if (state.activeTariff) {
           state.status = "idle";
-          state.activeTariff.intercity_tariff.global_addresses = action.payload;
+          state.activeTariff = action.payload;
           state.showAddCity = false;
         }
       })

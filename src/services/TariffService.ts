@@ -20,7 +20,7 @@ export class TariffService {
   }
 
   static addGlobalAddress(address: any) {
-    return $api.post("", address);
+    return $api.post("address/global-address/", address);
   }
 
   static getRegionSuggestions(string: string) {
@@ -35,8 +35,10 @@ export class TariffService {
     return $api.get<IService[]>("");
   }
 
-  static createRouteWithGlobalAddress(route: string) {
-    return $api.post("", route);
+  static createRouteWithGlobalAddress(route: string, id: number) {
+    return $api.post(`tariffs/tariff/${id}/intercity/global-address/`, {
+      global_address: route,
+    });
   }
 
   static getCitySuggestions(region: string, string: string) {
@@ -66,10 +68,10 @@ export class TariffService {
     );
   }
 
-  static getGlobalAddressesSuggestions(addres: string) {
-    return $api.get("", {
+  static getGlobalAddressesSuggestions(address: string) {
+    return $api.get("address/search-global-addresses", {
       params: {
-        global_address: addres,
+        search: address,
       },
     });
   }

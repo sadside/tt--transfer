@@ -39,6 +39,12 @@ const CityPricesTable = () => {
   const cities = useAppSelector(
     (state) => state.tariff.activeTariff?.intercity_tariff.cities
   );
+  const globalAddresses = useAppSelector(
+    (state) => state.tariff?.activeTariff?.intercity_tariff?.global_addresses
+  );
+  const hubs = useAppSelector(
+    (state) => state.tariff?.activeTariff?.intercity_tariff?.hubs
+  );
   const activeCity = useAppSelector((state) => state.tariff.activeCity);
   const activeTariff = useAppSelector((state) => state.tariff.activeTariff);
 
@@ -121,6 +127,7 @@ const CityPricesTable = () => {
             </table>
           </div>
         </div>
+
         <div className="submit-buttons-wrap">
           <EditSidebarSubmitButtons firstTitle="Удалить тариф" />
         </div>

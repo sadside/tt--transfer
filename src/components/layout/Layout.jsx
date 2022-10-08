@@ -64,14 +64,10 @@ const Layout = () => {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem("token")) {
-      navigate("/login");
+    if (localStorage.getItem("sidebar") === "open") {
+      setIsVisibleSidebar(true);
     } else {
-      if (localStorage.getItem("sidebar") === "open") {
-        setIsVisibleSidebar(true);
-      } else {
-        setIsVisibleSidebar(false);
-      }
+      setIsVisibleSidebar(false);
     }
   }, []);
 

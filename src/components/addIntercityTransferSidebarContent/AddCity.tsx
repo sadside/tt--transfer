@@ -44,6 +44,7 @@ const AddCity = () => {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<IInitialGlobalAddress>();
 
@@ -110,6 +111,7 @@ const AddCity = () => {
 
   const createGlobalAddress = (data: IInitialGlobalAddress) => {
     dispatch(createGlobalAddressThunk(data));
+    reset();
   };
 
   const handleHubInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -273,12 +275,13 @@ const AddCity = () => {
               <span className="required">*</span>Глобальный адрес
               <input
                 type="text"
+                style={{ width: 560 }}
                 className="tariff-data-input"
                 placeholder={"Введите адрес"}
                 value={globalAddressInputValue}
                 onChange={(e: ChangeEvent<HTMLInputElement>) => {
                   dispatch(setGlobalAddressInputValue(e.target.value));
-                  // dispatch(getGlobalAddressesSuggestion());
+                  dispatch(getGlobalAddressesSuggestion());
                   dispatch(setActiveGlobalAddress(""));
                 }}
               />

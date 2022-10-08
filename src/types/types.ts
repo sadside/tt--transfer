@@ -294,6 +294,7 @@ export interface ITariff {
     id: number;
     cities: IIntercityCity[] | null;
     global_addresses: IGlobalAddress[];
+    hubs: [];
   };
   lifetime: string;
 }
