@@ -234,6 +234,40 @@ export interface IIntercityCity {
   minutes_duration: number;
 }
 
+export interface IGlobalAddress {
+  id: number;
+  prices: [];
+  global_address: {
+    id: number;
+    address: string;
+    coordinate: {
+      id: number;
+      latitude: number;
+      longitude: number;
+    };
+  };
+  distance: number;
+  hours_duration: number;
+  minutes_duration: number;
+
+  // {
+  //       "id": 1,
+  //       "prices": [],
+  //       "distance": -1.0,
+  //       "hours_duration": -1,
+  //       "minutes_duration": -1,
+  //       "global_address": {
+  //           "id": 2,
+  //           "addresses": "тут какой-то адрес",
+  //           "coordinate": {
+  //               "id": 1,
+  //               "latitude": 51.767452,
+  //               "longitude": 55.097118
+  //           }
+  //       }
+  //   }
+}
+
 export interface ITariff {
   id: number;
   title: string;
@@ -259,7 +293,7 @@ export interface ITariff {
   intercity_tariff: {
     id: number;
     cities: IIntercityCity[] | null;
-    global_addresses: [];
+    global_addresses: IGlobalAddress[];
   };
   lifetime: string;
 }
@@ -300,4 +334,9 @@ export interface IShortTariff {
   is_available?: boolean;
   last_update?: string;
   type?: string;
+}
+
+export interface IInitialGlobalAddress {
+  coordinates: string;
+  address: string;
 }

@@ -201,11 +201,8 @@ const Layout = () => {
                 className={"profile-image"}
                 onClick={() => setIsShow(!isShow)}
               >
-                <div
-                  style={{ height: 45 }}
-                  className={"profile-image-layout-wrap"}
-                >
-                  {/*<img src={`${API}${avatarFilename}`} alt="" />*/}
+                <div className={"profile-image-layout-wrap"}>
+                  <img src={`${API}${avatarFilename}`} alt="" />
                 </div>
               </div>
               {isShow ? (

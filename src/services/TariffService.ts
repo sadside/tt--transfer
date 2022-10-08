@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import $api from "../http";
 import {
   CarClass,
+  IInitialGlobalAddress,
   IInitialTariff,
   IIntercityCity,
   IService,
@@ -18,6 +19,10 @@ export class TariffService {
     return $api.post<ITariff>("tariffs/tariff/", tariff);
   }
 
+  static addGlobalAddress(address: any) {
+    return $api.post("", address);
+  }
+
   static getRegionSuggestions(string: string) {
     return $api.get("address/filter-regions", {
       params: {
@@ -28,6 +33,10 @@ export class TariffService {
 
   static getTariffServices() {
     return $api.get<IService[]>("");
+  }
+
+  static createRouteWithGlobalAddress(route: string) {
+    return $api.post("", route);
   }
 
   static getCitySuggestions(region: string, string: string) {
@@ -55,6 +64,22 @@ export class TariffService {
     return $api.delete<IIntercityCity[]>(
       `tariffs/tariff/${tariffId}/intercity/city/${cityId}/`
     );
+  }
+
+  static getGlobalAddressesSuggestions(addres: string) {
+    return $api.get("", {
+      params: {
+        global_address: addres,
+      },
+    });
+  }
+
+  static getHubsSuggestions(string: string) {
+    return $api.get<string[]>("", {
+      params: {
+        hub: string,
+      },
+    });
   }
 
   static getShortTariffs(
@@ -96,6 +121,10 @@ export class TariffService {
       region,
       city,
     });
+  }
+
+  static createRouteWithHub(hub: string) {
+    return $api.post("", hub);
   }
 
   static deleteTariff(id: number) {

@@ -16,7 +16,7 @@ import {
   regionInputChanged,
   regionSuggestionClicked,
   smartFilter,
-} from "../../effector/address/smartFilterAddress";
+} from "../../effector/tariffs/addresses/smartFilterAddress";
 import {
   $tariffActive,
   $tariffCommission,
@@ -24,7 +24,7 @@ import {
   activeSelectChanged,
   commissionInputChanged,
   selectChanged,
-} from "../../effector/smartFiltres /tariffSmartFilter";
+} from "../../effector/tariffs/smartFilter/tariffSmartFilter";
 import useOutside from "../../hooks/useOutside";
 import { useAppDispatch } from "../../store/hooks";
 import { getShortTariffs } from "../../store/tariffSlice";

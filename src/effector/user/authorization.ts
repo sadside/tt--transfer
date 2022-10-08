@@ -17,6 +17,7 @@ import {
 export const registrationFormSubmit = createEvent<IRegistratinData>();
 export const loginFormSubmit = createEvent<ILoginData>();
 export const logout = createEvent();
+export const userNotAuthorized = createEvent();
 
 export const loginFx = createEffect<ILoginData, IUser, Error>(
   async ({ email, password }) => {
@@ -66,7 +67,7 @@ export const checkAuthFx = createEffect<undefined, IUser>(async () => {
     return response.data.user;
   } catch (e: any) {
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    throw new Error("not authorized");
   }
 });
 
@@ -106,18 +107,21 @@ export const $user = createStore<IFullUser>({
   documents: [],
 })
   .on(registrationFx.doneData, (_, user) => user)
-  // .on(getTokenFx.doneData, (_, user) => user)
   .on(checkAuthFx.doneData, (_, user) => user)
-  .on(checkAuthFx.failData, () => ({}))
   .on(loginFx.doneData, (_, user: any) => user?.user)
-  .reset(logout);
+  .reset(logout)
+  .reset(checkAuthFx.failData)
+  .reset(userNotAuthorized);
 
-const isAuth = !!localStorage.getItem("token");
+export const $loadingUserData = createStore(true)
+  .on(checkAuthFx.doneData, () => false)
+  .on(checkAuthFx.failData, () => false);
 
-export const $loadingUserData = createStore(isAuth).on(
-  checkAuthFx.doneData,
-  () => false
-);
+sample({
+  clock: userNotAuthorized,
+  fn: () => false,
+  target: $loadingUserData,
+});
 
 sample({
   clock: registrationFx.doneData,
@@ -135,10 +139,10 @@ forward({
 });
 
 export const $isAuth = createStore(false)
-  .on(checkAuthFx.failData, () => false)
   .on(loginFx.doneData, () => true)
   .on(checkAuthFx.doneData, () => true)
-  .reset(logout);
+  .reset(logout)
+  .reset(checkAuthFx.failData);
 
 export const $accountAlreadyCreated = createStore(false)
   .on(registrationFx.failData, (_, error) => {

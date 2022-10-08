@@ -56,7 +56,7 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
         <table className={s.scrollTableHead}>
           <thead>
             <tr>
-              <th className={s.checkbox}>
+              <th className={s.checkbox} style={{ width: "4%" }}>
                 <input
                   type="checkbox"
                   onChange={selectAll}
@@ -64,7 +64,12 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
                 />
               </th>
               {itemsHeader.map((item, index) => (
-                <th className={s.item} key={index} align={"center"}>
+                <th
+                  className={s.item}
+                  key={index}
+                  align={"center"}
+                  style={{ width: "16%" }}
+                >
                   {item}
                 </th>
               ))}
@@ -77,7 +82,7 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
             <tbody>
               {tariffs?.map((tariff, index) => (
                 <tr className={s.trBodyTable} key={tariff.id}>
-                  <td className={s.checkbox} align={"center"} width="10%">
+                  <td className={s.checkbox} align={"center"} width={"4%"}>
                     <input
                       type="checkbox"
                       onChange={() => dispatch(updateCheckedState(index))}
@@ -89,25 +94,26 @@ const MainTableTariffs: FC<MainTableTariffsProps> = ({}) => {
                     className={[s.item, s.firstItem].join(" ")}
                     onClick={() => dispatch(getTariffByIdThunk(tariff.id))}
                     align={"center"}
+                    width={"16%"}
                   >
                     {tariff.title}
                   </td>
-                  <td className={s.item} align={"center"}>
+                  <td className={s.item} align={"center"} width={"16%"}>
                     {tariff.city.city}
                   </td>
-                  <td className={s.item} align={"center"}>
+                  <td className={s.item} align={"center"} width={"16%"}>
                     {tariff.is_available ? "Да" : "Нет"}
                   </td>
-                  <td className={s.item} align={"center"}>
+                  <td className={s.item} align={"center"} width={"16%"}>
                     {/*{moment().isAfter(tariff.lifetime)*/}
                     {/*  ? "Срок истек"*/}
                     {/*  : `Срок истекает ${moment().to(tariff.lifetime)}`}*/}
                     {tariff.lifetime.split("T")[0]}
                   </td>
-                  <td className={s.item} align={"center"}>
+                  <td className={s.item} align={"center"} width={"16%"}>
                     {moment(tariff.last_update).fromNow()}
                   </td>
-                  <td className={s.item} align={"center"}>
+                  <td className={s.item} align={"center"} width={"16%"}>
                     {tariff.type === "commission" ? "Комиссионный" : "Основной"}
                   </td>
                 </tr>

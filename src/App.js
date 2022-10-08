@@ -10,6 +10,7 @@ import {
   $isAuth,
   appMounted,
   checkAuthFx,
+  userNotAuthorized,
 } from "./effector/user/authorization";
 import RequireNotAuth from "./hoc/RequireNotAuth";
 import RequireRoleClient from "./hoc/RequireRoleClient";
@@ -35,6 +36,8 @@ function App() {
   useEffect(() => {
     if (localStorage.getItem("token")) {
       checkAuthFx();
+    } else {
+      userNotAuthorized();
     }
   }, []);
 

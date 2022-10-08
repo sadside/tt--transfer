@@ -92,7 +92,7 @@ const EditTariff = ({}: EditTariffProps) => {
           <div className="tariffs-edit-sidebar-content-edit-part">
             <div>
               <SidebarTableHeader
-                linkField="Город/глобальный адрес"
+                linkField="Направление"
                 title={"Цены за километр"}
                 handleClick={setShowAddCitySidebar}
               />

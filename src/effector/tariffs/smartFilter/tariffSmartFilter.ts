@@ -1,6 +1,6 @@
 import { createEffect, createEvent, createStore, sample } from "effector";
 import { createGate } from "effector-react";
-import { smartFilter } from "../address/smartFilterAddress";
+import { smartFilter } from "../addresses/smartFilterAddress";
 
 const urlParams = new URLSearchParams(window.location.search);
 

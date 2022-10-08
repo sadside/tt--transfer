@@ -1,0 +1,46 @@
+.globalAddressItemWrap {
+	height: 50px;
+	border-radius: 3px;
+	display: flex;
+	align-items: center;
+}
+
+.address {
+	background-color: #354150;
+	border-radius: 3px;
+	flex: 1 1;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	color: #fff;
+	padding-left: 30px;
+	font-weight: 400;
+}
+
+.editAddress {
+	margin: 0 0 0 20px;
+	background-color: #8DC73F;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	padding: 0 17px;
+	font-weight: 400;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+.removeAddress {
+		margin: 0 20px;
+	background-color: #CF1616;
+	color: #fff;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+	padding: 0 17px;
+	font-weight: 400;
+	border-radius: 3px;
+	cursor: pointer;
+}

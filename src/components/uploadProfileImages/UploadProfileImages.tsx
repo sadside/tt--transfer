@@ -113,57 +113,57 @@ const UploadProfileImages = () => {
         {/*<input type="submit" onClick={handleSubmit} />*/}
       </form>
 
-      <div className="upload-image-wrapper">
-        <div className="upload-image-container">
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
-          <div className="image-item">
-            <img src={image} alt="" />
-          </div>
+      {/*<div className="upload-image-wrapper">*/}
+      {/*  <div className="upload-image-container">*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
+      {/*    <div className="image-item">*/}
+      {/*      <img src={image} alt="" />*/}
+      {/*    </div>*/}
 
-          <UploadProfileFile
-            title={"word"}
-            type={"exel"} // word, exel, pdf, file
-          />
-        </div>
-      </div>
+      {/*    <UploadProfileFile*/}
+      {/*      title={"word"}*/}
+      {/*      type={"exel"} // word, exel, pdf, file*/}
+      {/*    />*/}
+      {/*  </div>*/}
+      {/*</div>*/}
     </div>
   );
 };

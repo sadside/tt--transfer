@@ -36,13 +36,6 @@ const LoginFields = () => {
   }, [isUserAuth]);
 
   const onSubmit = async (data) => {
-    // await dispatch(
-    //   login({
-    //     email: data.email,
-    //     password: data.password,
-    //   })
-    // );
-
     loginFormSubmit({
       email: data.email,
       password: data.password,

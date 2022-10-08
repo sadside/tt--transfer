@@ -1,18 +1,8 @@
 .wrapper {
-  display: flex;
+  height: calc(100vh - 150px);
   position: relative;
-  padding-bottom: 74px;
-}
-
-.mainData {
-  margin-right: 45px;
-}
-
-.inputFields {
-  margin-top: 21px;
-}
-
-label {
+  
+  label {
   div {
     margin-bottom: 12px;
 
@@ -28,9 +18,9 @@ label {
     margin-bottom: 15px;
 
     border: none;
-    outline: noen;
+    outline: none;
     background: #E8E8E8;
-    border-radius: 3px;  
+    border-radius: 3px;
 
     font-size: 14px;
     
@@ -39,6 +29,21 @@ label {
     }
   }
 }
+}
+
+.formFields {
+  display: flex;
+  overflow: auto;
+  max-height: calc(100vh - 225px);
+}
+.mainData {
+  margin-right: 45px;
+}
+
+.inputFields {
+  margin-top: 21px;
+}
+
 
 .button {
   width: 180px;
@@ -46,6 +51,23 @@ label {
   position: absolute;
   bottom: 0;
   right: 0;
+
+  border: none;
+  outline: none;
+  background: #8DC73F;
+  border-radius: 3px;
+  cursor: pointer;
+
+  font-size: 14px;
+  color: #FFFFFF;
+}
+
+.button {
+  width: 180px;
+  height: 45px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 
   border: none;
   outline: none;

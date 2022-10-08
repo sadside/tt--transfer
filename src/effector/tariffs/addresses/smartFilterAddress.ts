@@ -1,6 +1,6 @@
 import { createEffect, createEvent, createStore, sample } from "effector";
 import { createGate } from "effector-react";
-import { TariffService } from "../../services/TariffService";
+import { TariffService } from "../../../services/TariffService";
 
 const smartFilter = createGate();
 

@@ -10,8 +10,10 @@ import { TariffService } from "../services/TariffService";
 import {
   CarClass,
   ICity,
+  IGlobalAddress,
   IHub,
   IHubToPrice,
+  IInitialGlobalAddress,
   IInitialTariff,
   IIntercityCity,
   IRegion,
@@ -48,6 +50,9 @@ export type TariffState = {
   activePage: number;
   checkedState: boolean[];
   isSelectAll: boolean;
+  globalAddressSuggestions: string[];
+  globalAddressInputValue: string;
+  activeGlobalAddress: string;
 };
 
 const initialState: TariffState = {
@@ -77,6 +82,9 @@ const initialState: TariffState = {
   activePage: 1,
   checkedState: [],
   isSelectAll: false,
+  globalAddressSuggestions: ["Кушкули", "Пригордный"],
+  globalAddressInputValue: "",
+  activeGlobalAddress: "",
 };
 
 export const getRegionSuggestionsThunk = createAsyncThunk<
@@ -308,6 +316,22 @@ export const createTariffThunk = createAsyncThunk<
   }
 });
 
+export const getGlobalAddressesSuggestion = createAsyncThunk<
+  string[],
+  undefined,
+  { state: { tariff: TariffState } }
+>("tariff/getGlobalAddressesSuggestion", async (_, { getState }) => {
+  const address = getState().tariff.globalAddressInputValue;
+
+  try {
+    const { data } = await TariffService.getGlobalAddressesSuggestions(address);
+
+    return data;
+  } catch (e: any) {
+    alert(e.response.data);
+  }
+});
+
 export const removeIntercityCity = createAsyncThunk<
   any | undefined,
   undefined,
@@ -329,6 +353,45 @@ export const removeIntercityCity = createAsyncThunk<
     return rejectWithValue(e.message());
   }
 });
+
+export const createRouteWithGlobalAddress = createAsyncThunk<any, string>(
+  "tariff/createRouteWithGlobalAddress",
+  async (data) => {
+    try {
+      const response = await TariffService.createRouteWithGlobalAddress(data);
+
+      return response.data;
+    } catch (e: any) {
+      alert(e.response.data);
+    }
+  }
+);
+
+export const createGlobalAddressThunk = createAsyncThunk<
+  IGlobalAddress[],
+  IInitialGlobalAddress
+>("tariff/createGlobalAddress", async (globalAddress) => {
+  try {
+    const response = await TariffService.addGlobalAddress(globalAddress);
+
+    return response.data;
+  } catch (e: any) {
+    alert(e.response.data);
+  }
+});
+
+export const createRouteWithHubThunk = createAsyncThunk<any, string>(
+  "tariff/createRouteWithHubThunk",
+  async (hub) => {
+    try {
+      const response = await TariffService.createRouteWithHub(hub);
+
+      return response.data;
+    } catch (e: any) {
+      alert(e.response.data);
+    }
+  }
+);
 
 export const getShortTariffs = createAsyncThunk<
   IShortTariffResponse,
@@ -398,6 +461,15 @@ export const tariffSlice = createSlice({
       state.tariffRegion = "";
       state.citySuggestions = [];
       state.regionSuggestions = [];
+    },
+    setGlobalAddressInputValue(state, action) {
+      state.globalAddressInputValue = action.payload;
+    },
+    setActiveGlobalAddress(state, action) {
+      state.activeGlobalAddress = action.payload;
+    },
+    removeActiveGlobalAddress(state, acton) {
+      state.activeGlobalAddress = "";
     },
     updateCheckedState(state, action: PayloadAction<number>) {
       if (state.checkedState)
@@ -491,6 +563,13 @@ export const tariffSlice = createSlice({
           state.citySuggestions = action.payload;
         }
       )
+      .addCase(createRouteWithHubThunk.pending, (state) => {
+        state.status = "creating city";
+      })
+      .addCase(createRouteWithHubThunk.fulfilled, (state, action) => {
+        state.status = "idle";
+        state.showAddCity = false;
+      })
       .addCase(
         getTariffServicesThunk.fulfilled,
         (state, action: PayloadAction<IService[]>) => {
@@ -555,11 +634,24 @@ export const tariffSlice = createSlice({
       .addCase(editTariff.fulfilled, (state, action) => {
         state.activeTariff = action.payload;
       })
+      .addCase(getGlobalAddressesSuggestion.fulfilled, (state, action) => {
+        state.globalAddressSuggestions = action.payload;
+      })
       .addCase(removeIntercityCity.fulfilled, (state, action) => {
         if (action.payload && state.activeTariff)
           state.activeTariff.intercity_tariff = action.payload;
 
         state.activeCity = null;
+      })
+      .addCase(createRouteWithGlobalAddress.pending, (state) => {
+        state.status = "creating city";
+      })
+      .addCase(createRouteWithGlobalAddress.fulfilled, (state, action) => {
+        if (state.activeTariff) {
+          state.status = "idle";
+          state.activeTariff.intercity_tariff.global_addresses = action.payload;
+          state.showAddCity = false;
+        }
       })
       .addMatcher(isError, (state, action) => {
         state.status = "idle";
@@ -586,6 +678,9 @@ export const {
   updateCheckedState,
   setCheckedState,
   setIsSelectAll,
+  setGlobalAddressInputValue,
+  setActiveGlobalAddress,
+  removeActiveGlobalAddress,
 } = tariffSlice.actions;
 
 export default tariffSlice.reducer;
