@@ -2,19 +2,17 @@ import { useForm } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   editTariffPriceThunk,
-  removeIntercityCity,
-  setActiveCity,
+  removeGlobalAddressRoute,
   setActiveGlobalAddressRoute,
-  setActiveHubRoute,
 } from "../../store/tariffSlice";
 import { CarClass } from "../../types/types";
+import "../addIntercityTariff/AddIntercityTariff.scss";
 import EditSidebarSubmitButtons from "../editSidebarSubmitButtons/EditSidebarSubmitButtons";
 import Modal from "../modal/Modal";
 import TariffCell from "../tariffCell/TariffCell";
 import Button from "../ui/button/Button";
-import "./AddIntercityTariff.scss";
 
-const CityPricesTable = () => {
+const GlobalAddressesTable = () => {
   const dispatch = useAppDispatch();
 
   const {
@@ -24,28 +22,34 @@ const CityPricesTable = () => {
     formState: { errors },
   } = useForm();
 
+  // useEffect(() => {
+  //   return () => {
+  //     dispatch(editTariffPriceThunk(getValues()));
+  //   };
+  // }, []);
+
   const onSubmit = (data: any) => {
     dispatch(editTariffPriceThunk(data));
   };
 
   const carClasses = useAppSelector((state) => state.tariff.carClasses);
-  const cities = useAppSelector(
-    (state) => state.tariff.activeTariff?.intercity_tariff.cities
+  const globalAddresses = useAppSelector(
+    (state) => state.tariff?.activeTariff?.intercity_tariff?.global_addresses
   );
-
-  const activeCity = useAppSelector((state) => state.tariff.activeCity);
   const activeTariff = useAppSelector((state) => state.tariff.activeTariff);
 
+  const activeGlobalAddressRoute = useAppSelector(
+    (state) => state.tariff.activeGlobalAddressRoute
+  );
+
   const setShowModal = () => {
-    dispatch(setActiveCity(null));
     dispatch(setActiveGlobalAddressRoute(null));
-    dispatch(setActiveHubRoute(null));
   };
 
-  if (cities && cities?.length === 0)
+  if (globalAddresses && globalAddresses?.length === 0)
     return (
       <div style={{ textAlign: "center", fontSize: 18, marginTop: 20 }}>
-        Маршруты с городами отсутствуют
+        Маршруты с глобальными адресами отсутствуют
       </div>
     );
 
@@ -63,13 +67,20 @@ const CityPricesTable = () => {
           >
             Тип услуг
           </div>
-          {cities?.map((city) => (
+          {globalAddresses?.map((globalAddress) => (
             <div
               className="fixed-cell-tr"
-              style={{ cursor: "pointer", height: 91, width: 190 }}
-              onClick={() => dispatch(setActiveCity(city))}
+              style={{
+                cursor: "pointer",
+                height: 91,
+                width: 190,
+              }}
+              onClick={() =>
+                dispatch(setActiveGlobalAddressRoute(globalAddress))
+              }
             >
-              {activeTariff?.city?.city} - {city.city.city}
+              {activeTariff?.city?.city} -{" "}
+              {globalAddress.global_address.address.slice(0, 20) + " ..."}
             </div>
           ))}
         </div>
@@ -86,9 +97,9 @@ const CityPricesTable = () => {
           <div>
             <table>
               <tbody className="fixed-conteiner">
-                {cities?.map((city) => (
+                {globalAddresses?.map((globalAddress) => (
                   <tr>
-                    {city.prices.map((price) => (
+                    {globalAddress.prices.map((price) => (
                       <TariffCell
                         register={register}
                         id={price.id}
@@ -109,16 +120,21 @@ const CityPricesTable = () => {
           <EditSidebarSubmitButtons firstTitle="Удалить тариф" />
         </div>
       </form>
-      {activeCity && (
-        <Modal active={Boolean(activeCity)} setActive={setShowModal}>
+
+      {activeGlobalAddressRoute && (
+        <Modal
+          active={Boolean(activeGlobalAddressRoute)}
+          setActive={setShowModal}
+        >
           <div>
             <div>
-              Трансфер: {activeTariff?.city.city} - {activeCity.city.city}
+              Трансфер: {activeTariff?.city.city} -{" "}
+              {activeGlobalAddressRoute.global_address.address}
             </div>
-            <div>Расстояние: {activeCity.distance} км</div>
+            <div>Расстояние: {activeGlobalAddressRoute.distance} км</div>
             <div>
-              Длительность: {activeCity.hours_duration} ч.{" "}
-              {activeCity.minutes_duration} мин
+              Длительность: {activeGlobalAddressRoute.hours_duration} ч.{" "}
+              {activeGlobalAddressRoute.minutes_duration} мин
             </div>
           </div>
           <div>
@@ -132,8 +148,7 @@ const CityPricesTable = () => {
                 backgroundColor: "#DB5454",
               }}
               callback={() => {
-                dispatch(removeIntercityCity());
-                // dispatch(setActiveCity(null));
+                dispatch(removeGlobalAddressRoute());
               }}
             />
           </div>
@@ -143,4 +158,4 @@ const CityPricesTable = () => {
   );
 };
 
-export default CityPricesTable;
+export default GlobalAddressesTable;

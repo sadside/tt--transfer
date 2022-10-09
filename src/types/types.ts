@@ -197,6 +197,7 @@ export interface IHubPrice {
   car_class: string;
   customer_price: number;
   driver_price: number;
+  ru_car_class: string;
 }
 
 export interface IFullZone {
@@ -225,18 +226,9 @@ export interface IIntracityTariff {
   hub_to_prices: IHubToPrice[];
 }
 
-export interface IIntercityCity {
-  id: number;
-  prices: IServicePrice[];
-  city: IHubCity;
-  distance: number;
-  hours_duration: number;
-  minutes_duration: number;
-}
-
 export interface IGlobalAddress {
   id: number;
-  prices: [];
+  prices: IHubPrice[];
   global_address: {
     id: number;
     address: string;
@@ -251,21 +243,13 @@ export interface IGlobalAddress {
   minutes_duration: number;
 
   // {
-  //       "id": 1,
-  //       "prices": [],
-  //       "distance": -1.0,
-  //       "hours_duration": -1,
-  //       "minutes_duration": -1,
-  //       "global_address": {
-  //           "id": 2,
-  //           "addresses": "тут какой-то адрес",
-  //           "coordinate": {
-  //               "id": 1,
-  //               "latitude": 51.767452,
-  //               "longitude": 55.097118
-  //           }
-  //       }
-  //   }
+  // id: number,
+  // prices: Prices[] (не ебу),
+  // distance: number,
+  // hour_duration: number,
+  // minutes_duration: number,
+  // global_address: GlobalAddress (не ебу)
+  // }
 }
 
 export interface ITariff {
@@ -292,12 +276,50 @@ export interface ITariff {
   intracity_tariff: IIntracityTariff;
   intercity_tariff: {
     id: number;
-    cities: IIntercityCity[] | null;
+    cities: IIntercityCity[];
     global_addresses: IGlobalAddress[];
-    hubs: [];
+    hubs: IIntercityHub[];
   };
   lifetime: string;
 }
+
+export interface IIntercityHub {
+  id: number;
+  prices: IHubPrice[];
+  distance: number;
+  hours_duration: number;
+  minutes_duration: number;
+  hub: IFullHub;
+}
+
+// {
+// id: number,
+// prices: Prices[] (не ебу),
+// distance: number,
+// hour_duration: number,
+// minutes_duration: number,
+// hub: Hub (не ебу)
+// }
+
+export interface IIntercityCity {
+  id: number;
+  prices: IServicePrice[];
+  city: IHubCity;
+  distance: number;
+  hours_duration: number;
+  minutes_duration: number;
+  converse: boolean;
+}
+
+// {
+// id: number,
+// prices: Prices[] (не ебу),
+// distance: number,
+// hour_duration: number,
+// minutes_duration: number,
+// converse: bool,
+// city: City (не ебу)
+// }
 
 export type CarClass = {
   title: string;

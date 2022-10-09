@@ -23,7 +23,7 @@ const getHubSuggestionsFx = createEffect<{ string: string }, string[], Error>(
 const createRouteWithHubFx = createEffect<{ hub: string }, any, Error>(
   async ({ hub }) => {
     try {
-      const response = await TariffService.createRouteWithHub(hub);
+      const response = await TariffService.createRouteWithHub(hub, 10);
 
       return response.data;
     } catch (e: any) {
@@ -32,13 +32,46 @@ const createRouteWithHubFx = createEffect<{ hub: string }, any, Error>(
   }
 );
 
+const addCitySidebarChanged = createEvent<boolean>();
+
+const $showAddCitySidebar = createStore(false).on(
+  addCitySidebarChanged,
+  (_, state) => state
+);
+
+const addGlobalAddressSidebarChanged = createEvent<boolean>();
+
+const $showAddGlobalSidebar = createStore(false).on(
+  addGlobalAddressSidebarChanged,
+  (_, state) => state
+);
+
+const addHubSidebarChanged = createEvent<boolean>();
+
+const $showAddHubSidebar = createStore(false).on(
+  addHubSidebarChanged,
+  (_, state) => state
+);
+
 const hubInputChanged = createEvent<string>();
 const suggestionClicked = createEvent<string>();
 
 const $hubInputValue = createStore("");
-const $activeHub = createStore("");
+const $activeHub = createStore("").reset(hubInputChanged);
 const $hubSuggestions = createStore<string[]>([]).reset(
   getHubSuggestionsFx.failData
+);
+
+const globalAddressRouteClicked = createEvent<boolean>();
+const hubClicked = createEvent<boolean>();
+
+const $showGlobalAddressRouteInfo = createStore(false).on(
+  globalAddressRouteClicked,
+  (_, payload) => payload
+);
+const $showHubRouteInfo = createStore(false).on(
+  hubClicked,
+  (_, payload) => payload
 );
 
 sample({
@@ -69,4 +102,14 @@ export {
   $activeHub,
   $hubSuggestions,
   suggestionClicked,
+  $showAddCitySidebar,
+  $showAddGlobalSidebar,
+  $showAddHubSidebar,
+  addGlobalAddressSidebarChanged,
+  addCitySidebarChanged,
+  addHubSidebarChanged,
+  globalAddressRouteClicked,
+  hubClicked,
+  $showGlobalAddressRouteInfo,
+  $showHubRouteInfo,
 };

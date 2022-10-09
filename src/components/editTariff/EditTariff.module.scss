@@ -10,3 +10,8 @@
 	box-sizing: border-box;
 	color: red;
 }
+
+.tablesWrap {
+	height: calc(100vh - 140px);
+	overflow-y: auto;
+}

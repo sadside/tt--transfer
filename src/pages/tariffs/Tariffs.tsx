@@ -1,8 +1,11 @@
+import { useUnit } from "effector-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { log } from "util";
 import ActionMenu from "../../components/actionMenu/ActionMenu";
+import AddGlobalAddress from "../../components/AddGlobalAddress/AddGlobalAddress";
+import AddHub from "../../components/AddHub/AddHub";
 import AddIntercityTariffSidebarContent from "../../components/addIntercityTariffSidebarContent/AddIntercityTariffSidebarContent";
 import AddCity from "../../components/addIntercityTransferSidebarContent/AddCity";
 import BlockHeader from "../../components/blockHeader/BlockHeader";
@@ -23,13 +26,25 @@ import {
   tariffsTableHeaders,
   tariffsTabs,
 } from "../../db";
+import {
+  $showAddCitySidebar,
+  $showAddGlobalSidebar,
+  $showAddHubSidebar,
+  addCitySidebarChanged,
+  addGlobalAddressSidebarChanged,
+  addHubSidebarChanged,
+  hubInputChanged,
+  suggestionClicked,
+} from "../../effector/tariffs/editTariff/editIntercityRoute/editIntercityRoute";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   clearTariff,
   getCarClassesThunk,
   getShortTariffs,
   getTariffByIdThunk,
+  setActiveGlobalAddress,
   setActivePage,
+  setGlobalAddressInputValue,
   setShowAddCity,
   setShowAddTariffSidebar,
   setShowEditTariffSidebar,
@@ -81,7 +96,7 @@ const Tariffs = () => {
     (state) => state.tariff.showEditTariffSidebar
   );
 
-  const showAddCity = useAppSelector((state) => state.tariff.showAddCity);
+  // const showAddCity = useAppSelector((state) => state.tariff.showAddCity);
 
   const status = useAppSelector((state) => state.tariff.status);
   const tariffsPerPage = useAppSelector((state) => state.tariff.tariffsPerPage);
@@ -150,6 +165,22 @@ const Tariffs = () => {
     dispatch(setShowEditTariffSidebar(value));
     dispatch(clearTariff());
   };
+
+  const showAddCity = useUnit($showAddCitySidebar);
+  const showAddGlobalAddress = useUnit($showAddGlobalSidebar);
+  const showAddHub = useUnit($showAddHubSidebar);
+
+  useEffect(() => {
+    dispatch(setGlobalAddressInputValue(""));
+    dispatch(setActiveGlobalAddress(""));
+  }, [showAddGlobalAddress]);
+
+  useEffect(() => {
+    if (!showAddHub) {
+      hubInputChanged("");
+      suggestionClicked("");
+    }
+  }, [showAddHub]);
 
   return (
     <>
@@ -363,9 +394,60 @@ const Tariffs = () => {
           >
             <EditSidebar
               isVisible={showAddCity}
-              toggleSidebar={setShowAddCitySidebar}
+              toggleSidebar={addCitySidebarChanged}
             >
               <AddCity />
+            </EditSidebar>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showAddGlobalAddress && (
+          <motion.div
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: 1070, opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            style={{
+              overflow: "hidden",
+              display: "flex",
+              position: "absolute",
+              top: 0,
+              right: 0,
+              zIndex: 2200,
+            }}
+            transition={{ type: "Tween" }}
+          >
+            <EditSidebar
+              isVisible={showAddGlobalAddress}
+              toggleSidebar={addGlobalAddressSidebarChanged}
+            >
+              <AddGlobalAddress />
+            </EditSidebar>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showAddHub && (
+          <motion.div
+            initial={{ width: 0, opacity: 0 }}
+            animate={{ width: 1070, opacity: 1 }}
+            exit={{ width: 0, opacity: 0 }}
+            style={{
+              overflow: "hidden",
+              display: "flex",
+              position: "absolute",
+              top: 0,
+              right: 0,
+              zIndex: 2200,
+            }}
+            transition={{ type: "Tween" }}
+          >
+            <EditSidebar
+              isVisible={showAddHub}
+              toggleSidebar={addHubSidebarChanged}
+            >
+              <AddHub />
             </EditSidebar>
           </motion.div>
         )}

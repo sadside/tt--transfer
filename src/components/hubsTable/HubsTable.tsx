@@ -2,19 +2,17 @@ import { useForm } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import {
   editTariffPriceThunk,
-  removeIntercityCity,
-  setActiveCity,
-  setActiveGlobalAddressRoute,
+  removeHubRoute,
   setActiveHubRoute,
 } from "../../store/tariffSlice";
 import { CarClass } from "../../types/types";
+import "../addIntercityTariff/AddIntercityTariff.scss";
 import EditSidebarSubmitButtons from "../editSidebarSubmitButtons/EditSidebarSubmitButtons";
 import Modal from "../modal/Modal";
 import TariffCell from "../tariffCell/TariffCell";
 import Button from "../ui/button/Button";
-import "./AddIntercityTariff.scss";
 
-const CityPricesTable = () => {
+const HubsTable = () => {
   const dispatch = useAppDispatch();
 
   const {
@@ -29,23 +27,22 @@ const CityPricesTable = () => {
   };
 
   const carClasses = useAppSelector((state) => state.tariff.carClasses);
-  const cities = useAppSelector(
-    (state) => state.tariff.activeTariff?.intercity_tariff.cities
-  );
 
-  const activeCity = useAppSelector((state) => state.tariff.activeCity);
+  const hubs = useAppSelector(
+    (state) => state.tariff?.activeTariff?.intercity_tariff?.hubs
+  );
   const activeTariff = useAppSelector((state) => state.tariff.activeTariff);
 
+  const activeHubRoute = useAppSelector((state) => state.tariff.activeHubRoute);
+
   const setShowModal = () => {
-    dispatch(setActiveCity(null));
-    dispatch(setActiveGlobalAddressRoute(null));
     dispatch(setActiveHubRoute(null));
   };
 
-  if (cities && cities?.length === 0)
+  if (hubs && hubs?.length === 0)
     return (
       <div style={{ textAlign: "center", fontSize: 18, marginTop: 20 }}>
-        Маршруты с городами отсутствуют
+        Маршруты с хабами отсутствуют
       </div>
     );
 
@@ -63,13 +60,13 @@ const CityPricesTable = () => {
           >
             Тип услуг
           </div>
-          {cities?.map((city) => (
+          {hubs?.map((hub) => (
             <div
               className="fixed-cell-tr"
               style={{ cursor: "pointer", height: 91, width: 190 }}
-              onClick={() => dispatch(setActiveCity(city))}
+              onClick={() => dispatch(setActiveHubRoute(hub))}
             >
-              {activeTariff?.city?.city} - {city.city.city}
+              {activeTariff?.city?.city} - {hub.hub.title}
             </div>
           ))}
         </div>
@@ -86,14 +83,14 @@ const CityPricesTable = () => {
           <div>
             <table>
               <tbody className="fixed-conteiner">
-                {cities?.map((city) => (
+                {hubs?.map((city) => (
                   <tr>
-                    {city.prices.map((price) => (
+                    {city.prices.map((hub) => (
                       <TariffCell
                         register={register}
-                        id={price.id}
-                        driverPrice={price.driver_price}
-                        customerPrice={price.customer_price}
+                        id={hub.id}
+                        driverPrice={hub.driver_price}
+                        customerPrice={hub.customer_price}
                         setValue={setValue}
                         errors={errors}
                       />
@@ -109,16 +106,17 @@ const CityPricesTable = () => {
           <EditSidebarSubmitButtons firstTitle="Удалить тариф" />
         </div>
       </form>
-      {activeCity && (
-        <Modal active={Boolean(activeCity)} setActive={setShowModal}>
+
+      {activeHubRoute && (
+        <Modal active={Boolean(activeHubRoute)} setActive={setShowModal}>
           <div>
             <div>
-              Трансфер: {activeTariff?.city.city} - {activeCity.city.city}
+              Трансфер: {activeTariff?.city.city} - {activeHubRoute.hub.title}
             </div>
-            <div>Расстояние: {activeCity.distance} км</div>
+            <div>Расстояние: {activeHubRoute.distance} км</div>
             <div>
-              Длительность: {activeCity.hours_duration} ч.{" "}
-              {activeCity.minutes_duration} мин
+              Длительность: {activeHubRoute.hours_duration} ч.{" "}
+              {activeHubRoute.minutes_duration} мин
             </div>
           </div>
           <div>
@@ -132,8 +130,7 @@ const CityPricesTable = () => {
                 backgroundColor: "#DB5454",
               }}
               callback={() => {
-                dispatch(removeIntercityCity());
-                // dispatch(setActiveCity(null));
+                dispatch(removeHubRoute());
               }}
             />
           </div>
@@ -143,4 +140,4 @@ const CityPricesTable = () => {
   );
 };
 
-export default CityPricesTable;
+export default HubsTable;

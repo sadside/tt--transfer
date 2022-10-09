@@ -5,6 +5,11 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { reject } from "lodash";
+import {
+  addCitySidebarChanged,
+  addGlobalAddressSidebarChanged,
+  addHubSidebarChanged,
+} from "../effector/tariffs/editTariff/editIntercityRoute/editIntercityRoute";
 import $api from "../http";
 import { TariffService } from "../services/TariffService";
 import {
@@ -16,6 +21,7 @@ import {
   IInitialGlobalAddress,
   IInitialTariff,
   IIntercityCity,
+  IIntercityHub,
   IRegion,
   IService,
   IShortTariff,
@@ -53,6 +59,8 @@ export type TariffState = {
   globalAddressSuggestions: string[];
   globalAddressInputValue: string;
   activeGlobalAddress: string;
+  activeGlobalAddressRoute: IGlobalAddress | null;
+  activeHubRoute: IIntercityHub | null;
 };
 
 const initialState: TariffState = {
@@ -85,6 +93,8 @@ const initialState: TariffState = {
   globalAddressSuggestions: ["Кушкули", "Пригордный"],
   globalAddressInputValue: "",
   activeGlobalAddress: "",
+  activeGlobalAddressRoute: null,
+  activeHubRoute: null,
 };
 
 export const getRegionSuggestionsThunk = createAsyncThunk<
@@ -354,6 +364,53 @@ export const removeIntercityCity = createAsyncThunk<
   }
 });
 
+export const removeGlobalAddressRoute = createAsyncThunk<
+  any | undefined,
+  undefined,
+  { rejectValue: string; state: { tariff: TariffState } }
+>(
+  "tariff/removeGlobalAddressRoute",
+  async (_, { rejectWithValue, getState }) => {
+    try {
+      const tariffId = getState().tariff.activeTariff?.id;
+      const intercityId = getState().tariff.activeGlobalAddressRoute?.id;
+
+      if (tariffId && intercityId) {
+        const response = await TariffService.deleteGlobalAddressRoute(
+          tariffId,
+          intercityId
+        );
+
+        return response.data;
+      }
+    } catch (e: any) {
+      return rejectWithValue(e.message());
+    }
+  }
+);
+
+export const removeHubRoute = createAsyncThunk<
+  any | undefined,
+  undefined,
+  { rejectValue: string; state: { tariff: TariffState } }
+>("tariff/removeHubRoute", async (_, { rejectWithValue, getState }) => {
+  try {
+    const tariffId = getState().tariff.activeTariff?.id;
+    const intercityId = getState().tariff.activeHubRoute?.id;
+
+    if (tariffId && intercityId) {
+      const response = await TariffService.deleteHubRoute(
+        tariffId,
+        intercityId
+      );
+
+      return response.data;
+    }
+  } catch (e: any) {
+    return rejectWithValue(e.message());
+  }
+});
+
 export const createRouteWithGlobalAddress = createAsyncThunk<
   any,
   string,
@@ -362,23 +419,26 @@ export const createRouteWithGlobalAddress = createAsyncThunk<
       tariff: TariffState;
     };
   }
->("tariff/createRouteWithGlobalAddress", async (data, { getState }) => {
-  const id = getState().tariff.activeTariff?.id;
+>(
+  "tariff/createRouteWithGlobalAddress",
+  async (data, { getState, rejectWithValue }) => {
+    const id = getState().tariff.activeTariff?.id;
 
-  try {
-    if (id) {
-      const response = await TariffService.createRouteWithGlobalAddress(
-        data,
-        id
-      );
+    try {
+      if (id) {
+        const response = await TariffService.createRouteWithGlobalAddress(
+          data,
+          id
+        );
 
-      return response.data;
+        return response.data;
+      }
+    } catch (e: any) {
+      alert(e.response.data.detail);
+      return rejectWithValue("error");
     }
-  } catch (e: any) {
-    // alert(e.response.data);
-    console.log(e.response);
   }
-});
+);
 
 export const createGlobalAddressThunk = createAsyncThunk<
   void,
@@ -395,15 +455,24 @@ export const createGlobalAddressThunk = createAsyncThunk<
   alert(response.data.detail);
 });
 
-export const createRouteWithHubThunk = createAsyncThunk<any, string>(
+export const createRouteWithHubThunk = createAsyncThunk<
+  any,
+  string,
+  { state: { tariff: TariffState } }
+>(
   "tariff/createRouteWithHubThunk",
-  async (hub) => {
-    try {
-      const response = await TariffService.createRouteWithHub(hub);
+  async (hub, { getState, rejectWithValue }) => {
+    const id = getState().tariff.activeTariff?.id;
 
-      return response.data;
+    try {
+      if (id) {
+        const response = await TariffService.createRouteWithHub(hub, id);
+
+        return response.data;
+      }
     } catch (e: any) {
-      alert(e.response.data);
+      alert(e.response.data.detail);
+      return rejectWithValue("already created");
     }
   }
 );
@@ -550,6 +619,12 @@ export const tariffSlice = createSlice({
     setActiveCity(state, action) {
       state.activeCity = action.payload;
     },
+    setActiveGlobalAddressRoute(state, action) {
+      state.activeGlobalAddressRoute = action.payload;
+    },
+    setActiveHubRoute(state, action) {
+      state.activeHubRoute = action.payload;
+    },
     setTariffsPerPage(state, action) {
       state.tariffsPerPage = action.payload;
     },
@@ -587,6 +662,8 @@ export const tariffSlice = createSlice({
       .addCase(createRouteWithHubThunk.fulfilled, (state, action) => {
         state.status = "idle";
         state.showAddCity = false;
+        state.activeTariff = action.payload;
+        addHubSidebarChanged(false);
       })
       .addCase(
         getTariffServicesThunk.fulfilled,
@@ -639,6 +716,7 @@ export const tariffSlice = createSlice({
       .addCase(createIntercityCityThunk.fulfilled, (state, action) => {
         state.status = "idle";
         state.activeTariff = action.payload;
+        addCitySidebarChanged(false);
       })
       .addCase(deleteTariffThunk.fulfilled, (state, action) => {
         state.activeTariff = null;
@@ -661,6 +739,18 @@ export const tariffSlice = createSlice({
 
         state.activeCity = null;
       })
+      .addCase(removeGlobalAddressRoute.fulfilled, (state, action) => {
+        if (action.payload && state.activeTariff)
+          state.activeTariff.intercity_tariff = action.payload;
+
+        state.activeGlobalAddressRoute = null;
+      })
+      .addCase(removeHubRoute.fulfilled, (state, action) => {
+        if (action.payload && state.activeTariff)
+          state.activeTariff.intercity_tariff = action.payload;
+
+        state.activeHubRoute = null;
+      })
       .addCase(createRouteWithGlobalAddress.pending, (state) => {
         state.status = "creating city";
       })
@@ -669,11 +759,15 @@ export const tariffSlice = createSlice({
           state.status = "idle";
           state.activeTariff = action.payload;
           state.showAddCity = false;
+          addGlobalAddressSidebarChanged(false);
         }
+      })
+      .addCase(createRouteWithGlobalAddress.rejected, (state) => {
+        state.activeGlobalAddress = "";
+        state.globalAddressInputValue = "";
       })
       .addMatcher(isError, (state, action) => {
         state.status = "idle";
-        state.error = action.payload;
       });
   },
 });
@@ -699,6 +793,8 @@ export const {
   setGlobalAddressInputValue,
   setActiveGlobalAddress,
   removeActiveGlobalAddress,
+  setActiveGlobalAddressRoute,
+  setActiveHubRoute,
 } = tariffSlice.actions;
 
 export default tariffSlice.reducer;
