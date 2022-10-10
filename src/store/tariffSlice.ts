@@ -4,7 +4,6 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import { reject } from "lodash";
 import {
   addCitySidebarChanged,
   addGlobalAddressSidebarChanged,
@@ -14,15 +13,11 @@ import $api from "../http";
 import { TariffService } from "../services/TariffService";
 import {
   CarClass,
-  ICity,
   IGlobalAddress,
-  IHub,
   IHubToPrice,
   IInitialGlobalAddress,
   IInitialTariff,
-  IIntercityCity,
   IIntercityHub,
-  IRegion,
   IService,
   IShortTariff,
   IShortTariffResponse,
@@ -192,11 +187,19 @@ export const createIntercityCityThunk = createAsyncThunk<
   }
 >(
   "tariff/createIntercityCity",
-  async ({ region, city }, { getState, rejectWithValue, dispatch }) => {
+  async (
+    { region, city, converse },
+    { getState, rejectWithValue, dispatch }
+  ) => {
     const id = getState().tariff.activeTariff?.id;
 
     try {
-      const response = await TariffService.createCity(id, region, city);
+      const response = await TariffService.createCity(
+        id,
+        region,
+        city,
+        converse
+      );
 
       dispatch(setShowAddCity({ value: false }));
 

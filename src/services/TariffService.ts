@@ -1,9 +1,7 @@
-import axios, { AxiosResponse } from "axios";
 import $api from "../http";
 import {
   CarClass,
   IGlobalAddress,
-  IInitialGlobalAddress,
   IInitialTariff,
   IIntercityCity,
   IService,
@@ -131,10 +129,11 @@ export class TariffService {
     });
   }
 
-  static createCity(id: any, region: string, city: string) {
+  static createCity(id: any, region: string, city: string, converse: boolean) {
     return $api.post(`tariffs/tariff/${id}/intercity/city/`, {
       region,
       city,
+      converse,
     });
   }
 
