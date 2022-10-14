@@ -1,7 +1,20 @@
+import { useToast } from "@chakra-ui/react";
 import { nanoid } from "@reduxjs/toolkit";
 import axios from "axios";
-import { FC, useState } from "react";
+import { useUnit } from "effector-react";
+import { ChangeEvent, FC, useState } from "react";
+import rightArrow from "../../assets/rightArrow.svg";
 import { carsClasses } from "../../db";
+import {
+  $activeCity,
+  $activeRegion,
+  $cityInputValue,
+  $citySuggestions,
+  $regionInputValue,
+  $regionSuggestions,
+  cityInputChanged,
+  regionInputChanged,
+} from "../../effector/calculator/calculatorLocation";
 import { API } from "../../http";
 import {
   addAdditionalRace,
@@ -10,11 +23,9 @@ import {
   setActiveAddressFrom,
   setActiveAddressTo,
   setActiveFromHub,
-  setActiveHub,
   setActiveToHub,
   setAddressFromType,
   setAddressToType,
-  setShowModal,
 } from "../../store/calculatorSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { getSuggestions } from "../../store/zoneSlice";
@@ -24,13 +35,9 @@ import EditAddress from "../editAddress/EditAddress";
 import Modal from "../modal/Modal";
 import Select from "../select/Select";
 import Button from "../ui/button/Button";
-import lodash from "lodash";
 import styles from "./Routes.module.scss";
-import rightArrow from "../../assets/rightArrow.svg";
 
 const Routes: FC = () => {
-  const activeRegion = useAppSelector((state) => state.calculator.activeRegion);
-  const activeCity = useAppSelector((state) => state.calculator.activeCity);
   const hubs = useAppSelector((state) => state.calculator.hubs);
   const activeHubTo = useAppSelector((state) => state.calculator.activeToHub);
   const additionalRaces = useAppSelector(
@@ -162,6 +169,23 @@ const Routes: FC = () => {
     setAdditionalRacesValue("");
   };
 
+  const regionInputHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    regionInputChanged(e.target.value);
+  };
+
+  const cityInputHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    cityInputChanged(e.target.value);
+  };
+
+  const regionInputValue = useUnit($regionInputValue);
+  const cityInputValue = useUnit($cityInputValue);
+
+  const regionSuggestions = useUnit($regionSuggestions);
+  const citySuggestions = useUnit($citySuggestions);
+
+  const activeRegion = useUnit($activeRegion);
+  const activeCity = useUnit($activeCity);
+
   const coordinatesTo = activeHubTo.id
     ? `&lat=${activeHubTo.coordinate.latitude}&lon=${activeHubTo.coordinate.longitude}`
     : `&lat=${activeAddressTo.coordinates.lat}&lon=${activeAddressTo.coordinates.lon}`;
@@ -170,6 +194,8 @@ const Routes: FC = () => {
     coordinatesTo.indexOf("null") === -1 &&
     coordinatesFrom.indexOf("null") === -1;
 
+  const toast = useToast();
+
   const iframeCoords: string = additionalRaces
     .map((item: IAdditionalRace) => {
       if (item.coordinates.length !== 0) {
@@ -177,10 +203,6 @@ const Routes: FC = () => {
       }
     })
     .join("");
-
-  if (!activeCity || !activeRegion) {
-    return <div>Введите город и регион в разделе "Зонирование"</div>;
-  }
 
   return (
     <div className={styles.mainWrap}>
@@ -356,6 +378,20 @@ const Routes: FC = () => {
               )}
           </div>
         </div>
+        <button
+          onClick={() => {
+            toast({
+              title: "Илья долбаеб",
+              description: "Описание и хули ты здесь хочешь увидеть",
+              status: "success",
+              position: "top-right",
+              duration: 2000,
+              isClosable: true,
+            });
+          }}
+        >
+          toast
+        </button>
         <div className="calculator-additional-inputs">
           <div>
             <span style={{ color: "red" }}>*</span>Дополнительные заезды

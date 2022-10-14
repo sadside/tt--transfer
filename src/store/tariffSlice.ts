@@ -719,7 +719,7 @@ export const tariffSlice = createSlice({
       .addCase(createIntercityCityThunk.fulfilled, (state, action) => {
         state.status = "idle";
         state.activeTariff = action.payload;
-        addCitySidebarChanged(false);
+        addCitySidebarChanged(false); //effector's event
       })
       .addCase(deleteTariffThunk.fulfilled, (state, action) => {
         state.activeTariff = null;

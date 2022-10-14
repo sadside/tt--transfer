@@ -1,17 +1,8 @@
-import { YMaps } from "@pbe/react-yandex-maps";
-import { useGate, useStore } from "effector-react";
-import { useState } from "react";
-import { Provider, useDispatch, useSelector } from "react-redux";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { Route, Routes } from "react-router-dom";
 import Moderation from "./components/moderation/Moderation";
-import { Role } from "./context";
-import {
-  $authFailed,
-  $isAuth,
-  appMounted,
-  checkAuthFx,
-  userNotAuthorized,
-} from "./effector/user/authorization";
+import { checkAuthFx, userNotAuthorized } from "./effector/user/authorization";
+import RequireAuth from "./hoc/RequireAuth";
 import RequireNotAuth from "./hoc/RequireNotAuth";
 import RequireRoleClient from "./hoc/RequireRoleClient";
 import RequireRoleManager from "./hoc/RequireRoleManager";
@@ -29,8 +20,6 @@ import Register from "./pages/register/Register";
 import Request from "./pages/requests/Request";
 import Success from "./pages/success/Success";
 import Tariffs from "./pages/tariffs/Tariffs";
-import RequireAuth from "./hoc/RequireAuth";
-import { useEffect } from "react";
 
 function App() {
   useEffect(() => {
@@ -40,6 +29,8 @@ function App() {
       userNotAuthorized();
     }
   }, []);
+
+  console.log("render");
 
   return (
     <>

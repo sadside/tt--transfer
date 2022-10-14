@@ -2,7 +2,6 @@ import { useUnit } from "effector-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { log } from "util";
 import ActionMenu from "../../components/actionMenu/ActionMenu";
 import AddGlobalAddress from "../../components/AddGlobalAddress/AddGlobalAddress";
 import AddHub from "../../components/AddHub/AddHub";
@@ -12,20 +11,12 @@ import BlockHeader from "../../components/blockHeader/BlockHeader";
 import EditSidebar from "../../components/editSidebar/EditSidebar";
 import EditTariff from "../../components/editTariff/EditTariff";
 import Loader from "../../components/loader/Loader";
-import MainTable from "../../components/mainTable/MainTable";
 import MainTableTariffs from "../../components/mainTableTariffs/MainTableTariffs";
 import Pagination from "../../components/pagination/Pagination";
 import SmartFilterTariff from "../../components/smartFilter/SmartFilterTariff";
 import Tabs from "../../components/tabs/Tabs";
-import "./tariffs.scss";
-import TariffsEditSidebarContent from "../../components/tariffsEditSidebarContent/TariffsEditSidebarContent";
 import HubInfo from "../../components/tariffsEditSidebarTransfersContent/HubInfo";
-import {
-  tariffsFilterData,
-  tariffsTableBody,
-  tariffsTableHeaders,
-  tariffsTabs,
-} from "../../db";
+import { tariffsFilterData, tariffsTableBody, tariffsTabs } from "../../db";
 import {
   $showAddCitySidebar,
   $showAddGlobalSidebar,
@@ -41,7 +32,6 @@ import {
   clearTariff,
   getCarClassesThunk,
   getShortTariffs,
-  getTariffByIdThunk,
   setActiveGlobalAddress,
   setActivePage,
   setGlobalAddressInputValue,
@@ -51,6 +41,7 @@ import {
   setShowZoneSidebar,
   setTariffsPerPage,
 } from "../../store/tariffSlice";
+import "./tariffs.scss";
 
 const Tariffs = () => {
   const dispatch = useAppDispatch();
@@ -213,17 +204,7 @@ const Tariffs = () => {
             </motion.div>
           )}
         </AnimatePresence>
-        {/*<MainTable*/}
-        {/*  headers={tariffsTableHeaders}*/}
-        {/*  body={currentCountry}*/}
-        {/*  haveInputs={true}*/}
-        {/*  handleShowActionMenu={handleShowActionMenu}*/}
-        {/*  setShowEditSidebar={() => setShowEditSidebar(true)}*/}
-        {/*  activeTab={0}*/}
-        {/*  setOnlyOneSelected={setOnlyOneSelected}*/}
-        {/*  handleShowActionMenuArchive={() => console.log("show")}*/}
-        {/*/>*/}
-        {status == "tariffs loading" ? (
+        {status === "tariffs loading" ? (
           <Loader />
         ) : (
           <div>

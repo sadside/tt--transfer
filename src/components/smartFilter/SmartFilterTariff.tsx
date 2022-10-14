@@ -1,8 +1,8 @@
-import "./smartFilter.scss";
 import { useGate, useUnit } from "effector-react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent } from "react";
 import { useSearchParams } from "react-router-dom";
+import downArrowSelect from "../../assets/downArrow.svg";
 import {
   $activeCity,
   $activeRegion,
@@ -10,7 +10,6 @@ import {
   $citySuggestions,
   $regionInputValue,
   $regionSuggestions,
-  // addressGate,
   cityInputChanged,
   citySuggestionClicked,
   regionInputChanged,
@@ -22,7 +21,6 @@ import {
   $tariffCommission,
   $tariffType,
   activeSelectChanged,
-  commissionInputChanged,
   selectChanged,
 } from "../../effector/tariffs/smartFilter/tariffSmartFilter";
 import useOutside from "../../hooks/useOutside";
@@ -30,8 +28,8 @@ import { useAppDispatch } from "../../store/hooks";
 import { getShortTariffs } from "../../store/tariffSlice";
 import CustomSelect from "../customSelect/CustomSelect";
 import Button from "../ui/button/Button";
+import "./smartFilter.scss";
 import styles from "./SmartFilterTariff.module.scss";
-import downArrowSelect from "../../assets/downArrow.svg";
 
 interface SmartFilterTariffProps {
   filterData?: any[];
@@ -121,13 +119,6 @@ const SmartFilterTariff = ({
   return (
     <div className="smart-filter-wrap-1">
       <div className={"smart-filter-wrap"}>
-        <div></div>
-        {/*<div className="filter-item">*/}
-        {/*  <div className="filter-title">Регион</div>*/}
-        {/*  <div className="filter-value">*/}
-        {/*    <input type="text" className={"filter-input"} />*/}
-        {/*  </div>*/}
-        {/*</div>*/}
         <label>
           <span className="required">*</span>Регион
           <input
@@ -208,45 +199,39 @@ const SmartFilterTariff = ({
             )}
           </AnimatePresence>
         </label>
-        <div style={{ width: 300 }}>
-          <label>
-            <div
-              className="tariff-select-currency"
-              ref={refType}
-              style={{ marginTop: 20 }}
-            >
-              <div>
-                <div style={{ color: "#000" }}>
-                  <span className="required">*</span>Тип
-                </div>
-                <div
-                  className="tariff-data-select"
-                  onClick={() => setIsShowType(!isShowType)}
-                >
-                  <div>{tariffType}</div>
-                  <img src={downArrowSelect} alt="" />
-                </div>
+        <label>
+          <div className={styles.smartFilterSelectCurrency} ref={refType}>
+            <div>
+              <div style={{ color: "#000" }}>
+                <span className="required">*</span>Тип
               </div>
-              <CustomSelect
-                items={selectItemsType}
-                isVisible={isShowType}
-                setItem={selectTypeHandler}
-                setVisible={setIsShowType}
-                showAll={false}
-              />
+              <div
+                className="tariff-data-select"
+                onClick={() => setIsShowType(!isShowType)}
+              >
+                <div>{tariffType}</div>
+                <img src={downArrowSelect} alt="" />
+              </div>
             </div>
+            <CustomSelect
+              items={selectItemsType}
+              isVisible={isShowType}
+              setItem={selectTypeHandler}
+              setVisible={setIsShowType}
+              showAll={false}
+            />
+          </div>
+        </label>
+        {tariffType === "Для компаний" && (
+          <label>
+            <span className="required">*</span>Компания
+            <input
+              type="text"
+              className="tariff-data-input"
+              placeholder="Введите компанию"
+            />
           </label>
-          {tariffType === "Для компаний" && (
-            <label>
-              <span className="required">*</span>Компания
-              <input
-                type="text"
-                className="tariff-data-input"
-                placeholder="Введите компанию"
-              />
-            </label>
-          )}
-        </div>
+        )}
         {/*<div style={{ marginTop: 20, marginLeft: 40 }}>*/}
         {/*  {tariffType === "Комиссионный" && (*/}
         {/*    <label>*/}
@@ -264,35 +249,29 @@ const SmartFilterTariff = ({
         {/*  )}*/}
         {/*</div>*/}
 
-        <div style={{ width: 300, marginLeft: 40 }}>
-          <label>
-            <div
-              className="tariff-select-currency"
-              ref={refActive}
-              style={{ marginTop: 20 }}
-            >
+        <label>
+          <div className={styles.smartFilterSelectCurrency} ref={refActive}>
+            <div>
               <div>
-                <div>
-                  <span className="required">*</span>Активный
-                </div>
-                <div
-                  className="tariff-data-select"
-                  onClick={() => setIsShowActive(!isShowActive)}
-                >
-                  <div>{tariffActive}</div>
-                  <img src={downArrowSelect} alt="" />
-                </div>
+                <span className="required">*</span>Активный
               </div>
-              <CustomSelect
-                items={selectItemsActive}
-                isVisible={isShowActive}
-                setItem={selectActiveHandler}
-                setVisible={setIsShowActive}
-                showAll={false}
-              />
+              <div
+                className="tariff-data-select"
+                onClick={() => setIsShowActive(!isShowActive)}
+              >
+                <div>{tariffActive}</div>
+                <img src={downArrowSelect} alt="" />
+              </div>
             </div>
-          </label>
-        </div>
+            <CustomSelect
+              items={selectItemsActive}
+              isVisible={isShowActive}
+              setItem={selectActiveHandler}
+              setVisible={setIsShowActive}
+              showAll={false}
+            />
+          </div>
+        </label>
       </div>
 
       <div className="filter-button-wrap">

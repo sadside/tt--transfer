@@ -1,4 +1,5 @@
 import axios from "axios";
+import { userNotAuthorized } from "../effector/user/authorization";
 
 export const API_URL = "http://localhost:8000/api/";
 // export const API_URL = "https://admin.tt-crm.ru/api/";
@@ -40,7 +41,7 @@ $api.interceptors.response.use(
         return $api.request(originalRequest);
       } catch (e) {
         if (e.response.status === 400) {
-          window.location.href = "/login";
+          userNotAuthorized();
         }
       }
     }

@@ -71,6 +71,10 @@ export const checkAuthFx = createEffect<undefined, IUser>(async () => {
   }
 });
 
+const clearLocalStorageFx = createEffect(() => {
+  localStorage.removeItem("token");
+});
+
 export const logoutFx = createEffect(async () => {
   await UserServices.logout();
 
@@ -126,16 +130,20 @@ sample({
 sample({
   clock: registrationFx.doneData,
   source: $user,
-  fn: (user: IFullUser) => ({
+  target: getTokenFx.prepend((user: IFullUser) => ({
     email: user.email || "",
     password: user.password || "",
-  }),
-  target: getTokenFx,
+  })),
 });
 
 forward({
   from: getTokenFx.doneData,
   to: checkAuthFx,
+});
+
+sample({
+  clock: userNotAuthorized,
+  target: clearLocalStorageFx,
 });
 
 export const $isAuth = createStore(false)
