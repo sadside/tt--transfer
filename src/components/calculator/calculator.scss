@@ -1,7 +1,8 @@
 .calculator-wrap {
 	padding: 0 18px 48px 18px;
 	height: calc(100vh - 180px);
-	overflow-y: auto;
+//	overflow-y: auto;
+	overflow-y: scroll;
 }
 
 .calculator-inputs {

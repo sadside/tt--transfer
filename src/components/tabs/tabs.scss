@@ -3,18 +3,19 @@
 	background-color: #EEF1F5;
 	
 	.tab-item {
-		padding: 10px 20px;
-		border-radius: 3px 3px 0 0;
-		border: 1px solid #EEF1F5;
-		cursor: pointer;
-		position: relative;
-		outline-offset: -2px;
-		font-weight: 400;
+		padding: 10px 20px !important;
+		border-radius: 3px 3px 0 0 !important;
+//		border: 2px solid #EEF1F5 !important;
+		cursor: pointer !important;
+		position: relative !important;
+		font-weight: 400 !important;
+		margin: 0 !important;
 	}
 	
 	.active-tab {
 		background-color: #ffffff;
-		border: 1px solid rgba(216, 216, 216, 0.8);
+//		border: 1px solid rgba(216, 216, 216, 0.8);
+		box-sizing: border-box;
 	}
 	
 	.tab-indicator {

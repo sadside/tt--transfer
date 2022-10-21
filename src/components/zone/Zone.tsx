@@ -1,14 +1,7 @@
 import classNames from "classnames";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Interface } from "readline";
-import {
-  deleteZone,
-  deleteZoneThunk,
-  editZone,
-  editZoneThunk,
-} from "../../store/zoneSlice";
-import deleteZoneIcon from "../../assets/deleteZone.svg";
+import { deleteZoneThunk, editZoneThunk } from "../../store/zoneSlice";
 
 import styles from "./Zone.module.scss";
 
@@ -113,7 +106,8 @@ const Zone: React.FC<ZoneProps> = ({
         </div>
       )}
       <div className={styles.deleteZoneBtn} onClick={removeZone}>
-        <img src={deleteZoneIcon} alt="" />
+        {/*<img src={deleteZoneIcon} alt="Удалить" height={30} />*/}
+        Удалить
       </div>
     </div>
   );

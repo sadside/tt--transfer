@@ -1,5 +1,5 @@
-import { useToast } from "@chakra-ui/react";
 import { nanoid } from "@reduxjs/toolkit";
+import { notification } from "antd";
 import axios from "axios";
 import { useUnit } from "effector-react";
 import { ChangeEvent, FC, useState } from "react";
@@ -194,8 +194,6 @@ const Routes: FC = () => {
     coordinatesTo.indexOf("null") === -1 &&
     coordinatesFrom.indexOf("null") === -1;
 
-  const toast = useToast();
-
   const iframeCoords: string = additionalRaces
     .map((item: IAdditionalRace) => {
       if (item.coordinates.length !== 0) {
@@ -291,7 +289,17 @@ const Routes: FC = () => {
                 </div>
               )}
           </div>
-          <img src={rightArrow} alt="" />
+          <img
+            src={rightArrow}
+            alt=""
+            onClick={() => {
+              notification["success"]({
+                message: "Notification Title",
+                description:
+                  "This is the content of the notification. This is the content of the notification. This is the content of the notification.",
+              });
+            }}
+          />
           <div className="to-calculator">
             <Select
               setShowSelect={setShowSecondSelect}
@@ -378,20 +386,6 @@ const Routes: FC = () => {
               )}
           </div>
         </div>
-        <button
-          onClick={() => {
-            toast({
-              title: "Илья долбаеб",
-              description: "Описание и хули ты здесь хочешь увидеть",
-              status: "success",
-              position: "top-right",
-              duration: 2000,
-              isClosable: true,
-            });
-          }}
-        >
-          toast
-        </button>
         <div className="calculator-additional-inputs">
           <div>
             <span style={{ color: "red" }}>*</span>Дополнительные заезды

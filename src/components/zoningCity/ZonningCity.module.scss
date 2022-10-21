@@ -1,0 +1,311 @@
+.howToUse {
+	padding: 0 30px;
+	background-color: #db5454;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	font-size: 16px;
+	height: 100px;
+	border-radius: 3px;
+	a {
+		color: #000000;
+	}
+}
+.calculatorTitle {
+	font-size: 28px;
+	text-align: center;
+	margin-bottom: 30px;
+}
+
+.addZone {
+	display: flex;
+	margin-top: 15px;
+}
+
+.coords {
+	height: 40px;
+	outline: none;
+	border: none;
+	padding-left: 17px;
+	box-sizing: border-box;
+	font-weight: 400;
+	font-size: 16px;
+	flex-grow: 1;
+	background: #e8e8e8;
+	border-bottom-left-radius: 3px;
+	border-top-left-radius: 3px;
+}
+.selectZone {
+	font-weight: 400;
+	height: 40px;
+	display: flex;
+	align-items: center;
+	position: relative;
+	justify-content: center;
+	width: 150px;
+	flex-grow: 0;
+	cursor: pointer;
+	background-color: #e8e8e8;
+}
+
+.selectZoneItem {
+	position: absolute;
+	top: 65px;
+	left: 0;
+	width: 100%;
+	height: 120px;
+	background-color: #fff;
+	border-radius: 3px;
+	box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.25);
+}
+.addZoneBtn {
+	width: 150px;
+	cursor: pointer;
+	border: none;
+	background-color: #8dc73f;
+	color: #ffffff;
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+}
+
+.colorItem {
+	height: 40px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	div {
+		height: 15px;
+		width: 15px;
+		border-radius: 100%;
+		background-color: red;
+	}
+
+	&:hover {
+		background-color: #ccc;
+	}
+}
+
+
+
+.green {
+	color: #8dc73f !important;
+}
+
+.blue {
+	color: #337ab7 !important;
+}
+.red {
+	color: #db5454 !important;
+}
+.yellow {
+	color: yellow;
+}
+.calculatorSubTitle {
+	font-weight: 300;
+	font-size: 28px;
+	margin: 24px 0 0 0;
+}
+
+.zones {
+//	max-height: calc(100vh - 800px);
+	min-height: 40px;
+	max-height: 225px;
+	overflow-y: auto;
+}
+
+.transferCalculatorWrap {
+	margin-top: 50px;
+	background: #C9D2E0;
+	border-radius: 3px;
+//	height: calc(100vh - 740px);
+	padding: 40px;
+	box-sizing: border-box;
+}
+
+.selectZoneColorBlock {
+	background-color: #e8e8e8;
+	height: 100%;
+	display: flex;
+	img {
+		flex: 0 0;
+		margin-left: 10px;
+		margin-top: 1px;
+	}
+	align-items: center;
+	padding-right: 15px;
+	cursor: pointer;
+}
+.selectZoneColor {
+	position: relative;
+}
+
+.selectZoneColorMenu {
+	position: absolute;
+	top: 30px;
+	left: 0;
+	width: calc(100% - 15px);
+	box-sizing: border-box;
+	background: #E8E8E8;
+	border: 1px solid #D9D9D9;
+	border-radius: 3px;
+	z-index: 4500;
+	padding: 5px 13px;
+}
+
+.selectZoneColorMenuItem {
+	display: flex;
+	cursor: pointer;
+	height: 30px;
+	align-items: center;
+}
+
+.zoneIndicatorGreen {
+	border-radius: 100%;
+	background-color: #8DC73F;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+.zoneIndicatorBlue {
+	border-radius: 100%;
+	background: #337AB7;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+.zoneIndicatorRed {
+	border-radius: 100%;
+	background-color: #DB5454;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+.zoneIndicatorYellow {
+	border-radius: 100%;
+	background-color: yellow;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+.zoneIndicatorOrange {
+	border-radius: 100%;
+	background-color: orange;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+.zoneIndicatorLime {
+	border-radius: 100%;
+	background-color: lime;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+.zoneIndicatorPurple {
+	border-radius: 100%;
+	background-color: purple;
+	width: 15px;
+	height: 15px;
+	margin-right: 12px;
+}
+
+.zoneColorText {
+	font-size: 14px;
+}
+
+.zoneColorTextActive {
+	color: #737373;
+}
+
+.iframeWrap {
+	margin-top: 30px;
+	iframe {
+		border-radius: 3px;
+	}
+}
+
+.custom-select {
+	&__control {
+		border: none !important;
+	}
+	&--menu-is-open {
+		border-color: #761c19 !important;
+	}
+}
+
+.selectDestinationType {
+	width: 350px;
+	background: #E8E8E8;
+border-radius: 3px;
+	height: 40px;
+}
+
+.addHub {
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	margin: 0 50px;
+	div {
+		font-size: 16px;
+		font-weight: 400;
+		margin: 12px 0;
+		text-align: left;
+				width: calc(40vw - 100px);
+	}
+	input {
+	}
+}
+
+.hubInput {
+	height: 40px;
+		border: none;
+		width: calc(40vw - 100px);
+		background: #E8E8E8;
+		padding-left: 10px;
+		box-sizing: border-box;
+	margin-bottom: 5px;
+}
+
+.hubInputSubmit {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 14px;
+	width: 300px;
+	cursor: pointer;
+	border: none;
+	background: #8DC73F;
+	border-radius: 3px;
+	height: 40px;
+	color: #fff;
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+
+.hubActions {
+	display: flex;
+	justify-content: space-between;
+	margin: 30px 0;
+}
+
+.hubBtn {
+	flex: 0 0 25%;
+	margin-left: 20px;
+}
+
+.selectHubWrap {
+	flex: 1 1;
+}
+
+.mapIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #8DC73F;
+	width: 40px;
+	height: 40px;
+	border-radius: 3px;
+	margin-left: 20px;
+	cursor: pointer;
+}

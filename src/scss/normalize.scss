@@ -9,8 +9,8 @@
  */
 
 html {
-	line-height: 1.15; /* 1 */
-	-webkit-text-size-adjust: 100%; /* 2 */
+	line-height: 1.15 !important; /* 1 */
+	-webkit-text-size-adjust: 100% !important; /* 2 */
 }
 
 /* Sections
@@ -21,7 +21,7 @@ html {
  */
 
 body {
-	margin: 0;
+	margin: 0 !important;
 }
 
 /**
@@ -29,7 +29,7 @@ body {
  */
 
 main {
-	display: block;
+	display: block !important;
 }
 
 /**
@@ -38,8 +38,8 @@ main {
  */
 
 h1 {
-	font-size: 2em;
-	margin: 0.67em 0;
+	font-size: 2em !important;
+	margin: 0.67em 0 !important;
 }
 
 /* Grouping content
@@ -51,9 +51,9 @@ h1 {
  */
 
 hr {
-	box-sizing: content-box; /* 1 */
-	height: 0; /* 1 */
-	overflow: visible; /* 2 */
+	box-sizing: content-box !important; /* 1 */
+	height: 0 !important; /* 1 */
+	overflow: visible !important; /* 2 */
 }
 
 /**

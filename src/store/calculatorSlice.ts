@@ -5,7 +5,7 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import { AxiosResponse } from "axios";
-import calculator, { HubFormValues } from "../components/calculator/Calculator";
+import calculator from "../components/calculator/Calculator";
 import CalculatorService from "../services/CalculatorService";
 import { TariffService } from "../services/TariffService";
 import { ZoneService } from "../services/ZoneService";
@@ -14,15 +14,17 @@ import {
   IAddress,
   IBrokenAddress,
   ICity,
+  ICityZone,
   IFullHub,
-  IHub,
   IHubCity,
   IHubs,
   IRegion,
 } from "../types/types";
-import { TariffState } from "./tariffSlice";
 
 export type CalculatorState = {
+  cityZone: {
+    coordinates: [];
+  };
   loading: boolean;
   error: boolean;
   regions: IRegion[];
@@ -47,6 +49,9 @@ export type CalculatorState = {
 };
 
 const initialState: CalculatorState = {
+  cityZone: {
+    coordinates: [],
+  },
   loading: true,
   error: false,
   regions: [],
@@ -193,6 +198,23 @@ export const getRegionsThunk = createAsyncThunk<
   }
 });
 
+export const createCityZoneThunk = createAsyncThunk<
+  ICityZone,
+  {
+    city: string;
+    region: string;
+    coordinates: [];
+  }
+>("calculator/createCityZoneThunk", async (zone) => {
+  try {
+    const response = await CalculatorService.createZone(zone);
+
+    return response.data;
+  } catch (e: any) {
+    alert(e.response.detail);
+  }
+});
+
 export const addHubThunk = createAsyncThunk<
   IFullHub,
   any,
@@ -258,14 +280,8 @@ const calculatorSlice = createSlice({
   initialState,
   reducers: {
     setActiveRegion(state, action: PayloadAction<any>) {
-      if (!action.payload) {
-        state.activeRegion = action.payload;
-        state.cities = null;
-      } else {
-        state.activeRegion = action.payload;
-        state.cities = action.payload.areas;
-        state.activeCity = "";
-      }
+      state.activeRegion = action.payload;
+      state.citySuggestions = [];
     },
     setActiveHub(state, action) {
       state.activeHub = action.payload;
@@ -407,12 +423,16 @@ const calculatorSlice = createSlice({
       })
       .addCase(getHubsThunk.fulfilled, (state, action) => {
         state.hubs = action.payload.hubs;
+        state.cityZone = action.payload.zone;
         state.hubCity = action.payload.city;
         state.loading = false;
         state.error = false;
       })
       .addCase(addHubThunk.pending, (state) => {
         state.loading = false;
+      })
+      .addCase(createCityZoneThunk.fulfilled, (state, action) => {
+        state.cityZone = action.payload;
       })
       .addCase(
         getRegionSuggestionsThunk.fulfilled,

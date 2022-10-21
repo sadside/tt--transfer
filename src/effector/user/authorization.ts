@@ -117,6 +117,7 @@ export const $user = createStore<IFullUser>({
   .reset(checkAuthFx.failData)
   .reset(userNotAuthorized);
 
+
 export const $loadingUserData = createStore(true)
   .on(checkAuthFx.doneData, () => false)
   .on(checkAuthFx.failData, () => false);
@@ -140,6 +141,7 @@ forward({
   from: getTokenFx.doneData,
   to: checkAuthFx,
 });
+
 
 sample({
   clock: userNotAuthorized,

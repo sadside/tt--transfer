@@ -1,4 +1,5 @@
 {
-	"extends": ["react-app", "react-app/jest"],
+    "extends": ["react-app", "react-app/jest", "plugin:effector/recommended", "plugin:effector/scope"],
+    "plugins": ["effector"],
 	"rules": {}
 }

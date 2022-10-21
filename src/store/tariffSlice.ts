@@ -4,6 +4,7 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
+import { notification } from "antd";
 import {
   addCitySidebarChanged,
   addGlobalAddressSidebarChanged,
@@ -85,7 +86,7 @@ const initialState: TariffState = {
   activePage: 1,
   checkedState: [],
   isSelectAll: false,
-  globalAddressSuggestions: ["Кушкули", "Пригордный"],
+  globalAddressSuggestions: [],
   globalAddressInputValue: "",
   activeGlobalAddress: "",
   activeGlobalAddressRoute: null,
@@ -706,6 +707,11 @@ export const tariffSlice = createSlice({
         state.checkedState = new Array(action.payload.results.length).fill(
           state.isSelectAll
         );
+        notification["success"]({
+          message: "Notification Title",
+          description:
+            "This is the content of the notification. This is the content of the notification. This is the content of the notification.",
+        });
       })
       .addCase(getIntercityRegionSuggestions.fulfilled, (state, action) => {
         state.intercityRegionSuggestions = action.payload;

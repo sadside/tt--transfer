@@ -1,5 +1,3 @@
-import moderation from "../components/moderation/Moderation";
-
 export interface IUser {
   id: number;
   name: string;
@@ -139,6 +137,9 @@ export interface IFullHub {
 export interface IHubs {
   hubs: IFullHub[];
   city: any;
+  zone: {
+    coordinates: [];
+  };
 }
 
 export interface IHubCity {
@@ -362,4 +363,10 @@ export interface IShortTariff {
 export interface IInitialGlobalAddress {
   coordinates: string;
   address: string;
+}
+
+export interface ICityZone {
+  region: string;
+  city: string;
+  coordinates: [];
 }

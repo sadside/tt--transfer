@@ -6,15 +6,19 @@ export default class CalculatorService {
     return axios.get("https://api.hh.ru/areas");
   }
 
-  static getHubs(region, city) {
+  static async createZone(zone: any) {
+    return $api.post("address/add-city-zone/", zone);
+  }
+
+  static getHubs(region: string, city: string) {
     return $api.get(`address/hub/?region=${region}&city=${city}`);
   }
 
-  static addHub(data) {
+  static addHub(data: any) {
     return $api.post("address/hub/", data);
   }
 
-  static addBrokenAddress({ address, coordinates }) {
+  static addBrokenAddress({ address, coordinates }: any) {
     return $api.post("address/hub/", { address, coordinates });
   }
 }
